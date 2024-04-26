@@ -10,6 +10,13 @@ sylar -- 源代码输出路径
 tests -- 测试代码文件夹
 
 ### 日志系统
+1） Log4J
+
+    logger(定义日志级别)
+        |
+        +--------Formatter(日志格式)
+        |
+    Appender(日志输出地)
 ### 协程库封装
 ### socket函数库
 ### http协议开发

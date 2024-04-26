@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.vue": "html",
+        "iosfwd": "cpp",
+        "sstream": "cpp",
+        "iostream": "cpp"
+    }
+}
