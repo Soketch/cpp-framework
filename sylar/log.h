@@ -71,5 +71,9 @@ namespace sylar
         LogLevel::Level m_level;
     };
 
+    // 输出到控制台的appender
+    class StdLogAppender : public LogAppender
+    {
+    };
 }
 #endif
