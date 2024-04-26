@@ -1,10 +1,10 @@
 # sylar
 
 ## 项目路径
-bin -- 二进制
-build -- 构建/中间文件路径
-cmake -- cmake函数文件夹
-CMakeLists.txt -- cmake定义文件
+bin -- 二进制  <br/>
+build -- 构建/中间文件路径 <br/>
+cmake -- cmake函数文件夹 <br/>
+CMakeLists.txt -- cmake定义文件 <br/>
 lib -- 库输出路径
 sylar -- 源代码输出路径
 tests -- 测试代码文件夹
