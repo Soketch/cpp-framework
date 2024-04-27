@@ -10,13 +10,34 @@ sylar -- 源代码输出路径
 tests -- 测试代码文件夹
 
 ### 日志系统
-1） Log4J
+1）     Log4J
 
-    logger(定义日志级别)
-        |
-        +--------Formatter(日志格式)
-        |
-    Appender(日志输出地)
+Logger (日志记录器)
+  |
+  +---- Appender (日志输出)
+  |           |
+  |           +---- Formatter (日志格式)
+  |           |          |
+  |           |          +---- FormatItem (格式项)
+  |           |
+  |           +---- StdLogAppender (标准输出到控制台)
+  |           |
+  |           +---- FileLogAppender (输出到文件)
+  |
+  +---- LogLevel (日志级别)
+  |          |
+  |          +---- DEBUG
+  |          |
+  |          +---- INFO
+  |          |
+  |          +---- WARN
+  |          |
+  |          +---- ERROR
+  |          |
+  |          +---- FATAL
+  |
+  +---- LogEvent (日志事件)
+            
 ### 协程库封装
 ### socket函数库
 ### http协议开发

@@ -8,14 +8,24 @@
 #include <list>
 #include <iostream>
 #include <vector>
+#include <functional>
+#include <algorithm>
 namespace sylar
 {
+    class Logger;
     // 日志事件
     class LogEvent
     {
     public:
         typedef std::shared_ptr<LogEvent> ptr;
         LogEvent();
+        const char *getFile() const { return m_file; }
+        int32_t getLine() const { return m_line; }
+        int32_t getThreadId() const { return m_threadId; }
+        uint32_t getFiberId() const { return m_fiberId; }
+        std::string getContent() const { return m_content; }
+        uint64_t getTime() const { return m_time; }
+        uint32_t getElapse() const { return m_elapse; }
 
     private:
         const char *m_file = nullptr; // 文件名
@@ -33,12 +43,41 @@ namespace sylar
     public:
         enum Level // 日志级别
         {
+            UNKNOW = 0,
             DEBUG = 1,
             INFO = 2,
             WARN = 3,
             ERROR = 4,
             FATAL = 5
         };
+
+        static const char *ToString(LogLevel::Level level);
+    };
+
+    // 日志格式器
+    class LogFormatter
+    {
+    public:
+        typedef std::shared_ptr<LogFormatter> ptr;
+        std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
+        LogFormatter(const std::string &pattern); // pattern在复制时会根据pattern格式解析出Item信息
+
+    public:
+        // 日志解析子模块
+        class FormatItem
+        {
+        public:
+            FormatItem(const std::string &fmt = "") {}
+            typedef std::shared_ptr<FormatItem> ptr;
+            virtual ~FormatItem(){};
+            virtual void format(std::ostream os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;
+        };
+
+    private:
+        std::string m_pattern;                // format输出结构
+        std::vector<FormatItem::ptr> m_items; // formatItem列表定义输出多少个项
+
+        void init(); // 初始化pattern解析
     };
 
     // 日志输出地
@@ -48,35 +87,12 @@ namespace sylar
         typedef std::shared_ptr<LogAppender> ptr;
         virtual ~LogAppender(){};
 
-        virtual void log(LogLevel::Level level, LogEvent::ptr event) = 0;           // 定义成纯虚函数
-        void setFormatter(LogFormatter::ptr formatter) { m_formatter = formatter; } // 设置输出格式
-        LogFormatter::ptr getFormatter() const { return m_formatter; }              // 获取输出格式     -->常量成员函数:表示保证不修改对象状态，适用于常量对象
+        virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0; // 定义成纯虚函数
+        void setFormatter(LogFormatter::ptr formatter) { m_formatter = formatter; }                       // 设置输出格式
+        LogFormatter::ptr getFormatter() const { return m_formatter; }                                    // 获取输出格式     -->常量成员函数:表示保证不修改对象状态，适用于常量对象
     protected:
         LogLevel::Level m_level;
         LogFormatter::ptr m_formatter; // 定义LogAppender的输出格式
-    };
-
-    // 日志格式器
-    class LogFormatter
-    {
-    public:
-        typedef std::shared_ptr<LogFormatter> ptr;
-        std::string format(LogEvent::ptr event);
-        LogFormatter(std::string &pattern);
-
-    private:
-        // 日志解析子模块
-        class FormatItem
-        {
-        public:
-            typedef std::shared_ptr<FormatItem> ptr;
-            virtual ~FormatItem(){};
-            virtual std::string format(LogEvent::ptr event) = 0;
-        };
-
-    private:
-        std::string m_pattern; // format输出结构
-        std::vector<FormatItem::ptr> m_item;
     };
 
     // 日志输出器
@@ -98,6 +114,8 @@ namespace sylar
         LogLevel::Level getLevel() const { return m_level; }  // 获取日志级别
         void setLevel(LogLevel::Level val) { m_level = val; } // 设置日志级别
 
+        const std::string getName() { return m_name; }
+
     private:
         LogLevel::Level m_level;                 // 日志级别
         std::string m_name;                      // 日志名称
@@ -109,7 +127,7 @@ namespace sylar
     {
     public:
         typedef std::shared_ptr<StdLogAppender> ptr;
-        void log(LogLevel::Level level, LogEvent::ptr event) override; // 使用override描述子类的log()的确是从基类中继承而来
+        void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) override; // 使用override描述子类的log()的确是从基类中继承而来
     };
 
     // 定义输出到文件的appender
@@ -118,7 +136,7 @@ namespace sylar
     public:
         typedef std::shared_ptr<FileLogAppender> ptr;
         FileLogAppender(const std::string &filename);
-        void log(LogLevel::Level level, LogEvent::ptr event) override;
+        void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) override;
         bool reopen(); // 重新打开文件， true打开成功
 
     private:
