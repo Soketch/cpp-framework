@@ -96,7 +96,7 @@ namespace sylar
     };
 
     // 日志输出器
-    class Logger
+    class Logger : public std::enable_shared_from_this<Logger>
     {
     public:
         typedef std::shared_ptr<Logger> ptr;
@@ -127,7 +127,7 @@ namespace sylar
     {
     public:
         typedef std::shared_ptr<StdLogAppender> ptr;
-        void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) override; // 使用override描述子类的log()的确是从基类中继承而来
+        void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override; // 使用override描述子类的log()的确是从基类中继承而来
     };
 
     // 定义输出到文件的appender
@@ -136,7 +136,7 @@ namespace sylar
     public:
         typedef std::shared_ptr<FileLogAppender> ptr;
         FileLogAppender(const std::string &filename);
-        void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) override;
+        void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
         bool reopen(); // 重新打开文件， true打开成功
 
     private:

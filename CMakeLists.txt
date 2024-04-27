@@ -8,4 +8,13 @@ set(LIB_SRC
     sylar/log.cc
     )
 
-    add_library(sylar SHARED $) 
+add_library(sylar SHARED ${LIB_SRC})
+#add_library(sylar_static STATIC ${LIB_SRC})
+#set_target_properties(sylar_static PROPERTIES OUTPUT_NAME "sylar")
+
+add_executable(test test/test.cc)
+add_dependencies(test sylar)
+target_link_libraries(test sylar)
+
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

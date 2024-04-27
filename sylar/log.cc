@@ -154,9 +154,10 @@ namespace sylar
     {
         if (level >= m_level)
         {
+            auto self = shared_from_this();
             for (auto &i : m_appenders)
             {
-                i->log(level, event);
+                i->log(self, level, event);
             }
         }
     }
@@ -190,7 +191,7 @@ namespace sylar
     {
     }
 
-    std::string LogFormatter::format(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event)
+    std::string LogFormatter::format(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event)
     {
         std::stringstream ss;
         for (auto &i : m_items)
@@ -201,7 +202,7 @@ namespace sylar
     }
 
     // StdLogAppender重写基类LogAppender的log
-    void StdLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event)
+    void StdLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event)
     {
         if (level >= m_level)
         {
@@ -292,7 +293,7 @@ namespace sylar
             {
                 if (!nstr.empty())
                 {
-                    vec.push_back(std::make_tuple(nstr, "", 0));
+                    vec.push_back(std::make_tuple(nstr, std::string(), 0));
                 }
                 str = m_pattern.substr(i + 1, n - i - 1);
                 vec.push_back(std::make_tuple(str, fmt, 1));
