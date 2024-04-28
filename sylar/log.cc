@@ -37,7 +37,7 @@ namespace sylar
     class LevelFormatItem : public LogFormatter::FormatItem
     {
     public:
-        LevelFormatItem(const std::string &str) {}
+        LevelFormatItem(const std::string &str = "") {}
         void format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) override
         {
             os << LogLevel::ToString(level);
@@ -87,14 +87,16 @@ namespace sylar
     class DateTimeFormatItem : public LogFormatter::FormatItem
     {
     public:
-        DateTimeFormatItem(const std::string &format = "%Y:%m:%d: %H:%M:%S") : m_format(format)
+        DateTimeFormatItem(const std::string &format = "%Y-%m-%d %H:%M:%S")
+            : m_format(format)
         {
             if (m_format.empty())
             {
                 m_format = "%Y-%m-%d %H:%M:%S";
             }
         }
-        void format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) override
+
+        void format(std::ostream &os, Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override
         {
             struct tm tm;
             time_t time = event->getTime();
@@ -131,8 +133,8 @@ namespace sylar
     class NewLineFormatItem : public LogFormatter::FormatItem
     {
     public:
-        NewLineFormatItem(const std::string &str) {}
-        void format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) override
+        NewLineFormatItem(const std::string &str = "") {}
+        void format(std::ostream &os, Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override
         {
             os << std::endl;
         }
@@ -151,6 +153,19 @@ namespace sylar
         std::string m_string;
     };
 
+    class TabFormatItem : public LogFormatter::FormatItem
+    {
+    public:
+        TabFormatItem(const std::string &str = "") {}
+        void format(std::ostream &os, Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override
+        {
+            os << "\t";
+        }
+
+    private:
+        std::string m_string;
+    };
+
     LogEvent::LogEvent(const char *file, int32_t line, uint32_t elapse, uint32_t threadId, uint32_t fiberId, uint64_t time)
         : m_file(file), m_line(line), m_elapse(elapse), m_threadId(threadId), m_fiberId(fiberId), m_time(time)
     {
@@ -158,7 +173,7 @@ namespace sylar
 
     Logger::Logger(const std::string &name) : m_name(name), m_level(LogLevel::DEBUG)
     {
-        m_formatter.reset(new LogFormatter("%d  [%p]  <%f:%l>  %m  %n"));
+        m_formatter.reset(new LogFormatter("%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"));
     }
 
     void Logger::addAppender(LogAppender::ptr appender) // 添加appender
@@ -244,7 +259,10 @@ namespace sylar
         }
     }
 
-    FileLogAppender::FileLogAppender(const std::string &filename) : m_filename(filename) {}
+    FileLogAppender::FileLogAppender(const std::string &filename) : m_filename(filename)
+    {
+        this->reopen();
+    }
 
     bool FileLogAppender::reopen() // 文件重新打开
     {
@@ -295,7 +313,8 @@ namespace sylar
 
             std::string str;
             std::string fmt;
-            while (++n < m_pattern.size())
+            // while (++n < m_pattern.size())
+            while (n < m_pattern.size())
             {
                 // if (!isalpha(m_pattern[n]) && m_pattern[n] != '{' && m_pattern[n] != '}')
                 if (!fmt_status && (!isalpha(m_pattern[n]) && m_pattern[n] != '{' && m_pattern[n] != '}'))
@@ -309,18 +328,22 @@ namespace sylar
                     {
                         // str = m_pattern.substr(i + 1, n - i); // i代表%，是不需要被记录的
                         str = m_pattern.substr(i + 1, n - i - 1);
+                        // std::cout << "*" << str << std::endl;
                         fmt_status = 1; // 解析格式
-                        ++n;
                         fmt_begin = n;
+                        ++n;
                         continue;
                     }
                 }
-                if (fmt_status == 1)
+                else if (fmt_status == 1)
                 {
                     if (m_pattern[n] == '}')
                     { // 说明格式已经结束
-                        fmt = m_pattern.substr(fmt_begin + 1, n - fmt_begin);
-                        fmt_status = 2;
+                        // fmt = m_pattern.substr(fmt_begin + 1, n - fmt_begin);
+                        fmt = m_pattern.substr(fmt_begin + 1, n - fmt_begin - 1);
+                        // std::cout << "#" << fmt << std::endl;
+                        fmt_status = 0;
+                        ++n;
                         break;
                     }
                 }
@@ -341,7 +364,7 @@ namespace sylar
                     vec.push_back(std::make_tuple(nstr, std::string(), 0));
                     nstr.clear();
                 }
-                str = m_pattern.substr(i + 1, n - i - 1);
+                // str = m_pattern.substr(i + 1, n - i - 1);
                 vec.push_back(std::make_tuple(str, fmt, 1));
                 // i = n;   //这里应该是 i = n - 1;
                 i = n - 1;
@@ -351,15 +374,15 @@ namespace sylar
                 std::cout << "pattern parse error:" << m_pattern << "-" << m_pattern.substr(i) << std::endl;
                 vec.push_back(std::make_tuple("<<pattern_error>>", fmt, 0));
             }
-            else if (fmt_status == 2)
-            {
-                if (!nstr.empty())
-                {
-                    vec.push_back(std::make_tuple(nstr, "", 0));
-                }
-                vec.push_back(std::make_tuple(str, fmt, 1));
-                i = n - 1;
-            }
+            // else if (fmt_status == 2)
+            // {
+            //     if (!nstr.empty())
+            //     {
+            //         vec.push_back(std::make_tuple(nstr, "", 0));
+            //     }
+            //     vec.push_back(std::make_tuple(str, fmt, 1));
+            //     i = n - 1;
+            // }
         }
         if (!nstr.empty())
         {
@@ -381,6 +404,7 @@ namespace sylar
             XX(f, FileNameFormatItem),
             XX(l, LineFormatItem),
             XX(F, FiberIdFormatItem),
+            XX(T, TabFormatItem),
 #undef XX
         };
 
@@ -403,9 +427,10 @@ namespace sylar
                 }
             }
 
-            std::cout << "{" << std::get<0>(i) << "} - {" << std::get<1>(i) << "} - {" << std::get<2>(i) << "}" << std::endl;
+            // std::cout << "(" << std::get<0>(i) << ") - (" << std::get<1>(i) << ") - (" << std::get<2>(i) << ")" << std::endl;
         }
-        std::cout << m_items.size() << std::endl;
+
+        // std::cout << m_items.size() << std::endl;
     }
 
 }
