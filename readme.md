@@ -12,31 +12,31 @@ tests -- 测试代码文件夹
 ### 日志系统
 1）     Log4J
 
-Logger (日志记录器)
-  |
-  +---- Appender (日志输出)
-  |           |
-  |           +---- Formatter (日志格式)
-  |           |          |
-  |           |          +---- FormatItem (格式项)
-  |           |
-  |           +---- StdLogAppender (标准输出到控制台)
-  |           |
+Logger (日志记录器) </br>
+  |                 </br>
+  +---- Appender (日志输出)</br>
+  |           |     </br>
+  |           +---- Formatter (日志格式)    </br>
+  |           |          |      </br>
+  |           |          +---- FormatItem (格式项)    </br>
+  |           |     </br>
+  |           +---- StdLogAppender (标准输出到控制台)     </br>
+  |           |     </br>
   |           +---- FileLogAppender (输出到文件)
   |
-  +---- LogLevel (日志级别)
-  |          |
-  |          +---- DEBUG
-  |          |
-  |          +---- INFO
-  |          |
-  |          +---- WARN
-  |          |
-  |          +---- ERROR
-  |          |
-  |          +---- FATAL
-  |
-  +---- LogEvent (日志事件)
+  +---- LogLevel (日志级别)     </br>
+  |          |      </br>
+  |          +---- DEBUG    </br>
+  |          |      </br>
+  |          +---- INFO     </br>
+  |          |        </br>
+  |          +---- WARN     </br>
+  |          |      </br>
+  |          +---- ERROR      </br>
+  |          |      </br>
+  |          +---- FATAL      </br>
+  |     </br>
+  +---- LogEvent (日志事件)     </br>
             
 ### 协程库封装
 ### socket函数库
