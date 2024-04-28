@@ -233,7 +233,11 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
   /usr/include/c++/11/bits/stl_tree.h \
   /usr/include/c++/11/bits/stl_map.h \
   /usr/include/c++/11/bits/stl_multimap.h \
-  /usr/include/c++/11/bits/erase_if.h
+  /usr/include/c++/11/bits/erase_if.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h
 
 
 /usr/include/c++/11/bits/erase_if.h:
@@ -354,6 +358,8 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
 
 /usr/include/x86_64-linux-gnu/bits/stdio2.h:
 
+/usr/include/string.h:
+
 /usr/include/x86_64-linux-gnu/bits/stdio.h:
 
 /usr/include/stdio.h:
@@ -381,6 +387,8 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/wchar2.h:
+
+/usr/include/x86_64-linux-gnu/bits/strings_fortified.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
 
@@ -570,6 +578,8 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
 
 /usr/include/c++/11/bits/move.h:
 
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:
+
 /usr/include/c++/11/bits/stl_tree.h:
 
 /usr/include/c++/11/tuple:
@@ -673,6 +683,8 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
 /usr/include/c++/11/bits/stl_iterator_base_types.h:
 
 /usr/include/c++/11/cstdlib:
+
+/usr/include/strings.h:
 
 /usr/include/c++/11/bits/sstream.tcc:
 

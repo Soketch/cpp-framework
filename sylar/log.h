@@ -92,7 +92,7 @@ namespace sylar
         void setFormatter(LogFormatter::ptr formatter) { m_formatter = formatter; }                       // 设置输出格式
         LogFormatter::ptr getFormatter() const { return m_formatter; }                                    // 获取输出格式     -->常量成员函数:表示保证不修改对象状态，适用于常量对象
     protected:
-        LogLevel::Level m_level;
+        LogLevel::Level m_level = LogLevel::DEBUG;
         LogFormatter::ptr m_formatter; // 定义LogAppender的输出格式
     };
 
