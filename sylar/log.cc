@@ -1,6 +1,4 @@
 #include "log.h"
-#include <map>
-#include <string.h>
 
 namespace sylar
 {
@@ -22,6 +20,21 @@ namespace sylar
             return "UNKNOW";
         }
         return "UNKNOW";
+    }
+
+    LogEventWrap::LogEventWrap(LogEvent::ptr e) : m_event(e)
+    {
+    }
+    LogEventWrap::~LogEventWrap()
+    {
+        if (m_event)
+        {
+            m_event->getLogger()->log(m_event->getLevel(), m_event);
+        }
+    }
+    std::stringstream &LogEventWrap::getSS()
+    {
+        return m_event->getSS();
     }
 
     class MessageFormatItem : public LogFormatter::FormatItem
@@ -166,8 +179,8 @@ namespace sylar
         std::string m_string;
     };
 
-    LogEvent::LogEvent(const char *file, int32_t line, uint32_t elapse, uint32_t threadId, uint32_t fiberId, uint64_t time)
-        : m_file(file), m_line(line), m_elapse(elapse), m_threadId(threadId), m_fiberId(fiberId), m_time(time)
+    LogEvent::LogEvent(std::shared_ptr<Logger> logger, LogLevel::Level level, const char *file, int32_t line, uint32_t elapse, uint32_t threadId, uint32_t fiberId, uint64_t time)
+        : m_file(file), m_line(line), m_elapse(elapse), m_threadId(threadId), m_fiberId(fiberId), m_time(time), m_logger(logger), m_level(level)
     {
     }
 
