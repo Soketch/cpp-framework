@@ -13,6 +13,7 @@ tests -- 测试代码文件夹
 1）     Log4J
 
       LoggerManager --> (Singleton/SingletonPtr)
+<<<<<<< HEAD
           Logger (日志记录器)                               
           |                                                 
           +---- Appender (日志输出)                          
@@ -34,8 +35,31 @@ tests -- 测试代码文件夹
           |          +---- FATAL                             
           |                                                  
           +---- LogEvent (日志事件)                           
+=======
+          Logger (日志记录器)                                 
+          |                                                  
+          +---- Appender (日志输出)                           
+          |           |                                      
+          |           +---- Formatter (日志格式)              
+          |           |          |                           
+          |           |          +---- FormatItem (格式项) --> (MessageItem/DataItem/ThreadIditem/FiberIdItem/FileItem/......)    
+          |           |                                       
+          |           +---- StdLogAppender (标准输出到控制台)  
+          |           |                                       
+          |           +---- FileLogAppender (输出到文件)       
+          |                                                   
+          +---- LogLevel (日志级别)                            
+          |          |                                        
+          |          +---- DEBUG                              
+          |          +---- INFO                               
+          |          +---- WARN                               
+          |          +---- ERROR                              
+          |          +---- FATAL                              
+          |                                                   
+          +---- LogEvent (日志事件)                            
+>>>>>>> eebc382 (config 1)
 ### 配置系统
-
+Config --> yaml
 ### 协程库封装
 ### socket函数库
 ### http协议开发
