@@ -37,6 +37,25 @@ namespace sylar
         return m_event->getSS();
     }
 
+    void LogEvent::format(const char *fmt, ...)
+    {
+        va_list al;
+        va_start(al, fmt);
+        format(fmt, al);
+        va_end(al);
+    }
+
+    void LogEvent::format(const char *fmt, va_list al)
+    {
+        char *buf = nullptr;
+        int len = vasprintf(&buf, fmt, al);
+        if (len != -1)
+        {
+            this->m_ss << std::string(buf, len);
+            free(buf);
+        }
+    }
+
     class MessageFormatItem : public LogFormatter::FormatItem
     {
     public:
@@ -444,6 +463,20 @@ namespace sylar
         }
 
         // std::cout << m_items.size() << std::endl;
+    }
+
+    LoggerManager::LoggerManager()
+    {
+        this->m_root.reset(new Logger());
+        this->m_root->addAppender(LogAppender::ptr(new StdLogAppender));
+    }
+    Logger::ptr LoggerManager::getLogger(const std::string &name)
+    {
+        auto it = m_loggers.find(name);
+        return it == m_loggers.end() ? m_root : it->second;
+    }
+    void LoggerManager::init()
+    {
     }
 
 }
