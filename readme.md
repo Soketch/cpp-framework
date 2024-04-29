@@ -12,27 +12,28 @@ tests -- 测试代码文件夹
 ### 日志系统
 1）     Log4J
 
-          Logger (日志记录器)                                <br />
-          |                                                 <br />
-          +---- Appender (日志输出)                          <br />
-          |           |                                     <br />
-          |           +---- Formatter (日志格式)             <br />
-          |           |          |                          <br />
-          |           |          +---- FormatItem (格式项)   <br />
-          |           |                                      <br />
-          |           +---- StdLogAppender (标准输出到控制台) <br />
-          |           |                                      <br />
-          |           +---- FileLogAppender (输出到文件)      <br />
-          |                                                  <br />
-          +---- LogLevel (日志级别)                           <br />
-          |          |                                       <br />
-          |          +---- DEBUG                             <br />
-          |          +---- INFO                              <br />
-          |          +---- WARN                              <br />
-          |          +---- ERROR                             <br />
-          |          +---- FATAL                             <br />
-          |                                                  <br />
-          +---- LogEvent (日志事件)                           <br />
+      LoggerManager --> (Singleton/SingletonPtr)
+          Logger (日志记录器)                                <br/>
+          |                                                 <br/>
+          +---- Appender (日志输出)                          <br/>
+          |           |                                     <br/>
+          |           +---- Formatter (日志格式)             <br/>
+          |           |          |                          <br/>
+          |           |          +---- FormatItem (格式项)   <br/>
+          |           |                                      <br/>
+          |           +---- StdLogAppender (标准输出到控制台) <br/>
+          |           |                                      <br/>
+          |           +---- FileLogAppender (输出到文件)      <br/>
+          |                                                  <br/>
+          +---- LogLevel (日志级别)                           <br/>
+          |          |                                       <br/>
+          |          +---- DEBUG                             <br/>
+          |          +---- INFO                              <br/>
+          |          +---- WARN                              <br/>
+          |          +---- ERROR                             <br/>
+          |          +---- FATAL                             <br/>
+          |                                                  <br/>
+          +---- LogEvent (日志事件)                           <br/>
 ### 配置系统
 
 ### 协程库封装
