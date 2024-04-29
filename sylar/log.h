@@ -45,6 +45,9 @@
 #define SYLAR_LOG_ROOT() sylar::LoggerMgr::GetInstance()->getRoot()
 #define SYLAR_LOG_NAME(name) sylar::LoggerMgr::GetInstance()->getLogger(name)
 
+// 通过宏获取logger  m_root
+#define SYLAR_lOG_ROOT() sylar::LoggerMgr::GetInstance()->getRoot()
+
 namespace sylar
 {
     class Logger;
@@ -213,6 +216,7 @@ namespace sylar
         LoggerManager();
         Logger::ptr getLogger(const std::string &name);
         void init();
+        Logger::ptr getRoot() const { return m_root; }
 
     private:
         std::map<std::string, Logger::ptr> m_loggers;
