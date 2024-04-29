@@ -69,49 +69,53 @@ namespace sylar
             }
             return false;
         }
+        const T getValue() const { return m_val; }
+        void setValue(const T &value) { m_val = value; }
 
     private:
         T m_val;
     };
+
+    // config  管理类
+    class Config
+    {
+    public:
+        typedef std::map<std::string, ConfigVarBase::ptr> ConfigVarMap;
+        template <class T>
+        static typename ConfigVar<T>::ptr Lookup(const std::string &name, const T &default_value, const std::string desc = "")
+        {
+            auto tmp = Lookup<T>(name);
+            if (tmp)
+            {
+                SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "==config==  Lookup name:" << name << " exists";
+                return tmp;
+            }
+            if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._012345678") != std::string::npos)
+            {
+                SYLAR_LOG_ERROR(SYLAR_LOG_ROOT()) << "==config==  Lookup name Invalid" << name;
+                throw std::invalid_argument(name);
+            }
+
+            typename ConfigVar<T>::ptr v(new ConfigVar<T>(name, default_value, desc));
+            s_datas[name] = v;
+            return v;
+        }
+
+        template <class T>
+        static typename ConfigVar<T>::ptr Lookup(const std::string &name)
+        {
+            auto it = s_datas.find(name);
+            if (it == s_datas.end())
+            {
+                return nullptr;
+            }
+            return std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
+        }
+
+    private:
+        static ConfigVarMap s_datas;
+    };
+
 }
-
-// config  管理类
-class Config
-{
-public:
-    typedef std::map<std::string, ConfigVarBase::ptr> ConfigVarMap;
-    template <class T>
-    static typename ConfigVar<T>::ptr Lookup(const std::string &name, const T &default_value, const std::string desc = "")
-    {
-        auto tmp = Lookup<T>(name);
-        if (tmp)
-        {
-            SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "==config==  Lookup name:" << name << " exists";
-            return tmp;
-        }
-        if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._012345678") != std::string::npos)
-        {
-            SYLAR_LOG_ERROR(SYLAR_LOG_ROOT()) << "==config==  Lookup name Invalid" << name;
-            throw std::invalid_argument(name);
-        }
-
-        typename ConfigVar<T>::ptr v(new ConfigVar<T>(name, default_value, desc));
-        s_datas[name] = v;
-    }
-
-    template <class T>
-    static typename ConfigVar<T>::ptr Lookup(const std::string &name)
-    {
-        auto it = s_datas.find(name);
-        if (it == s_datas.end())
-        {
-            return nullptr;
-        }
-        return std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
-    }
-
-private:
-    static ConfigVarMap s_datas;
-};
 
 #endif

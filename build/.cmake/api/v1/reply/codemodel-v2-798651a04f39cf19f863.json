@@ -41,15 +41,15 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "sylar::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-sylar-Debug-c859ec356a5accb1ea97.json",
+					"jsonFile" : "target-sylar-Debug-128dd68e0510045289de.json",
 					"name" : "sylar",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
-					"id" : "test::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-test-Debug-2a3c2ab0fb9c7462e634.json",
-					"name" : "test",
+					"id" : "test_config::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_config-Debug-1002ced974ae10f45903.json",
+					"name" : "test_config",
 					"projectIndex" : 0
 				}
 			]
