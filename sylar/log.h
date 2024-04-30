@@ -13,6 +13,7 @@
 #include <map>
 #include <stdarg.h>
 #include <string.h>
+#include <cctype>
 #include "util.h"
 #include "singleton.h"
 

@@ -10,7 +10,9 @@
 	{
 		"commands" : 
 		[
-			"add_library"
+			"add_library",
+			"link_directories",
+			"include_directories"
 		],
 		"files" : 
 		[
@@ -24,7 +26,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 13,
+				"line" : 23,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 11,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 9,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 10,
 				"parent" : 0
 			}
 		]
@@ -35,13 +55,24 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : " -rdynamic -O3 -g -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -g -fPIC"
+					"fragment" : " -rdynamic -O0 -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -g -fPIC"
 				}
 			],
 			"defines" : 
 			[
 				{
 					"define" : "sylar_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "/home/coding/cpp/sylar/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/home/coding/tools"
 				}
 			],
 			"language" : "CXX",
@@ -61,6 +92,11 @@
 			{
 				"fragment" : "",
 				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-L/usr/local/lib",
+				"role" : "libraryPath"
 			}
 		],
 		"language" : "CXX"

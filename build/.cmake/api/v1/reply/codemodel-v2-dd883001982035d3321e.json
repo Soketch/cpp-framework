@@ -16,7 +16,8 @@
 					"targetIndexes" : 
 					[
 						0,
-						1
+						1,
+						2
 					]
 				}
 			],
@@ -32,7 +33,8 @@
 					"targetIndexes" : 
 					[
 						0,
-						1
+						1,
+						2
 					]
 				}
 			],
@@ -41,14 +43,21 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "sylar::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-sylar-Debug-128dd68e0510045289de.json",
+					"jsonFile" : "target-sylar-Debug-5ffe43715bce18047b60.json",
 					"name" : "sylar",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
+					"id" : "test::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test-Debug-9f08dc39778b3c418a1f.json",
+					"name" : "test",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
 					"id" : "test_config::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-test_config-Debug-1002ced974ae10f45903.json",
+					"jsonFile" : "target-test_config-Debug-25891c2ff861fc57ef6c.json",
 					"name" : "test_config",
 					"projectIndex" : 0
 				}

@@ -86,7 +86,6 @@ CMakeFiles/sylar.dir/sylar/config.cc.o: ../sylar/config.cc \
   /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/c++/11/bits/shared_ptr_base.h \
   /usr/include/c++/11/typeinfo \
   /usr/include/c++/11/bits/allocated_ptr.h \
@@ -164,11 +163,8 @@ CMakeFiles/sylar.dir/sylar/config.cc.o: ../sylar/config.cc \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
   /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/alloca.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/c++/11/bits/std_abs.h \
   /usr/include/c++/11/cstdio \
   /usr/include/stdio.h \
@@ -177,8 +173,6 @@ CMakeFiles/sylar.dir/sylar/config.cc.o: ../sylar/config.cc \
   /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/c++/11/cerrno \
   /usr/include/errno.h \
   /usr/include/x86_64-linux-gnu/bits/errno.h \
@@ -224,7 +218,6 @@ CMakeFiles/sylar.dir/sylar/config.cc.o: ../sylar/config.cc \
   /usr/include/x86_64-linux-gnu/bits/confname.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/linux/close_range.h \
   /usr/include/boost/config/detail/select_platform_config.hpp \
@@ -453,8 +446,6 @@ CMakeFiles/sylar.dir/sylar/config.cc.o: ../sylar/config.cc \
   /usr/include/boost/range/detail/sfinae.hpp \
   /usr/include/string.h \
   /usr/include/strings.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
   /usr/include/boost/range/size.hpp \
   /usr/include/boost/range/size_type.hpp \
   /usr/include/boost/range/difference_type.hpp \
@@ -818,14 +809,64 @@ CMakeFiles/sylar.dir/sylar/config.cc.o: ../sylar/config.cc \
   /usr/include/c++/11/bits/stl_map.h \
   /usr/include/c++/11/bits/stl_multimap.h \
   /usr/include/c++/11/bits/erase_if.h \
+  /usr/local/include/yaml-cpp/yaml.h \
+  /usr/local/include/yaml-cpp/parser.h \
+  /usr/local/include/yaml-cpp/dll.h \
+  /usr/local/include/yaml-cpp/emitter.h \
+  /usr/local/include/yaml-cpp/binary.h \
+  /usr/local/include/yaml-cpp/emitterdef.h \
+  /usr/local/include/yaml-cpp/emittermanip.h \
+  /usr/local/include/yaml-cpp/null.h \
+  /usr/local/include/yaml-cpp/ostream_wrapper.h \
+  /usr/local/include/yaml-cpp/emitterstyle.h \
+  /usr/local/include/yaml-cpp/stlemitter.h \
+  /usr/include/c++/11/list \
+  /usr/include/c++/11/bits/stl_list.h \
+  /usr/include/c++/11/bits/list.tcc \
+  /usr/include/c++/11/set \
+  /usr/include/c++/11/bits/stl_set.h \
+  /usr/include/c++/11/bits/stl_multiset.h \
+  /usr/local/include/yaml-cpp/exceptions.h \
+  /usr/local/include/yaml-cpp/mark.h \
+  /usr/local/include/yaml-cpp/noexcept.h \
+  /usr/local/include/yaml-cpp/traits.h \
+  /usr/local/include/yaml-cpp/node/node.h \
+  /usr/local/include/yaml-cpp/node/detail/iterator_fwd.h \
+  /usr/local/include/yaml-cpp/node/ptr.h \
+  /usr/local/include/yaml-cpp/node/type.h \
+  /usr/local/include/yaml-cpp/node/impl.h \
+  /usr/local/include/yaml-cpp/node/detail/memory.h \
+  /usr/local/include/yaml-cpp/node/detail/node.h \
+  /usr/local/include/yaml-cpp/node/detail/node_ref.h \
+  /usr/local/include/yaml-cpp/node/detail/node_data.h \
+  /usr/local/include/yaml-cpp/node/detail/node_iterator.h \
+  /usr/local/include/yaml-cpp/node/iterator.h \
+  /usr/local/include/yaml-cpp/node/detail/iterator.h \
+  /usr/include/c++/11/atomic \
+  /usr/local/include/yaml-cpp/node/convert.h \
+  /usr/include/c++/11/unordered_map \
+  /usr/include/c++/11/bits/hashtable.h \
+  /usr/include/c++/11/bits/hashtable_policy.h \
+  /usr/include/c++/11/bits/enable_special_members.h \
+  /usr/include/c++/11/bits/unordered_map.h \
+  /usr/include/c++/11/valarray \
+  /usr/include/c++/11/bits/valarray_array.h \
+  /usr/include/c++/11/bits/valarray_array.tcc \
+  /usr/include/c++/11/bits/valarray_before.h \
+  /usr/include/c++/11/bits/slice_array.h \
+  /usr/include/c++/11/bits/valarray_after.h \
+  /usr/include/c++/11/bits/gslice.h \
+  /usr/include/c++/11/bits/gslice_array.h \
+  /usr/include/c++/11/bits/mask_array.h \
+  /usr/include/c++/11/bits/indirect_array.h \
+  /usr/local/include/yaml-cpp/node/detail/impl.h \
+  /usr/local/include/yaml-cpp/node/parse.h \
+  /usr/local/include/yaml-cpp/node/emit.h \
   ../sylar/log.h \
   /usr/include/c++/11/fstream \
   /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
   /usr/include/c++/11/bits/fstream.tcc \
-  /usr/include/c++/11/list \
-  /usr/include/c++/11/bits/stl_list.h \
-  /usr/include/c++/11/bits/list.tcc \
   /usr/include/c++/11/iostream \
   ../sylar/util.h \
   /usr/include/x86_64-linux-gnu/sys/syscall.h \
@@ -885,7 +926,6 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
   /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/c++/11/cstdint \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
   /usr/include/stdint.h \
@@ -962,11 +1002,8 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
   /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/alloca.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/c++/11/bits/std_abs.h \
   /usr/include/c++/11/cstdio \
   /usr/include/stdio.h \
@@ -975,8 +1012,6 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
   /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/c++/11/cerrno \
   /usr/include/errno.h \
   /usr/include/x86_64-linux-gnu/bits/errno.h \
@@ -1069,8 +1104,6 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
   /usr/include/c++/11/bits/erase_if.h \
   /usr/include/string.h \
   /usr/include/strings.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
   ../sylar/util.h \
   /usr/include/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
@@ -1078,7 +1111,6 @@ CMakeFiles/sylar.dir/sylar/log.cc.o: ../sylar/log.cc \
   /usr/include/x86_64-linux-gnu/bits/confname.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/linux/close_range.h \
   /usr/include/x86_64-linux-gnu/sys/syscall.h \
@@ -1140,14 +1172,12 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
   /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
   /usr/include/x86_64-linux-gnu/bits/environments.h \
   /usr/include/x86_64-linux-gnu/bits/confname.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/linux/close_range.h \
   /usr/include/x86_64-linux-gnu/sys/syscall.h \
@@ -1178,6 +1208,46 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/c++/11/bits/fstream.tcc:
 
 /usr/include/c++/11/fstream:
+
+/usr/local/include/yaml-cpp/node/emit.h:
+
+/usr/include/c++/11/bits/indirect_array.h:
+
+/usr/include/c++/11/bits/mask_array.h:
+
+/usr/include/c++/11/bits/gslice_array.h:
+
+/usr/include/c++/11/bits/slice_array.h:
+
+/usr/include/c++/11/bits/valarray_array.h:
+
+/usr/include/c++/11/bits/hashtable_policy.h:
+
+/usr/include/c++/11/unordered_map:
+
+/usr/local/include/yaml-cpp/node/convert.h:
+
+/usr/include/c++/11/atomic:
+
+/usr/local/include/yaml-cpp/node/iterator.h:
+
+/usr/local/include/yaml-cpp/node/ptr.h:
+
+/usr/local/include/yaml-cpp/node/detail/iterator_fwd.h:
+
+/usr/local/include/yaml-cpp/mark.h:
+
+/usr/include/c++/11/bits/stl_set.h:
+
+/usr/local/include/yaml-cpp/stlemitter.h:
+
+/usr/local/include/yaml-cpp/emitterstyle.h:
+
+/usr/local/include/yaml-cpp/ostream_wrapper.h:
+
+/usr/local/include/yaml-cpp/emitterdef.h:
+
+/usr/local/include/yaml-cpp/emitter.h:
 
 /usr/include/c++/11/bits/erase_if.h:
 
@@ -1212,6 +1282,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/predef/other/endian.h:
 
 /usr/include/c++/11/math.h:
+
+/usr/local/include/yaml-cpp/node/detail/impl.h:
 
 /usr/include/c++/11/stdlib.h:
 
@@ -1399,6 +1471,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/math/special_functions/detail/round_fwd.hpp:
 
+/usr/include/c++/11/bits/valarray_before.h:
+
 /usr/include/c++/11/bits/stl_bvector.h:
 
 /usr/include/c++/11/bits/stl_vector.h:
@@ -1416,6 +1490,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/predef/detail/test.h:
 
 /usr/include/boost/predef/make.h:
+
+/usr/include/c++/11/valarray:
 
 /usr/include/boost/predef/version_number.h:
 
@@ -1446,6 +1522,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/c++/11/cstring:
 
 /usr/include/boost/move/detail/std_ns_end.hpp:
+
+/usr/local/include/yaml-cpp/node/impl.h:
 
 /usr/include/boost/move/detail/std_ns_begin.hpp:
 
@@ -1523,6 +1601,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/mpl/aux_/is_msvc_eti_arg.hpp:
 
+/usr/local/include/yaml-cpp/dll.h:
+
 /usr/include/boost/mpl/aux_/config/forwarding.hpp:
 
 /usr/include/boost/mpl/aux_/numeric_cast_utils.hpp:
@@ -1537,6 +1617,10 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/mpl/aux_/comparison_op.hpp:
 
+/usr/include/c++/11/bits/valarray_array.tcc:
+
+/usr/include/boost/numeric/conversion/detail/meta.hpp:
+
 /usr/include/boost/mpl/vector.hpp:
 
 /usr/include/boost/numeric/conversion/detail/conversion_traits.hpp:
@@ -1547,27 +1631,27 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/type.hpp:
 
+/usr/local/include/yaml-cpp/parser.h:
+
 /usr/include/boost/numeric/conversion/cast.hpp:
 
-/usr/include/boost/type_traits/is_base_of.hpp:
+/usr/include/boost/mpl/aux_/advance_backward.hpp:
 
-/usr/include/boost/mpl/long_fwd.hpp:
+/usr/include/boost/mpl/int_fwd.hpp:
 
-/usr/include/boost/lexical_cast/detail/converter_numeric.hpp:
+/usr/include/boost/detail/lcast_precision.hpp:
 
-/usr/include/boost/lexical_cast/detail/is_character.hpp:
+/usr/include/stdio.h:
 
-/usr/include/boost/predef/architecture/x86/64.h:
+/usr/include/boost/mpl/aux_/config/ttp.hpp:
 
-/usr/include/boost/type_traits/type_identity.hpp:
+/usr/local/include/yaml-cpp/node/parse.h:
 
-/usr/include/boost/lexical_cast/try_lexical_convert.hpp:
+/usr/include/boost/mpl/aux_/config/gcc.hpp:
 
-/usr/include/boost/current_function.hpp:
+/usr/include/c++/11/sstream:
 
-/usr/include/boost/assert/source_location.hpp:
-
-/usr/include/boost/throw_exception.hpp:
+/usr/include/boost/mpl/aux_/na_fwd.hpp:
 
 /usr/include/boost/mpl/or.hpp:
 
@@ -1577,15 +1661,13 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/mpl/aux_/common_name_wknd.hpp:
 
-/usr/include/boost/mpl/aux_/config/gcc.hpp:
-
-/usr/include/c++/11/sstream:
-
-/usr/include/boost/mpl/aux_/config/ttp.hpp:
-
 /usr/include/boost/mpl/aux_/config/adl.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
+
+/usr/include/boost/predef/architecture/x86/64.h:
+
+/usr/include/boost/type_traits/type_identity.hpp:
 
 /usr/include/c++/11/cstddef:
 
@@ -1598,10 +1680,6 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/numeric/conversion/int_float_mixture_enum.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
-
-/usr/include/boost/numeric/conversion/detail/meta.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/unistd.h:
 
 /usr/include/c++/11/bits/exception_defines.h:
 
@@ -1617,6 +1695,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
 
+/usr/local/include/yaml-cpp/yaml.h:
+
 /usr/include/boost/mpl/limits/arity.hpp:
 
 /usr/include/boost/mpl/aux_/config/eti.hpp:
@@ -1629,13 +1709,25 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/lexical_cast.hpp:
 
+/usr/local/include/yaml-cpp/node/type.h:
+
 /usr/include/c++/11/bits/istream.tcc:
 
 /usr/include/boost/preprocessor/variadic/elem.hpp:
 
+/usr/include/x86_64-linux-gnu/asm/unistd.h:
+
+/usr/include/c++/11/bits/locale_facets.tcc:
+
+/usr/local/include/yaml-cpp/emittermanip.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
+
 /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h:
 
 /usr/include/c++/11/bits/streambuf_iterator.h:
+
+/usr/include/c++/11/cwctype:
 
 /usr/include/boost/mpl/O1_size.hpp:
 
@@ -1657,6 +1749,10 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/concept/detail/has_constraints.hpp:
 
+/usr/include/boost/range/end.hpp:
+
+/usr/include/c++/11/stdexcept:
+
 /usr/include/boost/mpl/limits/list.hpp:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/error_constants.h:
@@ -1673,6 +1769,12 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
 
+/usr/include/boost/mpl/int.hpp:
+
+/usr/include/c++/11/streambuf:
+
+/usr/include/boost/range/functions.hpp:
+
 /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_base.h:
 
 /usr/include/x86_64-linux-gnu/bits/errno.h:
@@ -1680,26 +1782,6 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/c++/11/cerrno:
 
 /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio2.h:
-
-/usr/include/boost/mpl/if.hpp:
-
-/usr/include/x86_64-linux-gnu/asm/unistd.h:
-
-/usr/include/c++/11/bits/locale_facets.tcc:
-
-/usr/include/x86_64-linux-gnu/bits/stdio.h:
-
-/usr/include/boost/detail/lcast_precision.hpp:
-
-/usr/include/stdio.h:
-
-/usr/include/boost/mpl/aux_/advance_backward.hpp:
-
-/usr/include/boost/mpl/int_fwd.hpp:
 
 /usr/include/c++/11/cstdio:
 
@@ -1709,21 +1791,7 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/c++/11/bits/stl_heap.h:
 
-/usr/include/c++/11/cwctype:
-
-/usr/include/c++/11/stdexcept:
-
-/usr/include/boost/range/end.hpp:
-
 /usr/include/alloca.h:
-
-/usr/include/c++/11/cwchar:
-
-/usr/include/boost/mpl/aux_/config/arrays.hpp:
-
-../sylar/singleton.h:
-
-/usr/include/boost/range/concepts.hpp:
 
 /usr/include/boost/mpl/arg_fwd.hpp:
 
@@ -1887,6 +1955,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/type_traits/has_minus_assign.hpp:
 
+/usr/local/include/yaml-cpp/node/detail/node.h:
+
 /usr/include/c++/11/bits/stl_relops.h:
 
 /usr/include/boost/core/noncopyable.hpp:
@@ -1963,6 +2033,10 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
+/usr/local/include/yaml-cpp/node/detail/node_data.h:
+
+/usr/include/boost/type_traits/is_base_of.hpp:
+
 /usr/include/boost/mpl/aux_/msvc_eti_base.hpp:
 
 /usr/include/c++/11/debug/debug.h:
@@ -1982,10 +2056,6 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h:
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
-
-/usr/include/boost/type_traits/integral_constant.hpp:
-
-/usr/include/boost/type_traits/add_reference.hpp:
 
 /usr/include/c++/11/iosfwd:
 
@@ -2019,15 +2089,7 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/mpl/aux_/config/gpu.hpp:
 
-/usr/include/c++/11/streambuf:
-
-/usr/include/boost/mpl/int.hpp:
-
-/usr/include/boost/range/functions.hpp:
-
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
 /usr/include/c++/11/bits/functexcept.h:
 
@@ -2049,9 +2111,7 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/c++/11/bits/uses_allocator.h:
 
-/usr/include/boost/exception/exception.hpp:
-
-/usr/include/unistd.h:
+/usr/include/boost/mpl/aux_/na.hpp:
 
 /usr/include/c++/11/bits/stl_algobase.h:
 
@@ -2069,8 +2129,6 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/c++/11/memory:
 
-/usr/include/x86_64-linux-gnu/bits/string_fortified.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
 /usr/include/boost/range/detail/misc_concept.hpp:
@@ -2079,6 +2137,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/mpl/placeholders.hpp:
 
+/usr/local/include/yaml-cpp/node/node.h:
+
 /usr/include/boost/mpl/aux_/O1_size_impl.hpp:
 
 /usr/include/boost/mpl/equal_to.hpp:
@@ -2086,6 +2146,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/config/detail/select_stdlib_config.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
+
+/usr/local/include/yaml-cpp/binary.h:
 
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
@@ -2096,6 +2158,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/mpl/vector/aux_/at.hpp:
 
 /usr/include/c++/11/bit:
+
+/usr/local/include/yaml-cpp/node/detail/node_iterator.h:
 
 /usr/include/boost/numeric/conversion/detail/numeric_cast_traits.hpp:
 
@@ -2110,6 +2174,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/config/detail/suffix.hpp:
 
 /usr/include/boost/type_traits/is_integral.hpp:
+
+/usr/include/c++/11/bits/valarray_after.h:
 
 ../sylar/config.cc:
 
@@ -2131,11 +2197,15 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/c++/11/bits/hash_bytes.h:
 
+/usr/include/boost/lexical_cast/detail/is_character.hpp:
+
 /usr/include/boost/mpl/aux_/preprocessed/gcc/advance_backward.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/atomic_word.h:
+
+/usr/local/include/yaml-cpp/null.h:
 
 /usr/include/c++/11/ext/type_traits.h:
 
@@ -2146,8 +2216,6 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/x86_64-linux-gnu/bits/time.h:
 
 /usr/include/c++/11/backward/binders.h:
-
-/usr/include/x86_64-linux-gnu/bits/wchar2.h:
 
 /usr/include/c++/11/bits/postypes.h:
 
@@ -2181,11 +2249,15 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h:
 
-/usr/include/c++/11/bits/cxxabi_init_exception.h:
+/usr/include/c++/11/cwchar:
 
-/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+/usr/include/boost/mpl/aux_/config/arrays.hpp:
 
-/usr/include/wchar.h:
+../sylar/singleton.h:
+
+/usr/include/boost/range/concepts.hpp:
+
+/usr/include/boost/throw_exception.hpp:
 
 /usr/include/locale.h:
 
@@ -2255,17 +2327,23 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
 
+/usr/local/include/yaml-cpp/noexcept.h:
+
 /usr/include/c++/11/bits/basic_string.h:
 
 /usr/include/boost/mpl/list/aux_/front.hpp:
 
 /usr/include/c++/11/bits/shared_ptr_base.h:
 
+/usr/include/c++/11/set:
+
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
 /usr/include/linux/limits.h:
 
 /usr/include/boost/mpl/always.hpp:
+
+/usr/include/c++/11/bits/gslice.h:
 
 /usr/include/boost/preprocessor/repetition/for.hpp:
 
@@ -2295,6 +2373,14 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/mpl/not.hpp:
 
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+/usr/include/wchar.h:
+
+/usr/include/c++/11/bits/cxxabi_init_exception.h:
+
+/usr/local/include/yaml-cpp/traits.h:
+
 /usr/include/boost/mpl/aux_/config/has_xxx.hpp:
 
 /usr/include/c++/11/bits/stl_pair.h:
@@ -2313,13 +2399,11 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/preprocessor/punctuation/comma_if.hpp:
 
+/usr/include/c++/11/bits/hashtable.h:
+
 /usr/include/boost/core/checked_delete.hpp:
 
 /usr/include/c++/11/exception:
-
-/usr/include/boost/mpl/aux_/na.hpp:
-
-/usr/include/boost/mpl/aux_/na_fwd.hpp:
 
 /usr/include/boost/type_traits/is_float.hpp:
 
@@ -2367,6 +2451,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/utility/binary.hpp:
 
+/usr/include/c++/11/bits/enable_special_members.h:
+
 /usr/include/boost/mpl/aux_/largest_int.hpp:
 
 /usr/include/boost/preprocessor/control/iif.hpp:
@@ -2374,6 +2460,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/mpl/integral_c_fwd.hpp:
 
 /usr/include/boost/preprocessor/logical/bool.hpp:
+
+/usr/include/boost/lexical_cast/try_lexical_convert.hpp:
 
 /usr/include/boost/preprocessor/repeat.hpp:
 
@@ -2471,6 +2559,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/preprocessor/detail/check.hpp:
 
+/usr/local/include/yaml-cpp/exceptions.h:
+
 /usr/include/boost/preprocessor/logical/compl.hpp:
 
 /usr/include/boost/preprocessor/list/reverse.hpp:
@@ -2489,8 +2579,6 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/preprocessor/tuple/rem.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/strings_fortified.h:
-
 /usr/include/boost/mpl/aux_/include_preprocessed.hpp:
 
 /usr/include/boost/mpl/aux_/config/compiler.hpp:
@@ -2507,6 +2595,10 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/version.hpp:
 
+/usr/include/boost/type_traits/add_reference.hpp:
+
+/usr/include/boost/type_traits/integral_constant.hpp:
+
 /usr/include/boost/type_traits/declval.hpp:
 
 /usr/include/boost/type_traits/is_reference.hpp:
@@ -2514,6 +2606,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/type_traits/is_lvalue_reference.hpp:
 
 /usr/include/boost/utility/base_from_member.hpp:
+
+/usr/include/c++/11/bits/stl_multiset.h:
 
 /usr/include/boost/type_traits/is_rvalue_reference.hpp:
 
@@ -2523,7 +2617,11 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/type_traits/detail/yes_no_type.hpp:
 
+/usr/include/c++/11/bits/unordered_map.h:
+
 /usr/include/boost/type_traits/is_arithmetic.hpp:
+
+/usr/local/include/yaml-cpp/node/detail/node_ref.h:
 
 /usr/include/boost/mpl/vector/aux_/item.hpp:
 
@@ -2535,9 +2633,7 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/iterator/iterator_categories.hpp:
 
-/usr/include/boost/range/empty.hpp:
-
-/usr/include/boost/mpl/eval_if.hpp:
+/usr/include/boost/mpl/if.hpp:
 
 /usr/include/boost/mpl/aux_/config/integral.hpp:
 
@@ -2575,9 +2671,9 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/preprocessor/repetition/enum_binary_params.hpp:
 
-/usr/include/c++/11/ext/concurrence.h:
-
 /usr/include/boost/mpl/aux_/config/lambda.hpp:
+
+/usr/include/c++/11/ext/concurrence.h:
 
 /usr/include/boost/type_traits/is_same.hpp:
 
@@ -2620,6 +2716,8 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/mpl/apply_fwd.hpp:
 
 /usr/include/boost/mpl/aux_/preprocessed/gcc/apply_fwd.hpp:
+
+/usr/local/include/yaml-cpp/node/detail/iterator.h:
 
 /usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
 
@@ -2675,9 +2773,9 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/mpl/quote.hpp:
 
-/usr/include/boost/type_traits/remove_const.hpp:
-
 /usr/include/c++/11/bits/stringfwd.h:
+
+/usr/include/boost/type_traits/remove_const.hpp:
 
 /usr/include/boost/mpl/aux_/has_type.hpp:
 
@@ -2712,8 +2810,6 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/c++/11/bits/uniform_int_dist.h:
 
 /usr/include/boost/range/size.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/select2.h:
 
 /usr/include/boost/type_traits/add_const.hpp:
 
@@ -2752,6 +2848,10 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 /usr/include/boost/preprocessor/facilities/expand.hpp:
 
 /usr/include/boost/preprocessor/seq/enum.hpp:
+
+/usr/include/unistd.h:
+
+/usr/include/boost/exception/exception.hpp:
 
 /usr/include/boost/mpl/aux_/arity.hpp:
 
@@ -2807,7 +2907,13 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/boost/iterator/distance.hpp:
 
+/usr/include/boost/mpl/eval_if.hpp:
+
+/usr/include/boost/range/empty.hpp:
+
 /usr/include/boost/range/rbegin.hpp:
+
+/usr/local/include/yaml-cpp/node/detail/memory.h:
 
 /usr/include/boost/range/reverse_iterator.hpp:
 
@@ -2825,10 +2931,16 @@ CMakeFiles/sylar.dir/sylar/util.cc.o: ../sylar/util.cc \
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
-
 /usr/include/boost/type_traits/has_plus_assign.hpp:
 
 /usr/include/boost/type_traits/has_minus.hpp:
 
 /usr/include/boost/lexical_cast/bad_lexical_cast.hpp:
+
+/usr/include/boost/assert/source_location.hpp:
+
+/usr/include/boost/current_function.hpp:
+
+/usr/include/boost/mpl/long_fwd.hpp:
+
+/usr/include/boost/lexical_cast/detail/converter_numeric.hpp:

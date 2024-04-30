@@ -1,0 +1,15 @@
+logs:
+    - name: root
+      level: info
+      formatter: "%d%T%m%n"
+      appenders:
+          - type: FileLogAppender
+            file: /home/coding/cpp/sylar/txtdemo/root.txt
+          - type: StdoutLogAppender
+    - name: system
+      level: info
+      formatter: "%d%T%m%n"
+      appenders:
+          - type: FileLogAppender
+            file: /home/coding/cpp/sylar/txtdemo/system.txt
+          - type: StdoutLogAppender

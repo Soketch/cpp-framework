@@ -1122,6 +1122,18 @@
 			"value" : "FALSE"
 		},
 		{
+			"name" : "YAMLCPP",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/local/lib/libyaml-cpp.a"
+		},
+		{
 			"name" : "sylar_BINARY_DIR",
 			"properties" : 
 			[

@@ -287,7 +287,7 @@ namespace sylar
     {
         if (level >= m_level)
         {
-            std::cout << m_formatter->format(logger, level, event) << std::endl;
+            std::cout << m_formatter->format(logger, level, event); // std::endl;
         }
     }
 
