@@ -35,7 +35,7 @@ tests -- 测试代码文件夹
           |                                                   
           +---- LogEvent (日志事件)                            
 ### 配置系统
-Config --> yaml
+Config --> yaml<br>
 yaml安装    <a href="https://github.com/jbeder/yaml-cpp.git" >github:yaml-cpp</a>
 > -- git clone<br>
 > -- cd yaml-cpp<br>
