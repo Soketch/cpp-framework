@@ -36,6 +36,12 @@ tests -- 测试代码文件夹
           +---- LogEvent (日志事件)                            
 ### 配置系统
 Config --> yaml
+yaml安装    <a href="https://github.com/jbeder/yaml-cpp.git" >github:yaml-cpp</a>
+> -- git clone
+> -- cd yaml-cpp
+> -- mkdir build&& cd build
+> -- cmake ..  
+> -- make && make install
 ### 协程库封装
 ### socket函数库
 ### http协议开发
