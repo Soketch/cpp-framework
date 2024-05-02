@@ -58,11 +58,11 @@ int main(int argc, char **argv)
 {
     SYLAR_LOG_INFO(SYLAR_lOG_ROOT()) << g_int_value_config->getValue();
     SYLAR_LOG_INFO(SYLAR_lOG_ROOT()) << g_int_value_config->toString();
-
     std::cout << " ------------------------" << std::endl;
 
     SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << g_float_value_config->getValue();
     SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << g_float_value_config->toString();
+    std::cout << " ------------------------" << std::endl;
 
     test_yaml();
 
