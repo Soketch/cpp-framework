@@ -9,6 +9,13 @@
 #include <yaml-cpp/yaml.h>
 #include "log.h"
 
+#include <vector> //支持更多容器的偏特化
+#include <list>
+#include <set>
+#include <map>
+#include <unordered_set>
+#include <unordered_map>
+
 namespace sylar
 {
     // 配置基类  -- 用于配置基本信息（包含转换方法）

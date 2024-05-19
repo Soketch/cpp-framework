@@ -65,7 +65,7 @@ class ConfigVar;
 template<F,T>
 LexicalCast;
 
-//容器偏特化   支持vector,list,set,map等
+//容器偏特化   支持vector、list、set、map等
     template <class T> // 将string转vector
     class LexicalCast<std::string, std::vector<T>>
 
