@@ -42,6 +42,38 @@ yaml安装    <a href="https://github.com/jbeder/yaml-cpp.git" >github:yaml-cpp<
 > -- mkdir build&& cd build<br>
 > -- cmake ..  <br>
 > -- make && make install<br>
+
+yaml-cpp使用
+```cpp
+    YAML::Node node = YAML::LoadFile(filename);
+    
+    node.IsMap()
+    for(aauto it = node.begin(); it != node.end(); ++it)
+        it->first,it->second
+    
+    node.IsSequence()
+    for(size_t i = 0; i<node.size(); ++i)
+
+    node.IsScalar()
+```
+
+配置系统原则，约定优于配置
+```cpp
+template<T, FormStr, ToStr>
+class ConfigVar;
+
+template<F,T>
+LexicalCast;
+
+//容器偏特化   支持vector,list,map等
+    template <class T> // 将string转vector
+    class LexicalCast<std::string, std::vector<T>>
+    
+    template <class T>
+    class LexicalCast<std::vector<T>, std::string>
+
+```
+
 ### 协程库封装
 ### socket函数库
 ### http协议开发
