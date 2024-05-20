@@ -65,13 +65,23 @@ class ConfigVar;
 template<F,T>
 LexicalCast;
 
-//容器偏特化   支持vector、list、set、map等
+//容器偏特化   支持vector、list、set、map、unordered_set、unordered_map等
     template <class T> // 将string转vector
     class LexicalCast<std::string, std::vector<T>>
 
     template <class T>
     class LexicalCast<std::vector<T>, std::string>
 
+    template <class T> // 将map转string
+    class LexicalCast<std::map<std::string, T>, std::string>
+
+    template <class T> // 将unordered_map转string
+    class LexicalCast<std::unordered_map<std::string, T>, std::string>
+
+    //map与unordered_map 支持key = std::string
+    
+    问题部分
+    Config::Lookup(key) key相同但是值value不同
 ```
 
 ### 协程库封装
