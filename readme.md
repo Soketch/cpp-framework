@@ -82,6 +82,12 @@ LexicalCast;
     
     问题部分
     Config::Lookup(key) key相同 但是 类型不同的，不会有报错。需要处理！
+
+
+    自定义类型，需要实现偏特化sylar::LexicalCast
+    支持config解析自定义类型，以及stl容器与自定义类型结合使用
+
+    ####配置变更事件
 ```
 
 ### 协程库封装
