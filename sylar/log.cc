@@ -1,4 +1,21 @@
 #include "log.h"
+#define RESET "\033[0m"
+#define BLACK "\033[30m"   /* Black */
+#define RED "\033[31m"     /* Red */
+#define GREEN "\033[32m"   /* Green */
+#define YELLOW "\033[33m"  /* Yellow */
+#define BLUE "\033[34m"    /* Blue */
+#define MAGENTA "\033[35m" /* Magenta */
+#define CYAN "\033[36m"    /* Cyan */
+#define WHITE "\033[37m"   /* White */
+
+// 定义日志级别和颜色的映射
+#define LOG_COLOR(level)                                                     \
+    ((level) == LogLevel::DEBUG ? BLUE : (level) == LogLevel::INFO ? GREEN   \
+                                     : (level) == LogLevel::WARN   ? YELLOW  \
+                                     : (level) == LogLevel::ERROR  ? RED     \
+                                     : (level) == LogLevel::FATAL  ? MAGENTA \
+                                                                   : RESET)
 
 namespace sylar
 {
@@ -287,7 +304,9 @@ namespace sylar
     {
         if (level >= m_level)
         {
-            std::cout << m_formatter->format(logger, level, event); // std::endl;
+            // std::cout << m_formatter->format(logger, level, event); // std::endl;
+            const char *color = LOG_COLOR(level);
+            std::cout << color << m_formatter->format(logger, level, event) << RESET << std::endl;
         }
     }
 

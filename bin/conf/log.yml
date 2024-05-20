@@ -33,3 +33,17 @@ system:
       key2: 9
       key3: 10
       key4: 10
+class:
+  person:
+    name: soketch
+    age: 24
+    sex: true
+  map:
+    obj1:
+      name: som
+      age: 12
+      sex: true
+    obj2:
+      name: liny
+      age: 18
+      sex: false

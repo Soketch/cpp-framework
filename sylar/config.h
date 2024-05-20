@@ -34,6 +34,7 @@ namespace sylar
 
         virtual std::string toString() = 0; // 转换为明文
         virtual bool fromString(const std::string &val) = 0;
+        virtual std::string getTypeName() const = 0;
 
     protected:
         std::string m_name;
@@ -304,12 +305,14 @@ namespace sylar
             catch (const std::exception &e)
             {
                 SYLAR_LOG_ERROR(SYLAR_LOG_ROOT()) << "ConfigVar::fromString exception" << e.what()
-                                                  << "  convert:" << typeid(m_val).name() << " from string";
+                                                  << "  convert: string to " << typeid(m_val).name() << " - "
+                                                  << val;
             }
             return false;
         }
         const T getValue() const { return m_val; }
         void setValue(const T &value) { m_val = value; }
+        std::string getTypeName() const override { return typeid(T).name(); }
 
     private:
         T m_val;
@@ -323,12 +326,24 @@ namespace sylar
         template <class T>
         static typename ConfigVar<T>::ptr Lookup(const std::string &name, const T &default_value, const std::string desc = "")
         {
-            auto tmp = Lookup<T>(name);
-            if (tmp)
+            auto it = s_datas.find(name);
+            if (it != s_datas.end())
             {
-                SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "==config==  Lookup name:" << name << " exists";
-                return tmp;
+                auto tmp = std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
+                if (tmp)
+                {
+                    SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "==config==  Lookup name:" << name << " exists";
+                    return tmp;
+                }
+                else
+                {
+                    SYLAR_LOG_ERROR(SYLAR_LOG_ROOT()) << "==config==  Lookup name:" << name << " exists but type not"
+                                                      << typeid(T).name() << " real_type=" << it->second->getTypeName()
+                                                      << " " << it->second->toString();
+                    return nullptr;
+                }
             }
+
             if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyz._012345678") != std::string::npos)
             {
                 SYLAR_LOG_ERROR(SYLAR_LOG_ROOT()) << "==config==  Lookup name Invalid" << name;
