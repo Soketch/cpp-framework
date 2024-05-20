@@ -51,6 +51,14 @@
         "typeinfo": "cpp",
         "cstring": "cpp",
         "set": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "ctime": "cpp",
+        "strstream": "cpp",
+        "complex": "cpp",
+        "unordered_set": "cpp",
+        "iomanip": "cpp",
+        "cfenv": "cpp",
+        "cinttypes": "cpp",
+        "valarray": "cpp"
     }
 }

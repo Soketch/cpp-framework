@@ -87,6 +87,40 @@ namespace sylar
             return ss.str();
         }
     };
+    template <class T> // 将string转list
+    class LexicalCast<std::string, std::list<T>>
+    {
+    public:
+        std::list<T> operator()(const std::string &v)
+        {
+            YAML::Node node = YAML::Load(v);
+            typename std::list<T> vec;
+            std::stringstream ss;
+            for (size_t i = 0; i < node.size(); ++i)
+            {
+                ss.str("");
+                ss << node[i];
+                vec.push_back(LexicalCast<std::string, T>()(ss.str()));
+            }
+            return vec;
+        }
+    };
+    template <class T> // 将list转string
+    class LexicalCast<std::list<T>, std::string>
+    {
+    public:
+        std::string operator()(const std::list<T> &v)
+        {
+            YAML::Node node;
+            for (auto &i : v)
+            {
+                node.push_back(YAML::Load(LexicalCast<T, std::string>()(i)));
+            }
+            std::stringstream ss;
+            ss << node;
+            return ss.str();
+        }
+    };
 
     // 利用仿函数
     // FromStr T operator() (const std::string&)   // 将 string 类型 可以转换为 自定义类型 T
