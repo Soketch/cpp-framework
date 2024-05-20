@@ -81,7 +81,7 @@ LexicalCast;
     //map与unordered_map 支持key = std::string
     
     问题部分
-    Config::Lookup(key) key相同但是值value不同
+    Config::Lookup(key) key相同 但是 类型不同的，不会有报错。需要处理！
 ```
 
 ### 协程库封装
