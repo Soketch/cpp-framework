@@ -152,6 +152,13 @@ public:
            << "]";
         return ss.str();
     }
+
+    bool operator==(const Person &oth) const
+    {
+        return m_name == oth.m_name &&
+               m_age == oth.m_age &&
+               m_sex == oth.m_sex;
+    }
 };
 
 namespace sylar

@@ -16,6 +16,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include <functional>
+
 namespace sylar
 {
     // 配置基类  -- 用于配置基本信息（包含转换方法）
@@ -43,6 +45,7 @@ namespace sylar
     private:
     };
 
+    // LexicalCast的偏特化
     // F from_type, T to_type
     template <class F, class T>
     class LexicalCast
@@ -53,7 +56,6 @@ namespace sylar
             return boost::lexical_cast<T>(v);
         }
     };
-    // LexicalCast的偏特化
     // vector的偏特化
     template <class T> // 将string转vector
     class LexicalCast<std::string, std::vector<T>>
@@ -275,6 +277,7 @@ namespace sylar
     {
     public:
         typedef std::shared_ptr<ConfigVar> ptr;
+        typedef std::function<void(const T &old_val, const T &new_val)> on_change_cb; // 回调函数
 
         ConfigVar(const std::string &name, const T &default_value, const std::string description = "")
             : ConfigVarBase(name, description), m_val(default_value)
@@ -311,11 +314,43 @@ namespace sylar
             return false;
         }
         const T getValue() const { return m_val; }
-        void setValue(const T &value) { m_val = value; }
+        void setValue(const T &v)
+        {
+            if (v == m_val)
+            { // 如果原值等于新值， 没有变化
+                return;
+            }
+
+            // 不是，变化了，进行回调
+            for (auto &i : m_cbs)
+            {
+                i(m_val, v); // 这里 i 是m_cbs数组中的回调函数， //通知回调函数当前值和新值
+            }
+            m_val = v; // 更新值
+        }
         std::string getTypeName() const override { return typeid(T).name(); }
+
+        // 对回调函数 - 增加监听
+        void addListener(u_int64_t key, on_change_cb cb)
+        {
+            m_cbs[key] = cb;
+        }
+        // 删除
+        void delListener(uint64_t key)
+        {
+            m_cbs.erase(key);
+        }
+        // 返回cb
+        on_change_cb getListener(u_int64_t key)
+        {
+            auto it = m_cbs.find(key);
+            return it == m_cbs.end() ? nullptr : it->second;
+        }
 
     private:
         T m_val;
+        // 变更回调数组，uint64_t key要求唯一，一般使用hash
+        std::map<uint64_t, on_change_cb> m_cbs; // 采用map是因为functional中没有比较函数，意味着无法判断是否是相同回调函数
     };
 
     // config  管理类
