@@ -91,6 +91,30 @@ LexicalCast;
 
 配置变更事件
     事件机制 -- 当一个配置发生修改的时候，可以反向通知对用代码回调
+```cpp
+public:
+    void setValue(const T &v)
+        {
+            if (v == m_val)// 如果原值等于新值， 没有变化
+            { return;}
+            for (auto &i : m_cbs)// 不是，变化了，进行回调
+            {
+                i.second(m_val, v); // 这里 i 是m_cbs数组中的回调函数pair,[key, callback]， //通知回调函数当前值和新值
+            }
+            m_val = v; // 更新值
+        }
+        // 对回调函数 - 增加监听
+        void addListener(u_int64_t key, on_change_cb cb)
+        // 删除
+        void delListener(uint64_t key)
+        // 返回cb
+        on_change_cb getListener(u_int64_t key)
+        //清空
+        void clearListener()
+private:
+// 变更回调数组，uint64_t key要求唯一，一般使用hash
+        std::map<uint64_t, on_change_cb> m_cbs; // 采用map是因为functional中没有比较函数，意味着无法判断是否是相同回调函数
+```
 
 ### 协程库封装
 ### socket函数库
