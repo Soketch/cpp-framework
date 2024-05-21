@@ -324,7 +324,7 @@ namespace sylar
             // 不是，变化了，进行回调
             for (auto &i : m_cbs)
             {
-                i(m_val, v); // 这里 i 是m_cbs数组中的回调函数， //通知回调函数当前值和新值
+                i.second(m_val, v); // 这里 i 是m_cbs数组中的回调函数[key, callback]， //通知回调函数当前值和新值
             }
             m_val = v; // 更新值
         }
@@ -345,6 +345,11 @@ namespace sylar
         {
             auto it = m_cbs.find(key);
             return it == m_cbs.end() ? nullptr : it->second;
+        }
+
+        void clearListener()
+        {
+            m_cbs.clear();
         }
 
     private:

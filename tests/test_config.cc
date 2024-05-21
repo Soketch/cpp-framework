@@ -219,6 +219,10 @@ void test_class()
         SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << prefix << ": size = " << m.size(); \
     }
 
+    g_person->addListener(10, [](const Person &old_val, const Person &new_val)
+                          { SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << " old_val=" << old_val.toString()
+                                                             << " new_val=" << new_val.toString(); });
+
     XX_PM(g_person_map, "class.map before");
 
     YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/log.yml");
