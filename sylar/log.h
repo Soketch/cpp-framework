@@ -43,15 +43,17 @@
 #define SYLAR_LOG_FMT_WARN(logger, fmt, ...) SYLAR_LOG_FMT_LEVEL(logger, sylar::LogLevel::WARN, fmt, __VA_ARGS__)
 #define SYLAR_LOG_FMT_ERROR(logger, fmt, ...) SYLAR_LOG_FMT_LEVEL(logger, sylar::LogLevel::ERROR, fmt, __VA_ARGS__)
 #define SYLAR_LOG_FMT_FATAL(logger, fmt, ...) SYLAR_LOG_FMT_LEVEL(logger, sylar::LogLevel::FATAL, fmt, __VA_ARGS__)
-#define SYLAR_LOG_ROOT() sylar::LoggerMgr::GetInstance()->getRoot()
-#define SYLAR_LOG_NAME(name) sylar::LoggerMgr::GetInstance()->getLogger(name)
 
 // 通过宏获取logger  m_root
-#define SYLAR_lOG_ROOT() sylar::LoggerMgr::GetInstance()->getRoot()
+#define SYLAR_LOG_ROOT() sylar::LoggerMgr::GetInstance()->getRoot()
+
+// find log
+#define SYLAR_LOG_NAME(name) sylar::LoggerMgr::GetInstance()->getLogger(name)
 
 namespace sylar
 {
     class Logger;
+    class LoggerManager;
     // 日志事件
 
     // 日志级别
@@ -163,6 +165,8 @@ namespace sylar
     // 日志输出器
     class Logger : public std::enable_shared_from_this<Logger>
     {
+        friend class LoggerManager;
+
     public:
         typedef std::shared_ptr<Logger> ptr;
 
@@ -186,6 +190,8 @@ namespace sylar
         LogLevel::Level m_level;                 // 日志级别
         std::list<LogAppender::ptr> m_appenders; // appender日志集合
         LogFormatter::ptr m_formatter;
+
+        Logger::ptr m_root;
     };
 
     // 输出到控制台的appender

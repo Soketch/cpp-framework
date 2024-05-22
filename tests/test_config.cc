@@ -3,7 +3,7 @@
 #include "../sylar/log.h"
 #include "yaml-cpp/yaml.h"
 
-#define YAML_TEST_FILE "/home/coding/cpp/sylar/bin/conf/log.yml"
+#define YAML_TEST_FILE "/home/coding/cpp/sylar/bin/conf/test.yml"
 
 #if 0
 sylar::ConfigVar<int>::ptr g_int_value_config =
@@ -119,7 +119,7 @@ void test_config()
     XX_M(g_str_int_map_value_config, str_int_map, before);
     XX_M(g_str_int_umap_value_config, str_int_umap, before);
 
-    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/test.yml");
     sylar::Config::LoadFromYaml(root);
 
     SYLAR_LOG_INFO(SYLAR_lOG_ROOT()) << "after: " << g_int_value_config->getValue();
@@ -225,7 +225,7 @@ void test_class()
 
     XX_PM(g_person_map, "class.map before");
 
-    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/test.yml");
     sylar::Config::LoadFromYaml(root);
 
     SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "after: " << g_person->getValue().toString() << " - " << g_person->toString();
@@ -236,9 +236,7 @@ void test_class()
 int main(int argc, char **argv)
 {
     // test_sylar1();
-
     // test_yaml();
-
     // test_config();
 
     test_class();

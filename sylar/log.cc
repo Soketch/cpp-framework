@@ -109,7 +109,7 @@ namespace sylar
         NameFormatItem(const std::string &str) {}
         void format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) override
         {
-            os << logger->getName();
+            os << event->getLogger()->getName();
         }
     };
 
@@ -252,9 +252,16 @@ namespace sylar
         if (level >= m_level)
         {
             auto self = shared_from_this();
-            for (auto &i : m_appenders)
+            if (!m_appenders.empty())
             {
-                i->log(self, level, event);
+                for (auto &i : m_appenders)
+                {
+                    i->log(self, level, event);
+                }
+            }
+            else if (m_root)
+            {
+                m_root->log(level, event);
             }
         }
     }
@@ -489,10 +496,18 @@ namespace sylar
         this->m_root.reset(new Logger());
         this->m_root->addAppender(LogAppender::ptr(new StdLogAppender));
     }
+
     Logger::ptr LoggerManager::getLogger(const std::string &name)
     {
         auto it = m_loggers.find(name);
-        return it == m_loggers.end() ? m_root : it->second;
+        if (it != m_loggers.end())
+        {
+            return it->second;
+        }
+        Logger::ptr logger(new Logger(name));
+        logger->m_root = m_root;
+        m_loggers[name] = logger;
+        return logger;
     }
     void LoggerManager::init()
     {
