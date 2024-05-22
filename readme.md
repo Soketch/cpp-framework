@@ -115,6 +115,17 @@ private:
 // 变更回调数组，uint64_t key要求唯一，一般使用hash
         std::map<uint64_t, on_change_cb> m_cbs; // 采用map是因为functional中没有比较函数，意味着无法判断是否是相同回调函数
 ```
+#### 日志系统整合配置系统
+```yaml
+    Logs:
+        - name: root (作为唯一标识)
+          level: (debug、info、warn、error、fatal)
+          formatter: '%d%T%p%T%t%T%m%n'
+          appender:
+            - type: StdoutLogAppender, FileLogAppender)
+              level: (debug, ...)
+              file: /logs/xxx.log, ...
+```
 
 ### 协程库封装
 ### socket函数库
