@@ -240,10 +240,11 @@ namespace sylar
     Logger::Logger(const std::string &name) : m_name(name), m_level(LogLevel::DEBUG)
     {
         m_formatter.reset(new LogFormatter("%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"));
-        if (name == "root")
-        {
-            m_appenders.push_back(LogAppender::ptr(new StdLogAppender));
-        }
+        // Segmentation fault
+        // if (name == "root")
+        // {
+        //     m_appenders.push_back(LogAppender::ptr(new StdLogAppender));
+        // }
     }
 
     void Logger::addAppender(LogAppender::ptr appender) // 添加appender

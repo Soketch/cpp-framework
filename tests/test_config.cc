@@ -226,7 +226,7 @@ void test_class()
 
     XX_PM(g_person_map, "class.map before");
 
-    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/test.yml");
+    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/log.yml");
     sylar::Config::LoadFromYaml(root);
 
     SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "after: " << g_person->getValue().toString() << " - " << g_person->toString();
@@ -239,8 +239,8 @@ int main(int argc, char **argv)
     // test_sylar1();
     //  test_yaml();
     //  test_config();
-    std::cout << "0" << std::endl;
+
     test_class();
-    std::cout << "end" << std::endl;
+
     return 0;
 }
