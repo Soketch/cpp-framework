@@ -132,6 +132,13 @@ sylar::Logger g_logger =
 
 SYLAR_LOG_INFO(g_logger) << " ...  log ";
 ```
+
+```cpp
+保证静态 log 的唯一性
+static Logger::ptr g_log = SYLAR_LOG_NAME("system");   //log 静态化
+
+当logger的appenders为空，使用m_root写logger
+```
 ### 协程库封装
 ### socket函数库
 ### http协议开发

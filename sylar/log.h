@@ -16,7 +16,7 @@
 #include <cctype>
 #include "util.h"
 #include "singleton.h"
-
+#include <time.h>
 #define SYLAR_LOG_LEVEL(logger, level)                                                                       \
     if (logger->getLevel() <= level)                                                                         \
     sylar::LogEventWrap(sylar::LogEvent::ptr(new sylar::LogEvent(logger, level,                              \
@@ -138,9 +138,13 @@ namespace sylar
         };
 
         void init(); // 初始化pattern解析
+
+        bool isError() const { return m_error; }
+
     private:
         std::string m_pattern;                // format输出结构
         std::vector<FormatItem::ptr> m_items; // formatItem列表定义输出多少个项
+        bool m_error = false;
     };
 
     // 日志输出地
@@ -178,12 +182,17 @@ namespace sylar
         void warn(LogEvent::ptr event);
         void error(LogEvent::ptr event);
         void fatal(LogEvent::ptr event);
-        void addAppender(LogAppender::ptr appender);          // 添加appender
-        void delAppender(LogAppender::ptr appender);          // 删除appender
+        void addAppender(LogAppender::ptr appender); // 添加appender
+        void delAppender(LogAppender::ptr appender); // 删除appender
+        void clearAppenders();
         LogLevel::Level getLevel() const { return m_level; }  // 获取日志级别
         void setLevel(LogLevel::Level val) { m_level = val; } // 设置日志级别
 
         const std::string getName() { return m_name; }
+
+        void setFormatter(LogFormatter::ptr val);
+        void setFormatter(const std::string &val);
+        LogFormatter::ptr getFormatter();
 
     private:
         std::string m_name;                      // 日志名称
