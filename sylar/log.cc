@@ -581,7 +581,7 @@ namespace sylar
         }
     };
 
-    sylar::ConfigVar<std::set<LogDefine>> g_log_defines =
+    sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
         sylar::Config::Lookup("logs", std::set<LogDefine>(), "logs config");
 
     struct LogIniter
