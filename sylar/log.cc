@@ -679,7 +679,32 @@ namespace sylar
 
             for (auto &i : v)
             {
-                node.push_back(YAML::Load(LexicalCast<LogDefine, std::string>()(i)));
+                YAML::Node n;
+                n["name"] = i.name;
+                n["level"] = LogLevel::ToString(i.level);
+
+                if (i.formatter.empty())
+                {
+                    n["level"] = i.formatter;
+                }
+
+                for (auto &a : i.appenders)
+                {
+                    YAML::Node na;
+                    if (a.type == 1)
+                    {
+                        na["type"] = "FileLogAppender";
+                        na["file"] = a.file;
+                    }
+                    else if (a.type == 2)
+                    {
+                        na["type"] = "StdoutLogAppender";
+                    }
+                    na["level"] = LogLevel::ToString(a.level);
+
+                    n["appenders"].push_back(na);
+                }
+                node.push_back(n);
             }
             std::stringstream ss;
             ss << node;
