@@ -701,7 +701,10 @@ namespace sylar
                         na["type"] = "StdoutLogAppender";
                     }
                     na["level"] = LogLevel::ToString(a.level);
-
+                    if (!a.formatter.empty())
+                    {
+                        na["formatter"] = a.formatter;
+                    }
                     n["appenders"].push_back(na);
                 }
                 node.push_back(n);

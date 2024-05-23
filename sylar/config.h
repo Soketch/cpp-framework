@@ -366,8 +366,9 @@ namespace sylar
         template <class T>
         static typename ConfigVar<T>::ptr Lookup(const std::string &name, const T &default_value, const std::string desc = "")
         {
-            auto it = s_datas.find(name);
-            if (it != s_datas.end())
+            // auto it = s_datas.find(name);
+            auto it = GetDtatas().find(name);
+            if (it != GetDtatas().end())
             {
                 auto tmp = std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
                 if (tmp)
@@ -391,7 +392,7 @@ namespace sylar
             }
 
             typename ConfigVar<T>::ptr v(new ConfigVar<T>(name, default_value, desc));
-            s_datas[name] = v;
+            GetDtatas(). = v;
             return v;
         }
 

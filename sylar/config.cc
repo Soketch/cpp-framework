@@ -6,8 +6,9 @@ namespace sylar
 
     ConfigVarBase::ptr Config::LookupBase(const std::string &name)
     {
-        auto it = s_datas.find(name);
-        return it == s_datas.end() ? nullptr : it->second;
+        // auto it = s_datas.find(name);
+        auto it = GetDtatas().find(name);
+        return it == GetDtatas().end() ? nullptr : it->second;
     }
 
     static void ListAllMember(const std::string &prefix,
