@@ -2,7 +2,8 @@
 
 namespace sylar
 {
-    Config::ConfigVarMap Config::s_datas;
+    // Config::ConfigVarMap s_datas;
+    static sylar::Logger::ptr g_logger = SYLAR_LOG_NAME("system");
 
     ConfigVarBase::ptr Config::LookupBase(const std::string &name)
     {

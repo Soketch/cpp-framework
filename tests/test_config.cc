@@ -206,6 +206,7 @@ sylar::ConfigVar<std::map<std::string, Person>>::ptr g_person_map =
 // 自定义类型配置支持
 void test_class()
 {
+
     SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "before: " << g_person->getValue().toString() << " - " << g_person->toString();
 
 #define XX_PM(g_var, prefix)                                                   \
@@ -236,10 +237,10 @@ void test_class()
 int main(int argc, char **argv)
 {
     // test_sylar1();
-    // test_yaml();
-    // test_config();
-
+    //  test_yaml();
+    //  test_config();
+    std::cout << "0" << std::endl;
     test_class();
-
+    std::cout << "end" << std::endl;
     return 0;
 }

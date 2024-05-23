@@ -392,7 +392,7 @@ namespace sylar
             }
 
             typename ConfigVar<T>::ptr v(new ConfigVar<T>(name, default_value, desc));
-            GetDtatas(). = v;
+            GetDtatas()[name] = v;
             return v;
         }
 

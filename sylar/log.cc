@@ -734,7 +734,7 @@ namespace sylar
                                                if (it == old_val.end())
                                                { // 新的里面有，老的里面没有
                                                    // 新增logger
-                                                   logger.reset(new sylar::Logger(i.name));
+                                                   logger = SYLAR_LOG_NAME(i.name);
                                                }
                                                // 修改
                                                else // 新的老的都有，判断是否变化
@@ -743,6 +743,10 @@ namespace sylar
                                                    {
                                                        // 修改的logger
                                                        logger = SYLAR_LOG_NAME(i.name);
+                                                   }
+                                                   else
+                                                   {
+                                                       continue;
                                                    }
                                                }
                                                logger->setLevel(i.level);
@@ -786,5 +790,4 @@ namespace sylar
     void LoggerManager::init()
     {
     }
-
 }
