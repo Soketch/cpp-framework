@@ -398,8 +398,8 @@ namespace sylar
         template <class T>
         static typename ConfigVar<T>::ptr Lookup(const std::string &name)
         {
-            auto it = s_datas.find(name);
-            if (it == s_datas.end())
+            auto it = GetDtatas().find(name);
+            if (it == GetDtatas().end())
             {
                 return nullptr;
             }
@@ -410,7 +410,11 @@ namespace sylar
         static ConfigVarBase::ptr LookupBase(const std::string &name);
 
     private:
-        static ConfigVarMap s_datas;
+        static ConfigVarMap &GetDtatas()
+        {
+            static ConfigVarMap s_datas;
+            return s_datas;
+        }
     };
 
 }

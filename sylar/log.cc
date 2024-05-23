@@ -40,6 +40,22 @@ namespace sylar
         return "UNKNOW";
     }
 
+    LogLevel::Level LogLevel::FromString(const std::string &str)
+    {
+#define XX(name)               \
+    if (str == #name)          \
+    {                          \
+        return LogLevel::name; \
+    }
+        XX(DEBUG);
+        XX(INFO);
+        XX(WARN);
+        XX(ERROR);
+        XX(FATAL);
+        return LogLevel::UNKNOW;
+#undef XX
+    }
+
     LogEventWrap::LogEventWrap(LogEvent::ptr e) : m_event(e)
     {
     }
@@ -581,6 +597,96 @@ namespace sylar
         }
     };
 
+    // 偏特化  对logDefine - string
+    template <>
+    class LexicalCast<std::string, std::set<LogDefine>>
+    {
+    public:
+        std::set<LogDefine> operator()(const std::string &v)
+        {
+            YAML::Node node = YAML::Load(v);
+            std::set<LogDefine> vec; // 定义返回类型
+            std::stringstream ss;
+            for (size_t i = 0; i < node.size(); ++i)
+            {
+                auto n = node[i];
+                if (!n["name"].IsDefined())
+                {
+                    std::cout << "log config error: name is null, " << n
+                              << std::endl;
+                    continue;
+                }
+                LogDefine ld;
+                ld.name = n["name"].as<std::string>();
+                ld.level = LogLevel::FromString(n["level"].IsDefined() ? n["level"].as<std::string>() : "");
+                if (n["formatter"].IsDefined())
+                {
+                    ld.formatter = n["formatter"].as<std::string>();
+                }
+                if (n["appenders"].IsDefined())
+                {
+                    for (size_t k = 0; k < n["appenders"].size(); ++k)
+                    {
+                        auto a = n["appenders"][k];
+                        if (!a["type"].IsDefined())
+                        {
+                            std::cout << "log config error: appeender type is null, " << a
+                                      << std::endl;
+                            continue;
+                        }
+                        std::string type = a["type"].as<std::string>();
+                        LogAppenderDefine lad;
+                        if (type == "FileLogAppender")
+                        {
+                            lad.type = 1;
+                            if (!a["file"].IsDefined())
+                            {
+                                std::cout << "log config error: file_appeender is null, " << a
+                                          << std::endl;
+                                continue;
+                            }
+                            lad.file = a["file"].as<std::string>();
+                            if (a["formatter"].IsDefined())
+                            {
+                                lad.formatter = a["formatter"].as<std::string>();
+                            }
+                        }
+                        else if (type == "StdoutLogAppender")
+                        {
+                            lad.type = 2;
+                        }
+                        else
+                        {
+                            std::cout << "log config error: appeender type is invaild, " << a
+                                      << std::endl;
+                            continue;
+                        }
+                        ld.appenders.push_back(lad);
+                    }
+                }
+                vec.insert(ld);
+            }
+            return vec; // return std::move(vec);
+        }
+    };
+    template <>
+    class LexicalCast<std::set<LogDefine>, std::string>
+    {
+    public:
+        std::string operator()(const std::set<LogDefine> &v)
+        {
+            YAML::Node node;
+
+            for (auto &i : v)
+            {
+                node.push_back(YAML::Load(LexicalCast<LogDefine, std::string>()(i)));
+            }
+            std::stringstream ss;
+            ss << node;
+            return ss.str();
+        }
+    };
+
     sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
         sylar::Config::Lookup("logs", std::set<LogDefine>(), "logs config");
 
@@ -591,7 +697,7 @@ namespace sylar
             g_log_defines->addListener(0xF1E231,
                                        [](const std::set<LogDefine> &old_val, const std::set<LogDefine> &new_val)
                                        {
-                                           SYLAR_LOG_NAME(SYLAR_LOG_ROOT()) << "on_logger_conf_changed";
+                                           SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "on_logger_conf_changed";
                                            // 新增
                                            for (auto &i : new_val)
                                            {

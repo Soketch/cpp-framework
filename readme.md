@@ -139,6 +139,38 @@ static Logger::ptr g_log = SYLAR_LOG_NAME("system");   //log 静态化
 
 当logger的appenders为空，使用m_root写logger
 ```
+
+```cpp
+//定义LogDefine和LogAppenderDefine, 偏特化LexicalCast
+struct LogAppenderDefine
+    {
+        int type = 0; // 1 file, 2 stdout
+        LogLevel::Level level = LogLevel::UNKNOW;
+        std::string formatter;
+        std::string file;
+        bool operator==(const LogAppenderDefine &oth) const
+    };
+ struct LogDefine
+    {
+        std::string name;
+        LogLevel::Level level = LogLevel::UNKNOW;
+        std::string formatter;
+        std::vector<LogAppenderDefine> appenders;
+        bool operator==(const LogDefine &oth) const
+
+        bool operator<(const LogDefine &oth) const
+    };
+
+ template <>
+    class LexicalCast<std::string, std::set<LogDefine>>
+
+ template <>
+    class LexicalCast<std::set<LogDefine>, std::string>
+
+sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
+    sylar::Config::Lookup("logs", std::set<LogDefine>(), "logs config");
+//实现日志配置解析
+```
 ### 协程库封装
 ### socket函数库
 ### http协议开发
