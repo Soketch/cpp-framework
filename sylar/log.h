@@ -141,6 +141,7 @@ namespace sylar
         void init(); // 初始化pattern解析
 
         bool isError() const { return m_error; }
+        std::string getPattern() const { return m_pattern; }
 
     private:
         std::string m_pattern;                // format输出结构
@@ -154,6 +155,7 @@ namespace sylar
     public:
         typedef std::shared_ptr<LogAppender> ptr;
         virtual ~LogAppender(){};
+        virtual std::string toYamlString() = 0;
 
         virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0; // 定义成纯虚函数
         void setFormatter(LogFormatter::ptr formatter) { m_formatter = formatter; }                       // 设置输出格式
@@ -195,6 +197,8 @@ namespace sylar
         void setFormatter(const std::string &val);
         LogFormatter::ptr getFormatter();
 
+        std::string toYamlString();
+
     private:
         std::string m_name;                      // 日志名称
         LogLevel::Level m_level;                 // 日志级别
@@ -210,6 +214,7 @@ namespace sylar
     public:
         typedef std::shared_ptr<StdLogAppender> ptr;
         void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override; // 使用override描述子类的log()的确是从基类中继承而来
+        std::string toYamlString() override;
     };
 
     // 定义输出到文件的appender
@@ -220,6 +225,7 @@ namespace sylar
         FileLogAppender(const std::string &filename);
         void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
         bool reopen(); // 重新打开文件， true打开成功
+        std::string toYamlString() override;
 
     private:
         std::string m_filename;
@@ -234,6 +240,8 @@ namespace sylar
         Logger::ptr getLogger(const std::string &name);
         void init();
         Logger::ptr getRoot() const { return m_root; }
+
+        std::string toYamlString();
 
     private:
         std::map<std::string, Logger::ptr> m_loggers;
