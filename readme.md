@@ -171,6 +171,10 @@ sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
     sylar::Config::Lookup("logs", std::set<LogDefine>(), "logs config");
 //实现日志配置解析
 ```
+
+### 线程库
+    Thread类、Mutex互斥量、读写锁
+    
 ### 协程库封装
 ### socket函数库
 ### http协议开发
