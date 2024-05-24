@@ -152,19 +152,22 @@ namespace sylar
     // 日志输出地
     class LogAppender
     {
+        friend class Logger;
+
     public:
         typedef std::shared_ptr<LogAppender> ptr;
         virtual ~LogAppender(){};
         virtual std::string toYamlString() = 0;
 
         virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0; // 定义成纯虚函数
-        void setFormatter(LogFormatter::ptr formatter) { m_formatter = formatter; }                       // 设置输出格式
+        void setFormatter(LogFormatter::ptr formatter);                                                   // 设置输出格式
         LogFormatter::ptr getFormatter() const { return m_formatter; }                                    // 获取输出格式     -->常量成员函数:表示保证不修改对象状态，适用于常量对象
 
         void setLevel(LogLevel::Level level) { this->m_level = level; }
         LogLevel::Level getLevel() const { return m_level; }
 
     protected:
+        bool hasFormatter = false;
         LogLevel::Level m_level = LogLevel::DEBUG;
         LogFormatter::ptr m_formatter; // 定义LogAppender的输出格式
     };
@@ -211,6 +214,8 @@ namespace sylar
     // 输出到控制台的appender
     class StdLogAppender : public LogAppender
     {
+        friend class Logger;
+
     public:
         typedef std::shared_ptr<StdLogAppender> ptr;
         void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override; // 使用override描述子类的log()的确是从基类中继承而来
@@ -220,6 +225,8 @@ namespace sylar
     // 定义输出到文件的appender
     class FileLogAppender : public LogAppender
     {
+        friend class Logger;
+
     public:
         typedef std::shared_ptr<FileLogAppender> ptr;
         FileLogAppender(const std::string &filename);

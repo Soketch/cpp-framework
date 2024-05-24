@@ -95,6 +95,18 @@ namespace sylar
             free(buf);
         }
     }
+    void LogAppender::setFormatter(LogFormatter::ptr formatter)
+    {
+        this->m_formatter = formatter;
+        if (m_formatter)
+        {
+            hasFormatter = true;
+        }
+        else
+        {
+            hasFormatter = false;
+        }
+    }
 
     class MessageFormatItem : public LogFormatter::FormatItem
     {
@@ -278,7 +290,7 @@ namespace sylar
     {
         if (!appender->getFormatter())
         {
-            appender->setFormatter(m_formatter);
+            appender->m_formatter = m_formatter;
         }
         m_appenders.push_back(appender);
     }
@@ -303,6 +315,13 @@ namespace sylar
     void Logger::setFormatter(LogFormatter::ptr val)
     {
         m_formatter = val;
+        for (auto &i : m_appenders)
+        {
+            if (!i->hasFormatter)
+            {
+                i->m_formatter = m_formatter;
+            }
+        }
     }
     void Logger::setFormatter(const std::string &val)
     {
@@ -314,7 +333,8 @@ namespace sylar
                       << " invaild formatter.." << std::endl;
             return;
         }
-        m_formatter = new_val;
+        // m_formatter = new_val;
+        setFormatter(new_val);
     }
     LogFormatter::ptr Logger::getFormatter()
     {
@@ -399,7 +419,7 @@ namespace sylar
         {
             node["level"] = LogLevel::ToString(m_level);
         }
-        if (m_formatter)
+        if (m_formatter && hasFormatter)
         {
             node["formatter"] = m_formatter->getPattern();
         }
@@ -422,7 +442,7 @@ namespace sylar
         {
             node["level"] = LogLevel::ToString(m_level);
         }
-        if (m_formatter)
+        if (m_formatter && hasFormatter)
         {
             node["formatter"] = m_formatter->getPattern();
         }
@@ -839,6 +859,18 @@ namespace sylar
                                                        apd.reset(new StdLogAppender);
                                                    }
                                                    apd->setLevel(a.level);
+                                                   if (!a.formatter.empty())
+                                                   {
+                                                       LogFormatter::ptr fmt(new LogFormatter(a.formatter));
+                                                       if (!fmt->isError())
+                                                       {
+                                                           apd->setFormatter(fmt);
+                                                       }
+                                                       else
+                                                       {
+                                                           std::cout << "appender name=" << i.name << " formatter=" << i.formatter << " is invaild." << std::endl;
+                                                       }
+                                                   }
                                                    logger->addAppender(apd);
                                                }
                                            }
