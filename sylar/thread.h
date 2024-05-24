@@ -16,7 +16,7 @@ namespace sylar
     public:
         typedef std::shared_ptr<Thread> ptr;
 
-        Thread(std::function<void()> cb, std::string &name) {}
+        Thread(std::function<void()> cb, std::string &name);
         const std::string getName() const { return this->m_name; }
         pid_t getId() const { return this->m_id; }
         void join();
