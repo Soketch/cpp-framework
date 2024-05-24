@@ -42,16 +42,22 @@ namespace sylar
 
     LogLevel::Level LogLevel::FromString(const std::string &str)
     {
-#define XX(name)               \
-    if (str == #name)          \
-    {                          \
-        return LogLevel::name; \
+#define XX(level, val)          \
+    if (str == #val)            \
+    {                           \
+        return LogLevel::level; \
     }
-        XX(DEBUG);
-        XX(INFO);
-        XX(WARN);
-        XX(ERROR);
-        XX(FATAL);
+        XX(DEBUG, debug);
+        XX(INFO, info);
+        XX(WARN, warn);
+        XX(ERROR, error);
+        XX(FATAL, fatal);
+
+        XX(DEBUG, DEBUG);
+        XX(INFO, INFO);
+        XX(WARN, WARN);
+        XX(ERROR, ERROR);
+        XX(FATAL, FATAL);
         return LogLevel::UNKNOW;
 #undef XX
     }
@@ -251,7 +257,10 @@ namespace sylar
     {
         YAML::Node node;
         node["name"] = m_name;
-        node["level"] = LogLevel::ToString(m_level);
+        if (m_level != LogLevel::UNKNOW)
+        {
+            node["level"] = LogLevel::ToString(m_level);
+        }
         if (m_formatter)
         {
             node["formatter"] = m_formatter->getPattern();
@@ -386,6 +395,14 @@ namespace sylar
     {
         YAML::Node node;
         node["type"] = "StdoutLogAppender";
+        if (m_level != LogLevel::UNKNOW)
+        {
+            node["level"] = LogLevel::ToString(m_level);
+        }
+        if (m_formatter)
+        {
+            node["formatter"] = m_formatter->getPattern();
+        }
         std::stringstream ss;
         ss << node;
         return ss.str();
@@ -401,7 +418,10 @@ namespace sylar
         YAML::Node node;
         node["type"] = "FileLogAppender";
         node["file"] = m_filename;
-        node["level"] = LogLevel::ToString(m_level);
+        if (m_level != LogLevel::UNKNOW)
+        {
+            node["level"] = LogLevel::ToString(m_level);
+        }
         if (m_formatter)
         {
             node["formatter"] = m_formatter->getPattern();
@@ -726,11 +746,14 @@ namespace sylar
             {
                 YAML::Node n;
                 n["name"] = i.name;
-                n["level"] = LogLevel::ToString(i.level);
-
-                if (i.formatter.empty())
+                if (i.level != LogLevel::UNKNOW)
                 {
-                    n["level"] = i.formatter;
+                    n["level"] = LogLevel::ToString(i.level);
+                }
+
+                if (!i.formatter.empty())
+                {
+                    n["formatter"] = i.formatter;
                 }
 
                 for (auto &a : i.appenders)
@@ -745,7 +768,10 @@ namespace sylar
                     {
                         na["type"] = "StdoutLogAppender";
                     }
-                    na["level"] = LogLevel::ToString(a.level);
+                    if (a.level != LogLevel::UNKNOW)
+                    {
+                        na["level"] = LogLevel::ToString(a.level);
+                    }
                     if (!a.formatter.empty())
                     {
                         na["formatter"] = a.formatter;

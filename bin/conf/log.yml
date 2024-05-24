@@ -1,6 +1,6 @@
 logs:
     - name: root
-      level: info
+      level: INFO
       formatter: "%d%T%m%n"
       appenders:
           - type: FileLogAppender
