@@ -234,13 +234,21 @@ void test_class()
     XX_PM(g_person_map, "class.map after");
 }
 
+void test_log()
+{
+    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/log.yml");
+    sylar::Config::LoadFromYaml(root);
+}
+
 int main(int argc, char **argv)
 {
     // test_sylar1();
-    //  test_yaml();
-    //  test_config();
+    // test_yaml();
+    // test_config();
+    // test_class();
 
-    test_class();
-
+    std::cout << "--project run start--" << std::endl;
+    test_log();
+    std::cout << "--project run end--" << std::endl;
     return 0;
 }

@@ -735,6 +735,7 @@ namespace sylar
                                                if (it == old_val.end())
                                                { // 新的里面有，老的里面没有
                                                    // 新增logger
+                                                   // logger.reset(new sylar::Logger(i.name));
                                                    logger = SYLAR_LOG_NAME(i.name);
                                                }
                                                // 修改
