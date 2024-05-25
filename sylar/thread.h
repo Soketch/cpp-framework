@@ -4,13 +4,11 @@
 // 1  pthread_xxx
 // 2  std::thread   ==> 本质也是使用pthread实现
 
-#include <thread>
-#include <functional>
-#include <memory>
-#include <string>
-#include <pthread.h>
+#include "mutex.h"
+
 namespace sylar
 {
+
     class Thread
     {
     public:
