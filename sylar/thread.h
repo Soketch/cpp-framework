@@ -38,6 +38,8 @@ namespace sylar
         pthread_t m_thread = 0;     // 线程结构     //线程实际表示
         std::function<void()> m_cb; // 线程执行函数
         std::string m_name;         // 线程名称
+
+        Semaphore m_semaphore; // 信号量
     };
 }
 

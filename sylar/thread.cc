@@ -42,6 +42,9 @@ namespace sylar
 
         std::function<void()> cb;
         cb.swap(thread->m_cb);
+
+        thread->m_semaphore.notify(); // 如果有线程等待，其中的一个会被唤醒， sem_post
+
         cb();
         return 0;
     }
@@ -65,6 +68,8 @@ namespace sylar
                                       << "  name=" << m_name;
             throw std::logic_error("pthread_create error");
         }
+
+        m_semaphore.wait();
     }
 
     void Thread::join()
