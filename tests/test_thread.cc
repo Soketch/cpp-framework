@@ -1,14 +1,21 @@
 #include "sylar/sylar.h"
 sylar::Logger::ptr g_logger = SYLAR_LOG_ROOT();
 
+int g_count = 0;
+
+sylar::RWMutex s_mutex;
+
 void fun1()
 {
     SYLAR_LOG_INFO(g_logger) << "thread_name:" << sylar::Thread::GetName()
                              << "  this.name:" << sylar::Thread::GetThis()->getName()
                              << "  thread_id:" << sylar::GetTheadId()
                              << "  this.id:" << sylar::Thread::GetThis()->getId();
-
-    sleep(20);
+    for (int i = 0; i < 1000000; ++i)
+    {
+        sylar::RWMutex::WriteLock lock(s_mutex);
+        ++g_count;
+    }
 }
 
 void fun2()
@@ -32,5 +39,7 @@ int main()
     }
 
     SYLAR_LOG_INFO(g_logger) << "thread test end";
+
+    SYLAR_LOG_INFO(g_logger) << "g_count=" << g_count;
     return 0;
 }

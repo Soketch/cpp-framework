@@ -168,12 +168,12 @@ namespace sylar
         }
 
         // 读锁
-        void rdLock()
+        void rdlock()
         {
             pthread_rwlock_rdlock(&m_lock);
         }
         // 写锁
-        void wrLock()
+        void wrlock()
         {
             pthread_rwlock_wrlock(&m_lock);
         }
