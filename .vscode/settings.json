@@ -61,6 +61,14 @@
         "cinttypes": "cpp",
         "valarray": "cpp",
         "forward_list": "cpp",
-        "any": "cpp"
+        "any": "cpp",
+        "chrono": "cpp",
+        "netfwd": "cpp",
+        "optional": "cpp",
+        "ratio": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "variant": "cpp"
     }
 }

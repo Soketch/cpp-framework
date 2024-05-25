@@ -407,7 +407,8 @@ namespace sylar
         {
             // std::cout << m_formatter->format(logger, level, event); // std::endl;
             const char *color = LOG_COLOR(level);
-            std::cout << color << m_formatter->format(logger, level, event) << RESET << std::endl;
+            // std::cout << color << m_formatter->format(logger, level, event) << RESET << std::endl;
+            std::cout << color << m_formatter->format(logger, level, event) << RESET;
         }
     }
 
