@@ -243,6 +243,8 @@ namespace sylar
     private:
         std::string m_filename;
         std::ofstream m_filestream;
+        /// 上次重新打开时间
+        uint64_t m_lastTime = 0;
     };
 
     // 日志管理器
