@@ -243,5 +243,31 @@ namespace sylar
         }
     };
 
+    // 自旋锁：
+    // -- 等待锁可用时不会使线程进入睡眠状态，而是不断地循环检查锁的状态。这种机制被称为“自旋”
+    class SpinLock
+    {
+    public:
+        typedef ScopedLockImpl<SpinLock> Lock;
+        SpinLock()
+        {
+            pthread_spin_init(&m_mutex, 0);
+        }
+        ~SpinLock()
+        {
+            pthread_spin_destroy(&m_mutex);
+        }
+        void lock()
+        {
+            pthread_spin_lock(&m_mutex);
+        }
+        void unlock()
+        {
+            pthread_spin_unlock(&m_mutex);
+        }
+
+    private:
+        pthread_spinlock_t m_mutex;
+    };
 }
 #endif
