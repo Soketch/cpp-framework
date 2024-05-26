@@ -70,6 +70,7 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "variant": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "condition_variable": "cpp"
     }
 }

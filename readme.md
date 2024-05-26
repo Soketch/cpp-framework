@@ -173,8 +173,28 @@ sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
 ```
 
 ### 线程库
-    Thread类、Mutex互斥量、读写锁
+
+实现Thread类、Mutex互斥量、读写锁
+
+//  禁用拷贝原则
+
 **1.读写分离**
+```cpp
+    
+    . Semaphore 信号量
+    . ScopedLockImpl  局部锁模板实现 
+        - ReadScopedLockImpl 局部读锁模板
+        - WriteScopedLockImpl 局部写锁模板
+    . Mutex 互斥量
+    . RWMutex 读写互斥量
+```
+**2.整合日志系统--实现线程安全**
+整合Logger、LogAppender、LogManager
+
+**3.保证线程安全情况下，尽量不损失原有性能**
+
+    --采用 Spinlock 自旋锁
+    
 ### 协程库封装
 ### socket函数库
 ### http协议开发

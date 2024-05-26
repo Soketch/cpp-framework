@@ -17,6 +17,8 @@
 #include "util.h"
 #include "singleton.h"
 #include <time.h>
+#include "thread.h"
+
 #define SYLAR_LOG_LEVEL(logger, level)                                                                       \
     if (logger->getLevel() <= level)                                                                         \
     sylar::LogEventWrap(sylar::LogEvent::ptr(new sylar::LogEvent(logger, level,                              \
@@ -155,20 +157,22 @@ namespace sylar
         friend class Logger;
 
     public:
+        typedef Mutex MutexType;
         typedef std::shared_ptr<LogAppender> ptr;
         virtual ~LogAppender(){};
         virtual std::string toYamlString() = 0;
 
         virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0; // 定义成纯虚函数
         void setFormatter(LogFormatter::ptr formatter);                                                   // 设置输出格式
-        LogFormatter::ptr getFormatter() const { return m_formatter; }                                    // 获取输出格式     -->常量成员函数:表示保证不修改对象状态，适用于常量对象
+        LogFormatter::ptr getFormatter();                                                                 // 获取输出格式
 
         void setLevel(LogLevel::Level level) { this->m_level = level; }
         LogLevel::Level getLevel() const { return m_level; }
 
     protected:
-        bool hasFormatter = false;
         LogLevel::Level m_level = LogLevel::DEBUG;
+        bool hasFormatter = false;
+        MutexType m_mutex;             // 互斥量
         LogFormatter::ptr m_formatter; // 定义LogAppender的输出格式
     };
 
@@ -178,6 +182,7 @@ namespace sylar
         friend class LoggerManager;
 
     public:
+        typedef Mutex MutexType;
         typedef std::shared_ptr<Logger> ptr;
 
         Logger(const std::string &name = "root");
@@ -205,6 +210,7 @@ namespace sylar
     private:
         std::string m_name;                      // 日志名称
         LogLevel::Level m_level;                 // 日志级别
+        MutexType m_mutex;                       // 互斥量
         std::list<LogAppender::ptr> m_appenders; // appender日志集合
         LogFormatter::ptr m_formatter;
 
@@ -243,6 +249,7 @@ namespace sylar
     class LoggerManager
     {
     public:
+        typedef Mutex MutexType;
         LoggerManager();
         Logger::ptr getLogger(const std::string &name);
         void init();
@@ -251,6 +258,7 @@ namespace sylar
         std::string toYamlString();
 
     private:
+        MutexType m_mutex; // 互斥量
         std::map<std::string, Logger::ptr> m_loggers;
         // 默认Logger  --> name: root
         Logger::ptr m_root;

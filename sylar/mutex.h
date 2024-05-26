@@ -148,10 +148,42 @@ namespace sylar
     class Mutex
     {
     public:
+        typedef ScopedLockImpl<Mutex> Lock;
+        Mutex()
+        {
+            pthread_mutex_init(&m_mutex, nullptr);
+        }
+        ~Mutex()
+        {
+            pthread_mutex_destroy(&m_mutex);
+        }
+        void lock()
+        {
+            pthread_mutex_lock(&m_mutex);
+        }
+        void unlock()
+        {
+            pthread_mutex_unlock(&m_mutex);
+        }
+
+    private:
+        pthread_mutex_t m_mutex;
+    };
+
+    // 空锁 -- 仅用于调试验证工程
+    class NullMutex
+    {
+    public:
+        typedef ScopedLockImpl<NullMutex> Lock;
+        NullMutex() {}
+        ~NullMutex() {}
+        void lock() {}
+        void unlock() {}
+
     private:
     };
 
-    // 读写互斥量
+    // 读写锁互斥量
     class RWMutex
     {
     public:
@@ -186,5 +218,30 @@ namespace sylar
     private:
         pthread_rwlock_t m_lock;
     };
+
+    // 空读写锁 -- 用于调试
+    class NullRWMutex
+    {
+    public:
+        typedef ReadScopedLockImpl<NullMutex> ReadLock;
+        typedef WriteScopedLockImpl<NullMutex> WriteLock;
+
+        NullRWMutex()
+        {
+        }
+        ~NullRWMutex()
+        {
+        }
+        void rdlock()
+        {
+        }
+        void wrlock()
+        {
+        }
+        void unlock()
+        {
+        }
+    };
+
 }
 #endif
