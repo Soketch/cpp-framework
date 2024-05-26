@@ -157,7 +157,7 @@ namespace sylar
         friend class Logger;
 
     public:
-        typedef Mutex MutexType;
+        typedef SpinLock MutexType;
         typedef std::shared_ptr<LogAppender> ptr;
         virtual ~LogAppender(){};
         virtual std::string toYamlString() = 0;
@@ -182,7 +182,7 @@ namespace sylar
         friend class LoggerManager;
 
     public:
-        typedef Mutex MutexType;
+        typedef SpinLock MutexType;
         typedef std::shared_ptr<Logger> ptr;
 
         Logger(const std::string &name = "root");
@@ -251,7 +251,7 @@ namespace sylar
     class LoggerManager
     {
     public:
-        typedef Mutex MutexType;
+        typedef SpinLock MutexType;
         LoggerManager();
         Logger::ptr getLogger(const std::string &name);
         void init();
