@@ -8,6 +8,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdint.h>
+#include <atomic> //原子操作
+
 namespace sylar
 {
     // 信号量
@@ -268,6 +270,33 @@ namespace sylar
 
     private:
         pthread_spinlock_t m_mutex;
+    };
+
+    // 原子锁：  CAS 操作通常用于实现无锁数据结构
+    class CASLock
+    {
+    public:
+        typedef ScopedLockImpl<CASLock> Lock;
+        CASLock()
+        {
+            m_mutex.clear();
+        }
+        ~CASLock()
+        {
+        }
+        void lock()
+        {
+            while (std::atomic_flag_test_and_set_explicit(&m_mutex, std::memory_order_acquire))
+                ;
+        }
+        void unlock()
+        {
+            std::atomic_flag_clear_explicit(&m_mutex, std::memory_order_release);
+        }
+
+    private:
+        // 原子状态
+        volatile std::atomic_flag m_mutex; // std::atomic_flag 低级别的原子类型，用于实现简单的布尔标志。它只能设置和清除，但无法直接读取其值。
     };
 }
 #endif

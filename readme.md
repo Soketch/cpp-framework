@@ -189,6 +189,7 @@ sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
     . RWMutex 读写互斥量
 ```
 **2.整合日志系统--实现线程安全**
+
 整合Logger、LogAppender、LogManager
 
 **3.保证线程安全情况下，尽量不损失原有性能**
