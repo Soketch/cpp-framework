@@ -7,8 +7,7 @@
 #include <string>
 #include <map>
 #include <yaml-cpp/yaml.h>
-#include "log.h"
-
+#include <functional>
 #include <vector> //支持更多容器的偏特化
 #include <list>
 #include <set>
@@ -16,7 +15,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
-#include <functional>
+#include "log.h"
+#include "thread.h"
 
 namespace sylar
 {
@@ -276,7 +276,9 @@ namespace sylar
     class ConfigVar : public ConfigVarBase
     {
     public:
-        typedef std::shared_ptr<ConfigVar> ptr;
+        typedef RWMutex RWMutexType // 读写锁
+            typedef std::shared_ptr<ConfigVar>
+                ptr;
         typedef std::function<void(const T &old_val, const T &new_val)> on_change_cb; // 回调函数
 
         ConfigVar(const std::string &name, const T &default_value, const std::string description = "")
@@ -353,6 +355,7 @@ namespace sylar
         }
 
     private:
+        RWMutexType m_mutex;
         T m_val;
         // 变更回调数组，uint64_t key要求唯一，一般使用hash
         std::map<uint64_t, on_change_cb> m_cbs; // 采用map是因为functional中没有比较函数，意味着无法判断是否是相同回调函数

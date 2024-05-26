@@ -190,12 +190,16 @@ sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
 ```
 **2.整合日志系统--实现线程安全**
 
-整合Logger、LogAppender、LogManager
+>整合Logger、LogAppender、LogManager
 
 **3.保证线程安全情况下，尽量不损失原有性能**
 
-    --采用 Spinlock 自旋锁
-    
+    -- Spinlock 自旋锁    
+    -- CASLock 原子锁
+    -- 改进log写文件  ==> 周期性,reopen
+    >> 最终在log.h中使用SpinLock代替Mutex
+**4.整合配置系统**
+
 ### 协程库封装
 ### socket函数库
 ### http协议开发
