@@ -220,7 +220,7 @@ void test_class()
         SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << prefix << ": size = " << m.size(); \
     }
 
-    g_person->addListener(10, [](const Person &old_val, const Person &new_val)
+    g_person->addListener([](const Person &old_val, const Person &new_val)
                           { SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << " old_val=" << old_val.toString()
                                                              << " new_val=" << new_val.toString(); });
 
@@ -241,7 +241,7 @@ void test_log()
 
     std::cout << sylar::LoggerMgr::GetInstance()->toYamlString() << std::endl;
 
-    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/test.yml");
     sylar::Config::LoadFromYaml(root);
 
     std::cout << "=====================" << std::endl;
@@ -266,6 +266,14 @@ int main(int argc, char **argv)
 
     std::cout << "--project run start--" << std::endl;
     test_log();
+    // sylar::Config::Visit(
+    //     [](sylar::ConfigVarBase::ptr var)
+    //     {
+    //         SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "name=" << var->getName()
+    //                                          << " description=" << var->getDescription()
+    //                                          << " typename=" << var->getTypeName()
+    //                                          << " value=" << var->toString();
+    //     });
     std::cout << "--project run end--" << std::endl;
     return 0;
 }

@@ -22,7 +22,7 @@ void fun1()
 
 void fun2()
 {
-    int num = 10000;
+    int num = 10;
     while (num--)
     {
         SYLAR_LOG_INFO(g_logger) << "++++++++++++++++++++++++";
@@ -31,7 +31,7 @@ void fun2()
 
 void fun3()
 {
-    int num = 10000;
+    int num = 10;
     while (num--)
     {
         SYLAR_LOG_INFO(g_logger) << "########################";
@@ -39,7 +39,7 @@ void fun3()
 }
 void fun4()
 {
-    int num = 10000;
+    int num = 10;
     while (num--)
     {
         SYLAR_LOG_INFO(g_logger) << "========================";
@@ -49,9 +49,10 @@ void fun4()
 int main()
 {
     SYLAR_LOG_INFO(g_logger) << "thread test begin";
+    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/temp.yml");
+    /*
     std::vector<sylar::Thread::ptr> thrs;
 
-    YAML::Node root = YAML::LoadFile("/home/coding/cpp/sylar/bin/conf/temp.yml");
     sylar::Config::LoadFromYaml(root);
 
     for (int i = 0; i < 3; ++i)
@@ -69,8 +70,19 @@ int main()
         thrs[i]->join();
     }
 
-    SYLAR_LOG_INFO(g_logger) << "thread test end";
+    // //SYLAR_LOG_INFO(g_logger) << "g_count=" << g_count;
 
-    // SYLAR_LOG_INFO(g_logger) << "g_count=" << g_count;
+    */
+
+    sylar::Config::Visit(
+        [](sylar::ConfigVarBase::ptr var)
+        {
+            SYLAR_LOG_INFO(g_logger) << "name=" << var->getName()
+                                     << " description=" << var->getDescription()
+                                     << " typename=" << var->getTypeName()
+                                     << " value=" << var->toString();
+        });
+
+    SYLAR_LOG_INFO(g_logger) << "thread test end";
     return 0;
 }

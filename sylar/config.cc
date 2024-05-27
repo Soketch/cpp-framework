@@ -7,6 +7,7 @@ namespace sylar
 
     ConfigVarBase::ptr Config::LookupBase(const std::string &name)
     {
+        RWMutexType::ReadLock lock(GetMutex());
         // auto it = s_datas.find(name);
         auto it = GetDtatas().find(name);
         return it == GetDtatas().end() ? nullptr : it->second;
@@ -64,6 +65,20 @@ namespace sylar
                     var->fromString(ss.str());
                 }
             }
+        }
+    }
+
+    /**
+     * @brief 遍历配置模块里面所有配置项
+     * @param[in] cb 配置项回调函数
+     */
+    void Config::Visit(std::function<void(ConfigVarBase::ptr)> cb)
+    {
+        RWMutexType::ReadLock lock(GetMutex());
+        ConfigVarMap &m = GetDtatas();
+        for (auto it = m.begin(); it != m.end(); ++it)
+        {
+            cb(it->second);
         }
     }
 }

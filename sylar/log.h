@@ -182,7 +182,7 @@ namespace sylar
         friend class LoggerManager;
 
     public:
-        typedef SpinLock MutexType;
+        typedef SpinLock MutexType; // 采用自旋锁方式
         typedef std::shared_ptr<Logger> ptr;
 
         Logger(const std::string &name = "root");

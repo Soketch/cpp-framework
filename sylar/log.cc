@@ -849,80 +849,80 @@ namespace sylar
     {
         LogIniter()
         {
-            g_log_defines->addListener(0xF1E231,
-                                       [](const std::set<LogDefine> &old_val, const std::set<LogDefine> &new_val)
-                                       {
-                                           SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "on_logger_conf_changed";
-                                           // 新增
-                                           for (auto &i : new_val)
-                                           {
-                                               auto it = old_val.find(i);
-                                               sylar::Logger::ptr logger;
-                                               if (it == old_val.end())
-                                               { // 新的里面有，老的里面没有
-                                                   // 新增logger
-                                                   // logger.reset(new sylar::Logger(i.name));
-                                                   logger = SYLAR_LOG_NAME(i.name);
-                                               }
-                                               // 修改
-                                               else // 新的老的都有，判断是否变化
-                                               {
-                                                   if (!(i == *it))
-                                                   {
-                                                       // 修改的logger
-                                                       logger = SYLAR_LOG_NAME(i.name);
-                                                   }
-                                                   else
-                                                   {
-                                                       continue;
-                                                   }
-                                               }
-                                               logger->setLevel(i.level);
-                                               if (!i.formatter.empty())
-                                               {
-                                                   logger->setFormatter(i.formatter);
-                                               }
-                                               logger->clearAppenders();
-                                               for (auto &a : i.appenders)
-                                               {
-                                                   sylar::LogAppender::ptr apd;
-                                                   if (a.type == 1) // file
-                                                   {
-                                                       apd.reset(new FileLogAppender(a.file));
-                                                   }
-                                                   else if (a.type == 2) // stdout
-                                                   {
-                                                       apd.reset(new StdLogAppender);
-                                                   }
-                                                   apd->setLevel(a.level);
-                                                   if (!a.formatter.empty())
-                                                   {
-                                                       LogFormatter::ptr fmt(new LogFormatter(a.formatter));
-                                                       if (!fmt->isError())
-                                                       {
-                                                           apd->setFormatter(fmt);
-                                                       }
-                                                       else
-                                                       {
-                                                           std::cout << "appender name=" << i.name << " formatter=" << i.formatter << " is invaild." << std::endl;
-                                                       }
-                                                   }
-                                                   logger->addAppender(apd);
-                                               }
-                                           }
-                                           // 删除
-                                           for (auto &i : old_val)
-                                           {
-                                               auto it = new_val.find(i);
-                                               if (it == new_val.end())
-                                               {
-                                                   // 删除logger  假删除 --（删appender，关闭文件，设置高级别日志）
-                                                   auto logger = SYLAR_LOG_NAME(i.name);
-                                                   logger->setLevel((LogLevel::Level)100);
-                                                   logger->clearAppenders();
-                                               }
-                                           }
-                                       });
+            g_log_defines->addListener(
+                [](const std::set<LogDefine> &old_val, const std::set<LogDefine> &new_val)
+                {
+                    SYLAR_LOG_INFO(SYLAR_LOG_ROOT()) << "on_logger_conf_changed";
+                    // 新增
+                    for (auto &i : new_val)
+                    {
+                        auto it = old_val.find(i);
+                        sylar::Logger::ptr logger;
+                        if (it == old_val.end())
+                        { // 新的里面有，老的里面没有
+                            // 新增logger
+                            // logger.reset(new sylar::Logger(i.name));
+                            logger = SYLAR_LOG_NAME(i.name);
+                        }
+                        // 修改
+                        else // 新的老的都有，判断是否变化
+                        {
+                            if (!(i == *it))
+                            {
+                                // 修改的logger
+                                logger = SYLAR_LOG_NAME(i.name);
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                        logger->setLevel(i.level);
+                        if (!i.formatter.empty())
+                        {
+                            logger->setFormatter(i.formatter);
+                        }
+                        logger->clearAppenders();
+                        for (auto &a : i.appenders)
+                        {
+                            sylar::LogAppender::ptr apd;
+                            if (a.type == 1) // file
+                            {
+                                apd.reset(new FileLogAppender(a.file));
+                            }
+                            else if (a.type == 2) // stdout
+                            {
+                                apd.reset(new StdLogAppender);
+                            }
+                            apd->setLevel(a.level);
+                            if (!a.formatter.empty())
+                            {
+                                LogFormatter::ptr fmt(new LogFormatter(a.formatter));
+                                if (!fmt->isError())
+                                {
+                                    apd->setFormatter(fmt);
+                                }
+                                else
+                                {
+                                    std::cout << "appender name=" << i.name << " formatter=" << i.formatter << " is invaild." << std::endl;
+                                }
+                            }
+                            logger->addAppender(apd);
+                        }
+                    }
+                    // 删除
+                    for (auto &i : old_val)
+                    {
+                        auto it = new_val.find(i);
+                        if (it == new_val.end())
+                        {
+                            // 删除logger  假删除 --（删appender，关闭文件，设置高级别日志）
+                            auto logger = SYLAR_LOG_NAME(i.name);
+                            logger->setLevel((LogLevel::Level)100);
+                            logger->clearAppenders();
+                        }
+                    }
+                });
         }
     };
     static LogIniter __log_init;

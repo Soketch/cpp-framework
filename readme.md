@@ -104,7 +104,7 @@ public:
             m_val = v; // 更新值
         }
         // 对回调函数 - 增加监听
-        void addListener(u_int64_t key, on_change_cb cb)
+        void addListener(u_int64_t key, on_change_cb cb)   --> 24/5/27  uint64_t addListener(on_channge_cb cb);
         // 删除
         void delListener(uint64_t key)
         // 返回cb
