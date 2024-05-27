@@ -199,7 +199,16 @@ sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
     -- 改进log写文件  ==> 周期性,reopen
     >> 最终在log.h中使用SpinLock代替Mutex
 **4.整合配置系统**
+```cpp
+    typedef RWMutex RWMutexType; 
+    RWMutexType m_mutex;             //读写锁互斥量
 
+    static RWMutexType& GetMutex()   //封装配置项互斥量的静态方法
+    {
+        static RWMutexType s_mutex;
+        return s_mutex;
+    }
+```
 ### 协程库封装
 ### socket函数库
 ### http协议开发
