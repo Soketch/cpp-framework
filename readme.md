@@ -215,7 +215,10 @@ sylar::ConfigVar<std::set<LogDefine>>::ptr g_log_defines =
     -- Coroutine
 定义协程接口 <br>
 基于ucontext_t <br>
-macro ：定义自己的宏  sylar/macro.h
+macro ：定义自己的宏  sylar/macro.h <br>
+>    -- 实现SYLAR_ASSERT宏 打印调试栈信息<br>
+>    -- 通过backtrace、backtrace_symbols实现
+
 ### socket函数库
 ### http协议开发
 ### 分布协议
