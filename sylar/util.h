@@ -5,10 +5,17 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <cstdint>
+#include <vector>
+#include <string>
+
 namespace sylar
 {
-    pid_t GetTheadId();
+    pid_t GetTheadId(); // 获取当前线程id
 
-    uint32_t GetFiberId();
+    uint32_t GetFiberId(); // 获取当前协程（纤程）id
+
+    // 生成和格式化调用堆栈
+    void BackTrace(std::vector<std::string> &bt, int size, int skip = 1);
+    std::string BackTraceToString(int size, int skip = 2, const std::string &prefix = "");
 }
 #endif
