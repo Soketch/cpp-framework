@@ -3,7 +3,10 @@
 
 namespace sylar
 {
+    // 协程id
     static std::atomic<uint64_t> s_fiber_id{0};
+
+    // 全局计数
     static std::atomic<uint64_t> s_fiber_count{0};
 
     // 内存分配器
