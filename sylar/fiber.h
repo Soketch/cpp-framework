@@ -16,11 +16,12 @@ namespace sylar
 
         enum State // 协程状态
         {
-            INIT, // 初始状态 init
-            HOLD, // 暂停状态 hold
-            EXEC, // 正在运行状态 exec
-            TERM, // 终止状态 term
-            READY // 准备就绪状态 ready
+            INIT,  // 初始状态 init
+            HOLD,  // 暂停状态 hold
+            EXEC,  // 正在运行状态 exec
+            TERM,  // 终止状态 term
+            READY, // 准备就绪状态 ready
+            EXCEPT // 异常状态
         };
 
     private:

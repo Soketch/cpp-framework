@@ -1,13 +1,18 @@
 #include "fiber.h"
+#include "config.h"
 #include <atomic>
 
 namespace sylar
 {
-    // 协程id
+    // 当前协程id
     static std::atomic<uint64_t> s_fiber_id{0};
-
-    // 全局计数
+    // 协程全局计数
     static std::atomic<uint64_t> s_fiber_count{0};
+
+    // 线程局部变量（当前协程）
+    static thread_local Fiber *t_fiber = nullptr;
+    // 线程局部变量（主协程智能指针）
+    static thread_local std::shared_ptr<Fiber::ptr> t_threadFiber = nullptr; // main协程
 
     // 内存分配器
     class MallocStackAllocator
