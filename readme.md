@@ -219,6 +219,14 @@ macro ：定义自己的宏  sylar/macro.h <br>
 >    -- 实现SYLAR_ASSERT宏 打印调试栈信息<br>
 >    -- 通过backtrace、backtrace_symbols实现
 
+协程构建
+```cpp
+Thread -> main_fiber <------> sub_fiber
+            ^
+            |
+            v
+         sub_fiber
+```
 ### socket函数库
 ### http协议开发
 ### 分布协议
