@@ -8,7 +8,7 @@
 
 namespace sylar
 {
-    sylar::Logger::ptr g_logger = SYLAR_LOG_NAME("system");
+    static sylar::Logger::ptr g_logger = SYLAR_LOG_NAME("system");
 
     // 当前协程id
     static std::atomic<uint64_t> s_fiber_id{0};
@@ -50,11 +50,13 @@ namespace sylar
             SYLAR_ASSERT2(false, "getcontext");
         }
         ++s_fiber_count; // 总协程数+1
+
+        SYLAR_LOG_DEBUG(g_logger) << "Fiber::Fiber()";
     }
 
     // 真正的创建一个协程   >>  子协程 - 分配栈空间，每个协程都有独立栈运行空间
-    Fiber::Fiber(std::function<void()> cb, size_t stacksize = 0) : m_id(++s_fiber_id),
-                                                                   m_cb(cb)
+    Fiber::Fiber(std::function<void()> cb, size_t stacksize) : m_id(++s_fiber_id),
+                                                               m_cb(cb)
     {
         ++s_fiber_count;                                                      // 协程总数+1
         m_stacksize = stacksize ? stacksize : g_fiber_stack_size->getValue(); // 设置栈空间大小
@@ -69,6 +71,8 @@ namespace sylar
         m_ctx.uc_stack.ss_size = m_stacksize;
 
         makecontext(&m_ctx, &Fiber::MainFunc, 0);
+
+        SYLAR_LOG_DEBUG(g_logger) << "Fiber::Fiber(m_cb, stacksize)  , f_id:" << s_fiber_id;
     }
     Fiber::~Fiber()
     {
@@ -94,10 +98,12 @@ namespace sylar
                 setThis(nullptr);
             }
         }
+
+        SYLAR_LOG_DEBUG(g_logger) << "Fiber::~Fiber()  f_id:" << s_fiber_id;
     }
 
     // 重置协程函数,并重置状态
-    void Fiber::reset(std::function<void()> cb)
+    void Fiber::reset(std::function<void()> cb, size_t stacksize)
     {
         SYLAR_ASSERT(m_stack);
         SYLAR_ASSERT(m_state == State::TERM ||
@@ -209,5 +215,15 @@ namespace sylar
         }
 
         // 切回主协程
+    }
+
+    // 获取fiber id
+    uint64_t Fiber::GetFiberId()
+    {
+        if (t_fiber)
+        {
+            return t_fiber->getId();
+        }
+        return 0;
     }
 }

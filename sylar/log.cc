@@ -420,14 +420,29 @@ namespace sylar
     // StdLogAppender重写基类LogAppender的log
     void StdLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event)
     {
+        // if (level >= m_level)
+        // {
+        //     MutexType::Lock lock(m_mutex); // 加锁
+        //     // std::cout << m_formatter->format(logger, level, event); // std::endl; //无颜色 少一层换行
+        //     const char *color = LOG_COLOR(level);  // 通过打印日志级别设置相应日志颜色
+        //     // std::cout << color << m_formatter->format(logger, level, event) << RESET << std::endl; //有颜色多一层换行
+        //     std::cout << color << m_formatter->format(logger, level, event) << RESET; //有颜色少一层换行
+        // }
+
         if (level >= m_level)
         {
             MutexType::Lock lock(m_mutex); // 加锁
 
-            // std::cout << m_formatter->format(logger, level, event); // std::endl;
-            const char *color = LOG_COLOR(level);
-            // std::cout << color << m_formatter->format(logger, level, event) << RESET << std::endl;
-            std::cout << color << m_formatter->format(logger, level, event) << RESET;
+            const char *color = LOG_COLOR(level); // 通过打印日志级别设置相应日志颜色
+            std::string formatted_message = m_formatter->format(logger, level, event);
+
+            // 对每行添加颜色重置
+            std::istringstream iss(formatted_message);
+            std::string line;
+            while (std::getline(iss, line))
+            {
+                std::cout << color << line << RESET << std::endl;
+            }
         }
     }
 

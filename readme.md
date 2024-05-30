@@ -221,6 +221,7 @@ macro ：定义自己的宏  sylar/macro.h <br>
 
 协程构建
 ```cpp
+Fiber::GetThis()  //主协程
 Thread -> main_fiber <------> sub_fiber
             ^
             |
@@ -234,31 +235,29 @@ Thread -> main_fiber <------> sub_fiber
 */
 ```
 ```cpp
-    // 协程的主函数
-    void Fiber::MainFunc() {
-        Fiber::ptr cur = GetThis();
-        SYLAR_ASSERT(cur);
-        try {
-            cur->m_cb();
-            cur->m_cb = nullptr;
-            cur->m_state = TERM;
-        } catch (std::exception& ex) {
-            cur->m_state = EXCEPT;
-            std::cerr << "Fiber Except: " << ex.what() << std::endl;
-        } catch (...) {
-            cur->m_state = EXCEPT;
-            std::cerr << "Fiber Except: " << std::endl;
-        }
+    // 重置协程函数,并重置状态
+    void reset(std::function<void()> cb, size_t stacksize = 0);
+    // 切换到当前协程执行
+    void swapIn();
+    // 切换到后台执行
+    void swapOut();
+    // 设置当前协程
+    static void setThis(Fiber *f);
+    // 返回当前协程
+    static Fiber::ptr GetThis();
+    // 协程切换到后台，并设置ready状态  --准备就绪
+    static void YieldToReady();
+    // 协程切换到后台，并设置hold状态  --暂停
+    static void YieldToHold();
+    // 获取总协程数
+    static uint64_t TotalFibers();
+    // 协程执行主函数
+    static void MainFunc();
+    // 获取协程id
+    static uint64_t GetFiberId();
 
-        // 切换回主协程
-        auto raw_ptr = cur.get();
-        cur.reset();
-        raw_ptr->swapOut();
-
-        // 如果切换失败，抛出异常
-        SYLAR_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->m_id));
-    }
 ```
+
 ### socket函数库
 ### http协议开发
 ### 分布协议

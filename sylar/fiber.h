@@ -31,8 +31,9 @@ namespace sylar
         Fiber(std::function<void()> cb, size_t stacksize = 0);
         ~Fiber();
 
+        uint64_t getId() const { return this->m_id; }
         // 重置协程函数,并重置状态
-        void reset(std::function<void()> cb);
+        void reset(std::function<void()> cb, size_t stacksize = 0);
 
         // 切换到当前协程执行
         void swapIn();
@@ -50,8 +51,10 @@ namespace sylar
         static void YieldToHold();
         // 获取总协程数
         static uint64_t TotalFibers();
-
+        // 协程执行主函数
         static void MainFunc();
+        // 获取协程id
+        static uint64_t GetFiberId();
 
     private:
         uint64_t m_id = 0;        // 协程id
