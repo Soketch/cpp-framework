@@ -386,6 +386,7 @@ namespace sylar
     public:
         typedef std::unordered_map<std::string, ConfigVarBase::ptr> ConfigVarMap;
         typedef RWMutex RWMutexType; // 读写锁
+
         template <class T>
         static typename ConfigVar<T>::ptr Lookup(const std::string &name, const T &default_value, const std::string desc = "")
         {

@@ -226,6 +226,38 @@ Thread -> main_fiber <------> sub_fiber
             |
             v
          sub_fiber
+/* 
+    5/30当前模型实现  -- 基于ucontext
+    这里没有任意切换协程, 每个调度线程都有一个主协程
+    主协程（Main fiber）可以创建子协程（sub fiber）,并调度子协程
+    子协程只能执行完任务回到主协程，或者让出执行时间回到主协程
+*/
+```
+```cpp
+    // 协程的主函数
+    void Fiber::MainFunc() {
+        Fiber::ptr cur = GetThis();
+        SYLAR_ASSERT(cur);
+        try {
+            cur->m_cb();
+            cur->m_cb = nullptr;
+            cur->m_state = TERM;
+        } catch (std::exception& ex) {
+            cur->m_state = EXCEPT;
+            std::cerr << "Fiber Except: " << ex.what() << std::endl;
+        } catch (...) {
+            cur->m_state = EXCEPT;
+            std::cerr << "Fiber Except: " << std::endl;
+        }
+
+        // 切换回主协程
+        auto raw_ptr = cur.get();
+        cur.reset();
+        raw_ptr->swapOut();
+
+        // 如果切换失败，抛出异常
+        SYLAR_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->m_id));
+    }
 ```
 ### socket函数库
 ### http协议开发

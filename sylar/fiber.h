@@ -40,6 +40,8 @@ namespace sylar
         void swapOut();
 
     public:
+        // 设置当前协程
+        static void setThis(Fiber *f);
         // 返回当前协程
         static Fiber::ptr GetThis();
         // 协程切换到后台，并设置ready状态  --准备就绪
@@ -53,10 +55,11 @@ namespace sylar
 
     private:
         uint64_t m_id = 0;        // 协程id
-        uint64_t m_stacksize = 0; // 栈大小
         State m_state = INIT;     // 状态
+        uint64_t m_stacksize = 0; // 栈大小
         ucontext_t m_ctx;         // 上下文变量
-        void *m_stack = nullptr;  // 栈内存空间对象
+
+        void *m_stack = nullptr; // 栈内存空间对象
 
         std::function<void()> m_cb; // 回调函数
     };
