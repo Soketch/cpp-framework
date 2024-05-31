@@ -257,6 +257,19 @@ Thread -> main_fiber <------> sub_fiber
     static uint64_t GetFiberId();
 
 ```
+构建Scheduler协程调度模块 -- 实现协程调度器
+```cpp
+    +- Scheduler --> thread pool （Scheduler类似于一个线程池概念。）
+    |        1 - N  一对多
+    |
+    +- Thread   -->  Fiber
+    |        1 - N  线程与协程也是一个一对多的关系
+    |
+    |
+    |
+    V
+  N : M    ==> 最终可以推导为 N对M 的关系
+```
 
 ### socket函数库
 ### http协议开发
