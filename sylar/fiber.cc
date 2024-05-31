@@ -50,8 +50,6 @@ namespace sylar
             SYLAR_ASSERT2(false, "getcontext");
         }
         ++s_fiber_count; // 总协程数+1
-
-        SYLAR_LOG_DEBUG(g_logger) << "Fiber::Fiber()";
     }
 
     // 真正的创建一个协程   >>  子协程 - 分配栈空间，每个协程都有独立栈运行空间
@@ -71,8 +69,6 @@ namespace sylar
         m_ctx.uc_stack.ss_size = m_stacksize;
 
         makecontext(&m_ctx, &Fiber::MainFunc, 0);
-
-        SYLAR_LOG_DEBUG(g_logger) << "Fiber::Fiber(m_cb, stacksize)  , f_id:" << s_fiber_id;
     }
     Fiber::~Fiber()
     {
@@ -99,7 +95,7 @@ namespace sylar
             }
         }
 
-        SYLAR_LOG_DEBUG(g_logger) << "Fiber::~Fiber()  f_id:" << s_fiber_id;
+        // SYLAR_LOG_DEBUG(g_logger) << "Fiber::~Fiber()  f_id:" << m_id;
     }
 
     // 重置协程函数,并重置状态
@@ -165,7 +161,7 @@ namespace sylar
         }
 
         // 如果没有协程，就创建主协程
-        Fiber::ptr main_fiber(new Fiber());
+        Fiber::ptr main_fiber(new Fiber);
         SYLAR_ASSERT2(t_fiber == main_fiber.get(), "fiber getthis");
 
         t_threadFiber = main_fiber;
@@ -215,6 +211,11 @@ namespace sylar
         }
 
         // 切回主协程
+        auto resp = cur.get();
+        cur.reset();
+        resp->swapOut();
+
+        SYLAR_ASSERT2(false, "never reach fiber_id=" + std::to_string(resp->getId()));
     }
 
     // 获取fiber id
