@@ -84,10 +84,11 @@ namespace sylar
             m_threadIds.push_back(m_threads[i]->getId());
         }
     }
-    // 停止调度器
+    // 停止调度器   --
     void Scheduler::Stop()
     {
-        // 分两种情况，使用了use_caller和没有使用use_caller
+        // 1.等待所有任务完成才退出而不是直接而退出
+        // 2.分两种情况，使用了use_caller和没有使用use_caller
 
         m_autoStop = true;
         if (m_rootFiber &&
