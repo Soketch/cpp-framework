@@ -41,7 +41,7 @@ namespace sylar
         // 模板函数 - 带锁的schedule调度函数, 这里thread = -1 => 表示任意线程
         // 单个地放入m_fibers
         template <class FiberOrCb>
-        void schedule(FiberOrCb fc, pthread_t thread = -1)
+        void schedule(FiberOrCb fc, int thread = -1)
         {
             bool need_tickle = false; // 是否需要通知
             {
@@ -95,7 +95,7 @@ namespace sylar
     private:
         // 无锁schedule调度函数
         template <class FiberOrCb>
-        bool scheduleNoLock(FiberOrCb fc, pthread_t thread = -1)
+        bool scheduleNoLock(FiberOrCb fc, int thread = -1)
         {
             bool need_tickle = m_fibers.empty(); // 是否通知
             FiberAndThread ft(fc, thread);
@@ -112,17 +112,17 @@ namespace sylar
         {
             Fiber::ptr fiber;
             std::function<void()> cb;
-            pthread_t thread;
-            FiberAndThread(Fiber::ptr f, pthread_t thr) : fiber(f), thread(thr) {}
+            int thread;
+            FiberAndThread(Fiber::ptr f, int thr) : fiber(f), thread(thr) {}
 
-            FiberAndThread(Fiber::ptr *f, pthread_t thr) : thread(thr)
+            FiberAndThread(Fiber::ptr *f, int thr) : thread(thr)
             {
                 fiber.swap(*f);
             }
 
-            FiberAndThread(std::function<void()> f, pthread_t thr) : cb(f), thread(thr) {}
+            FiberAndThread(std::function<void()> f, int thr) : cb(f), thread(thr) {}
 
-            FiberAndThread(std::function<void()> *f, pthread_t thr) : thread(thr)
+            FiberAndThread(std::function<void()> *f, int thr) : thread(thr)
             {
                 cb.swap(*f);
             }
@@ -146,12 +146,12 @@ namespace sylar
         Fiber::ptr m_rootFiber;             // 主协程
         std::string m_name;                 // 调度器名称
     protected:
-        std::vector<int> m_threadIds;   // 存放线程id的数组
-        size_t m_threadCount = 0;       // 线程数
-        size_t m_activeThreadCount = 0; // 活跃线程数量
-        size_t m_idleThreadCount = 0;   // 空闲线程数量
-        bool m_stopping = true;         // 执行状态    m_stopping=false说明启动了
-        bool m_autoStop = false;        // 是否自动停止
+        std::vector<int> m_threadIds;               // 存放线程id的数组
+        size_t m_threadCount = 0;                   // 线程数
+        std::atomic<size_t> m_activeThreadCount{0}; // 活跃线程数量
+        std::atomic<size_t> m_idleThreadCount{0};   // 空闲线程数量
+        bool m_stopping = true;                     // 执行状态    m_stopping=false说明启动了
+        bool m_autoStop = false;                    // 是否自动停止
         // 主线程id(use_caller)
         int m_rootThread = 0;
     };

@@ -4,7 +4,7 @@
 
 namespace sylar
 {
-    sylar::Logger::ptr g_logger = SYLAR_LOG_NAME("system");
+    static sylar::Logger::ptr g_logger = SYLAR_LOG_NAME("system");
 
     // 线程局部变量（协程调度器指针）
     static thread_local Scheduler *t_scheduler = nullptr;
@@ -104,7 +104,7 @@ namespace sylar
             }
         }
 
-        bool exit_on_this_fiber = false; // 在当前线程退出
+        // bool exit_on_this_fiber = false; // 在当前线程退出
         if (m_rootThread != -1)
         { // use_caller
             SYLAR_ASSERT(GetThis() == this);
@@ -155,13 +155,12 @@ namespace sylar
                 auto it = m_fibers.begin();
                 while (it != m_fibers.end())
                 {
-                    if (m_activeThreadCount ==)
-                        if (it->thread != -1 && it->thread != sylar::GetTheadId())
-                        {
-                            ++it;
-                            tickle_me = true;
-                            continue;
-                        }
+                    if (it->thread != -1 && it->thread != sylar::GetTheadId())
+                    {
+                        ++it;
+                        tickle_me = true;
+                        continue;
+                    }
                     SYLAR_ASSERT(it->fiber || it->cb);
                     if (it->fiber &&
                         it->fiber->getState() == Fiber::EXEC)
@@ -180,9 +179,12 @@ namespace sylar
                 tickle();
             }
 
-            if (ft.fiber && ft.fiber->getState() != Fiber::TERM)
+            if (ft.fiber &&
+                (ft.fiber->getState() != Fiber::TERM || ft.fiber->getState() != Fiber::EXCEPT))
             {
+                ++m_activeThreadCount;
                 ft.fiber->swapIn();
+                --m_activeThreadCount;
                 if (ft.fiber->getState() == Fiber::READY)
                 {
                     schedule(ft.fiber);
@@ -192,6 +194,48 @@ namespace sylar
                 {
                     ft.fiber->m_state = Fiber::HOLD;
                 }
+                ft.reset();
+            }
+            else if (ft.cb)
+            {
+                if (cb_fiber)
+                {
+                    cb_fiber->reset(ft.cb);
+                }
+                else
+                {
+                    cb_fiber.reset(new Fiber(ft.cb));
+                }
+                ft.reset();
+                ++m_activeThreadCount;
+                cb_fiber->swapIn();
+                --m_activeThreadCount;
+
+                if (cb_fiber->getState() == Fiber::EXCEPT ||
+                    cb_fiber->getState() == Fiber::TERM)
+                {
+                    cb_fiber->reset(nullptr);
+                }
+                else // if(cb_fiber->getState() != Fiber::TERM){
+                {
+                    cb_fiber->m_state = Fiber::HOLD;
+                    cb_fiber.reset();
+                }
+            }
+            else
+            {
+                if (idle_fiber->getState() == Fiber::TERM)
+                {
+                    break;
+                }
+                ++m_idleThreadCount;
+                idle_fiber->swapIn();
+                --m_idleThreadCount;
+                if (idle_fiber->getState() != Fiber::EXCEPT ||
+                    idle_fiber->getState() != Fiber::TERM)
+                {
+                    idle_fiber->m_state = Fiber::HOLD;
+                }
             }
         }
     }
@@ -199,5 +243,6 @@ namespace sylar
     // 是否有空闲线程
     bool Scheduler::hasIdleThreads()
     {
+        return false;
     }
 }
