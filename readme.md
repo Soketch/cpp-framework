@@ -274,6 +274,23 @@ Thread -> main_fiber <------> sub_fiber
 Scheduler 1.是一个线程池，可以分配一组线程
           2.是一个协程调度器，实现将协程指定到相应的线程中去执行任务（多种调度策略）
 ```
+优雅的实现start()、stop()、run()方法
+```cpp
+    // 启动调度器
+    void Scheduler::Start()
+    {
+    }
+    // 停止调度器   
+    void Scheduler::Stop()
+    {
+        // 1.等待所有任务完成才退出而不是直接而退出
+        // 2.分两种情况，使用了use_caller和没有使用use_caller
+    }
+     // 协程调度运行函数
+    void Scheduler::run()
+    {
+    }
+```
 ### socket函数库
 ### http协议开发
 ### 分布协议

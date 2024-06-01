@@ -142,7 +142,58 @@ namespace sylar
             t_fiber = Fiber::GetThis().get();
         }
 
-        Fiber::ptr idle_fiber(new Fiber(std::bind(run, this)));
+        Fiber::ptr idle_fiber(new Fiber(std::bind(&Scheduler::idle, this)));
+        Fiber::ptr cb_fiber; // 回调函数的协程
+
+        FiberAndThread ft;
+        while (true)
+        {
+            ft.reset();
+            bool tickle_me = false;
+            {
+                MutexType::Lock locl(m_mutex);
+                auto it = m_fibers.begin();
+                while (it != m_fibers.end())
+                {
+                    if (m_activeThreadCount ==)
+                        if (it->thread != -1 && it->thread != sylar::GetTheadId())
+                        {
+                            ++it;
+                            tickle_me = true;
+                            continue;
+                        }
+                    SYLAR_ASSERT(it->fiber || it->cb);
+                    if (it->fiber &&
+                        it->fiber->getState() == Fiber::EXEC)
+                    {
+                        ++it;
+                        continue;
+                    }
+
+                    ft = *it;
+                    tickle_me = true;
+                    m_fibers.erase(it);
+                }
+            }
+            if (tickle_me)
+            {
+                tickle();
+            }
+
+            if (ft.fiber && ft.fiber->getState() != Fiber::TERM)
+            {
+                ft.fiber->swapIn();
+                if (ft.fiber->getState() == Fiber::READY)
+                {
+                    schedule(ft.fiber);
+                }
+                else if (ft.fiber->getState() != Fiber::TERM &&
+                         ft.fiber->getState() != Fiber::EXCEPT)
+                {
+                    ft.fiber->m_state = Fiber::HOLD;
+                }
+            }
+        }
     }
 
     // 是否有空闲线程

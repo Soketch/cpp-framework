@@ -11,6 +11,8 @@ namespace sylar
     // 协程类
     class Fiber : public std::enable_shared_from_this<Fiber>
     {
+        friend class Scheduler;
+
     public:
         typedef std::shared_ptr<Fiber> ptr;
 
