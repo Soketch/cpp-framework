@@ -48,6 +48,7 @@ namespace sylar
     // 设置当前的协程调度器
     void Scheduler::setThis()
     {
+        t_scheduler = this;
     }
 
     // 获取当前调度器
@@ -86,7 +87,7 @@ namespace sylar
     // 停止调度器
     void Scheduler::Stop()
     {
-        // 循环等待
+        // 分两种情况，使用了use_caller和没有使用use_caller
 
         m_autoStop = true;
         if (m_rootFiber &&
@@ -109,12 +110,38 @@ namespace sylar
         }
         else
         {
+            SYLAR_ASSERT(GetThis() != this);
         }
+
+        m_stopping = true;
+        for (size_t i = 0; i < m_threadCount; ++i)
+        {
+            tickle(); // 唤醒线程自行结束
+        }
+
+        if (m_rootFiber)
+        {
+            tickle();
+        }
+        if (stopping())
+        {
+            return;
+        }
+        // if(exit_on_this_fiber){
+        // }
     }
 
     // 协程调度运行函数
     void Scheduler::run()
     {
+        setThis();
+        if (sylar::GetTheadId() != m_rootThread)
+        {
+            // 当前线程id != 主线程id
+            t_fiber = Fiber::GetThis().get();
+        }
+
+        Fiber::ptr idle_fiber(new Fiber(std::bind(run, this)));
     }
 
     // 是否有空闲线程

@@ -83,7 +83,7 @@ namespace sylar
         // 返回是否可以停止
         virtual bool stopping();
 
-        // 协程无任务可调度时执行idle协程
+        // 协程无任务可调度时执行idle协程  // idle空闲线程
         virtual void idle();
 
         // 设置当前的协程调度器
