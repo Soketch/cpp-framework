@@ -40,6 +40,9 @@ namespace sylar
         // 切换到后台执行
         void swapOut();
 
+        // 返回协程状态
+        State getState() const { return m_state; }
+
     public:
         // 设置当前协程
         static void setThis(Fiber *f);
