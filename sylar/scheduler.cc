@@ -22,7 +22,7 @@ namespace sylar
             --threads;               // 用主线程，没必要再重建一个线程，线程数减一
             SYLAR_ASSERT(GetThis() == nullptr);
             t_scheduler = this;
-            m_rootFiber.reset(new Fiber(std::bind(&Scheduler::run, this)));
+            m_rootFiber.reset(new Fiber(std::bind(&Scheduler::run, this), 0, true));
             sylar::Thread::setName(m_name);
 
             t_fiber = m_rootFiber.get();
@@ -83,13 +83,13 @@ namespace sylar
                                           m_name + "_" + std::to_string(i))); // callback, thread_name
             m_threadIds.push_back(m_threads[i]->getId());
         }
-        lock.unlock();
-        if (m_rootFiber)
-        {
-            // m_rootFiber->swapIn();
-            m_rootFiber->call();
-            SYLAR_LOG_INFO(g_logger) << "root_fiber call out" << m_rootFiber->getState();
-        }
+        lock.unlock(); // 这里必须解锁， 进入call会重新锁产生死锁
+        // if (m_rootFiber)
+        // {
+        //     // m_rootFiber->swapIn();
+        //     m_rootFiber->call();
+        //     SYLAR_LOG_INFO(g_logger) << "root_fiber call out" << m_rootFiber->getState();
+        // }
     }
     // 停止调度器   --
     void Scheduler::Stop()
@@ -131,12 +131,35 @@ namespace sylar
         {
             tickle();
         }
-        if (stopping())
+        if (m_rootFiber)
         {
-            return;
+            // while (!stopping())
+            // {
+            //     if (m_rootFiber->getState() == Fiber::EXCEPT || m_rootFiber->getState() == Fiber::TERM)
+            //     {
+            //         m_rootFiber.reset(new Fiber(std::bind(&Scheduler::run, this), 0, true));
+            //         SYLAR_LOG_INFO(g_logger) << "root fiber is term, reset";
+            //         t_fiber = m_rootFiber.get();
+            //     }
+            //     m_rootFiber->call();
+            // }
+            if (!stopping())
+            {
+                m_rootFiber->call();
+            }
         }
         // if(exit_on_this_fiber){
         // }
+        std::vector<Thread::ptr> thrs;
+        {
+            MutexType::Lock lock(m_mutex);
+            thrs.swap(m_threads);
+        }
+
+        for (auto &i : thrs)
+        {
+            i->join();
+        }
     }
 
     // 协程调度运行函数
@@ -181,7 +204,7 @@ namespace sylar
                     ft = *it;
                     m_fibers.erase(it++);
                     ++m_activeThreadCount;
-                    tickle_me = true;
+                    is_active = true;
                     break;
                 }
                 tickle_me |= it != m_fibers.end();
@@ -196,6 +219,7 @@ namespace sylar
             {
                 ft.fiber->swapIn();
                 --m_activeThreadCount;
+
                 if (ft.fiber->getState() == Fiber::READY)
                 {
                     schedule(ft.fiber);
@@ -265,24 +289,21 @@ namespace sylar
         SYLAR_LOG_INFO(g_logger) << "tickle";
     }
 
-    void Scheduler::idle()
-    {
-        SYLAR_LOG_INFO(g_logger) << "idle";
-        // while (!stopping())
-        // {
-        //     sylar::Fiber::YieldToHold();
-        // }
-    }
-
     bool Scheduler::stopping()
     {
         MutexType::Lock lock(m_mutex);
-        return m_autoStop && m_stopping && m_fibers.empty() && m_activeThreadCount == 0;
+        return m_autoStop &&
+               m_stopping &&
+               m_fibers.empty() &&
+               m_activeThreadCount == 0;
     }
 
-    // 是否有空闲线程
-    bool Scheduler::hasIdleThreads()
+    void Scheduler::idle()
     {
-        return false;
+        SYLAR_LOG_INFO(g_logger) << "idle";
+        while (!stopping())
+        {
+            sylar::Fiber::YieldToHold();
+        }
     }
 }

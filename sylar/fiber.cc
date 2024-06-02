@@ -23,7 +23,7 @@ namespace sylar
 
     // 配合配置系统指定协程的 栈大小 -- -- 通过config的Lookup方法查找yaml配置文件fiber的stack_size项指定栈大小
     static ConfigVar<uint32_t>::ptr g_fiber_stack_size =
-        Config::Lookup<uint32_t>("fiber.stack_size", 1024 * 1024, "stack size for fiber.");
+        Config::Lookup<uint32_t>("fiber.stack_size", 128 * 1024, "stack size for fiber.");
 
     // 内存分配器
     class MallocStackAllocator
@@ -51,11 +51,12 @@ namespace sylar
             SYLAR_ASSERT2(false, "getcontext");
         }
         ++s_fiber_count; // 总协程数+1
+        SYLAR_LOG_DEBUG(g_logger) << "Fiber::Fiber main";
     }
 
     // 真正的创建一个协程   >>  子协程 - 分配栈空间，每个协程都有独立栈运行空间
-    Fiber::Fiber(std::function<void()> cb, size_t stacksize) : m_id(++s_fiber_id),
-                                                               m_cb(cb)
+    Fiber::Fiber(std::function<void()> cb, size_t stacksize, bool use_caller) : m_id(++s_fiber_id),
+                                                                                m_cb(cb)
     {
         ++s_fiber_count;                                                      // 协程总数+1
         m_stacksize = stacksize ? stacksize : g_fiber_stack_size->getValue(); // 设置栈空间大小
@@ -69,7 +70,16 @@ namespace sylar
         m_ctx.uc_stack.ss_sp = m_stack;
         m_ctx.uc_stack.ss_size = m_stacksize;
 
-        makecontext(&m_ctx, &Fiber::MainFunc, 0);
+        if (!use_caller)
+        {
+            makecontext(&m_ctx, &Fiber::MainFunc, 0);
+        }
+        else
+        {
+            makecontext(&m_ctx, &Fiber::CallerMainFunc, 0);
+        }
+
+        SYLAR_LOG_DEBUG(g_logger) << "Fiber::Fiber id=" << m_id;
     }
     Fiber::~Fiber()
     {
@@ -96,7 +106,8 @@ namespace sylar
             }
         }
 
-        // SYLAR_LOG_DEBUG(g_logger) << "Fiber::~Fiber()  f_id:" << m_id;
+        SYLAR_LOG_DEBUG(g_logger) << "Fiber::~Fiber id=" << m_id
+                                  << " total=" << s_fiber_count;
     }
 
     // 重置协程函数,并重置状态
@@ -192,6 +203,7 @@ namespace sylar
     void Fiber::YieldToReady()
     {
         Fiber::ptr cur = GetThis();
+        SYLAR_ASSERT(cur->m_state == EXEC);
         cur->m_state = State::READY;
         cur->swapOut();
     }
@@ -200,7 +212,8 @@ namespace sylar
     void Fiber::YieldToHold()
     {
         Fiber::ptr cur = GetThis();
-        cur->m_state = State::HOLD;
+        SYLAR_ASSERT(cur->m_state == EXEC);
+        // cur->m_state = State::HOLD;
         cur->swapOut();
     }
     // 获取总协程数
@@ -225,7 +238,7 @@ namespace sylar
             cur->m_state = State::EXCEPT; // 设置异常状态
             SYLAR_LOG_ERROR(g_logger) << "Fiber Except: " << e.what()
                                       << "  fiber_id=" << cur->getId()
-                                      << '\n'
+                                      << std::endl
                                       << sylar::BackTraceToString();
         }
         catch (...)
@@ -238,11 +251,44 @@ namespace sylar
         }
 
         // 切回主协程
-        auto resp = cur.get();
+        auto raw_ptr = cur.get();
         cur.reset();
-        resp->swapOut();
+        raw_ptr->swapOut();
 
-        SYLAR_ASSERT2(false, "never reach fiber_id=" + std::to_string(resp->getId()));
+        SYLAR_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
+    }
+
+    void Fiber::CallerMainFunc()
+    {
+        Fiber::ptr cur = GetThis();
+        SYLAR_ASSERT(cur);
+        try
+        {
+            cur->m_cb();
+            cur->m_cb = nullptr;
+            cur->m_state = TERM;
+        }
+        catch (std::exception &ex)
+        {
+            cur->m_state = EXCEPT;
+            SYLAR_LOG_ERROR(g_logger) << "Fiber Except: " << ex.what()
+                                      << " fiber_id=" << cur->getId()
+                                      << std::endl
+                                      << sylar::BackTraceToString();
+        }
+        catch (...)
+        {
+            cur->m_state = EXCEPT;
+            SYLAR_LOG_ERROR(g_logger) << "Fiber Except"
+                                      << " fiber_id=" << cur->getId()
+                                      << std::endl
+                                      << sylar::BackTraceToString();
+        }
+
+        auto raw_ptr = cur.get();
+        cur.reset();
+        raw_ptr->back();
+        SYLAR_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
     }
 
     // 获取fiber id
@@ -254,4 +300,5 @@ namespace sylar
         }
         return 0;
     }
+
 }

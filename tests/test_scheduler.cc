@@ -16,13 +16,14 @@ void test_fiber()
 
 int main(int argc, char **argv)
 {
-    SYLAR_LOG_INFO(g_logger) << "main";
-    sylar::Scheduler sc(3, false, "test");
+    SYLAR_LOG_INFO(g_logger) << "main begin";
+    // sylar::Scheduler sc;
+    sylar::Scheduler sc(3, true, "test");
     sc.Start();
     sleep(2);
     SYLAR_LOG_INFO(g_logger) << "schedule";
     sc.schedule(&test_fiber);
     sc.Stop();
-    SYLAR_LOG_INFO(g_logger) << "over";
+    SYLAR_LOG_INFO(g_logger) << "main over";
     return 0;
 }

@@ -90,12 +90,12 @@ namespace sylar
         void setThis();
 
         // 是否有空闲线程
-        bool hasIdleThreads();
+        bool hasIdleThreads() { return m_idleThreadCount > 0; }
 
     private:
         // 无锁schedule调度函数
         template <class FiberOrCb>
-        bool scheduleNoLock(FiberOrCb fc, int thread = -1)
+        bool scheduleNoLock(FiberOrCb fc, int thread)
         {
             bool need_tickle = m_fibers.empty(); // 是否通知
             FiberAndThread ft(fc, thread);
@@ -143,8 +143,9 @@ namespace sylar
         MutexType m_mutex;                  // 互斥量
         std::vector<Thread::ptr> m_threads; // 线程池
         std::list<FiberAndThread> m_fibers; // 协程组 - 存放将要执行或者计划、准备要执行的协程
-        Fiber::ptr m_rootFiber;             // 主协程
-        std::string m_name;                 // 调度器名称
+        /// use_caller为true时有效, 调度协程
+        Fiber::ptr m_rootFiber; // 主协程
+        std::string m_name;     // 调度器名称
     protected:
         std::vector<int> m_threadIds;               // 存放线程id的数组
         size_t m_threadCount = 0;                   // 线程数

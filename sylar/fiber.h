@@ -30,7 +30,7 @@ namespace sylar
         Fiber(); // 私有默认构造函数 -- 防止外部直接创建Fiber对象
 
     public:
-        Fiber(std::function<void()> cb, size_t stacksize = 0);
+        Fiber(std::function<void()> cb, size_t stacksize = 0, bool use_caller = false);
         ~Fiber();
 
         uint64_t getId() const { return this->m_id; }
@@ -63,6 +63,8 @@ namespace sylar
         static uint64_t TotalFibers();
         // 协程执行主函数
         static void MainFunc();
+        // 协程执行函数 -- 执行完成返回到线程调度协程
+        static void CallerMainFunc();
         // 获取协程id
         static uint64_t GetFiberId();
 
