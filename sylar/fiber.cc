@@ -2,6 +2,7 @@
 #include "config.h"
 #include "macro.h"
 #include "log.h"
+#include "scheduler.h"
 #include <atomic>
 
 // factory工厂模式   ？？？
@@ -128,8 +129,8 @@ namespace sylar
         SYLAR_ASSERT(m_state != State::EXEC); // 当前协程不能处于运行状态
 
         m_state = State::EXEC;
-        // 将当前上下文保存到 t_threadFiber->m_ctx，并切换到当前协程的上下文 m_ctx
-        if (swapcontext(&t_threadFiber->m_ctx, &m_ctx))
+        // 将当前上下文保存到 MainFiber->m_ctx，并切换到当前协程的上下文 m_ctx
+        if (swapcontext(&Scheduler::GetMainFiber()->m_ctx, &m_ctx))
         {
             SYLAR_ASSERT2(false, "swapIn context");
         }
@@ -137,12 +138,32 @@ namespace sylar
     // 切换到后台执行 -- (一般是由子协程切换到主协程)  //唤醒main协程
     void Fiber::swapOut()
     {
-        setThis(t_threadFiber.get()); // 返回对象的原始指针
+        setThis(Scheduler::GetMainFiber()); // 返回对象的原始指针
 
         // 将当前上下文保存到 m_ctx，并切换到主协程的上下文 t_threadFiber->m_ctx
-        if (swapcontext(&m_ctx, &t_threadFiber->m_ctx))
+        if (swapcontext(&m_ctx, &Scheduler::GetMainFiber()->m_ctx))
         {
             SYLAR_ASSERT2(false, "swapOut context");
+        }
+    }
+
+    // 相当于强行把当前协程置换成为目标协程
+    void Fiber::call()
+    {
+        setThis(this);
+        m_state = EXEC;
+        if (swapcontext(&t_threadFiber->m_ctx, &m_ctx))
+        {
+            SYLAR_ASSERT2(false, "swapcontext");
+        }
+    }
+
+    void Fiber::back()
+    {
+        setThis(t_threadFiber.get());
+        if (swapcontext(&m_ctx, &t_threadFiber->m_ctx))
+        {
+            SYLAR_ASSERT2(false, "swapcontext");
         }
     }
 
@@ -202,12 +223,18 @@ namespace sylar
         catch (const std::exception &e)
         {
             cur->m_state = State::EXCEPT; // 设置异常状态
-            SYLAR_LOG_ERROR(g_logger) << "Fiber Except: " << e.what() << '\n';
+            SYLAR_LOG_ERROR(g_logger) << "Fiber Except: " << e.what()
+                                      << "  fiber_id=" << cur->getId()
+                                      << '\n'
+                                      << sylar::BackTraceToString();
         }
         catch (...)
         {
             cur->m_state = EXCEPT;
-            SYLAR_LOG_ERROR(g_logger) << "Fiber Except ...";
+            SYLAR_LOG_ERROR(g_logger) << "Fiber Except "
+                                      << "  fiber_id=" << cur->getId()
+                                      << std::endl
+                                      << sylar::BackTraceToString();
         }
 
         // 切回主协程

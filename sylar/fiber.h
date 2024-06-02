@@ -42,6 +42,11 @@ namespace sylar
         // 切换到后台执行
         void swapOut();
 
+        // 唤醒操作
+        void call();
+
+        void back();
+
         // 返回协程状态
         State getState() const { return m_state; }
 
