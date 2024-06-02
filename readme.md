@@ -298,6 +298,34 @@ Scheduler 1.是一个线程池，可以分配一组线程
     > 1.协程消息队列里面是否有任务
     > 2.无任务执行idle
 ```
+
+#### IO协程调度模块
+实现方式
+```
+    IOManager(epoll)  ------------>  Scheduler
+        |
+        |
+        V
+      idle(epoll_wait)
+
+      Semaphore(信号量)
+      PutMessage(msg, ...) => semaphore+1 single()
+    Message_queue(消息队列)
+        |
+        |----Thread
+        |----Thread
+      RecvMessage(msg, ...) => wait() semaphore-1
+
+    应该实现异步IO，等待数据返回。在epoll_wait等待，没有消息回来会阻塞在epoll_wait中
+                                                            |----->处理方式: socket pair? pipe?
+    两种唤醒方式
+```
+```
+epoll使用  <sys/epoll.h>
+    |----epoll_create
+    |----epoll_ctl
+    |----epoll_wait
+```
 ### socket函数库
 ### http协议开发
 ### 分布协议

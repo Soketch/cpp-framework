@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 {
     SYLAR_LOG_INFO(g_logger) << "main begin";
     // sylar::Scheduler sc;
-    sylar::Scheduler sc(3, true, "test");
+    sylar::Scheduler sc(3, false, "test");
     sc.Start();
     sleep(2);
     SYLAR_LOG_INFO(g_logger) << "schedule";
