@@ -58,18 +58,18 @@ namespace sylar
     {
         m_epfd = epoll_create(5000);
         SYLAR_ASSERT2(m_epfd > 0, "IOManager(...){} epoll_create");
-        int rt = pipe(m_tickleFds);
-        SYLAR_ASSERT(rt);
+        int rt = pipe(m_tickleFds); // pipe成功返回0，失败返回-1
+        SYLAR_ASSERT(!rt);          // SYLAR_ASSERT(rt != 0);
         epoll_event event;
         memset(&event, 0, sizeof(epoll_event));
         event.events = EPOLLIN | EPOLLET; //  EPOLLIN可读 + EPOLLET边缘触发（高效模式）
         event.data.fd = m_tickleFds[0];   // 0是读端， 1是写端
 
         rt = fcntl(m_tickleFds[0], F_SETFL, O_NONBLOCK); // 将管道的读端（m_tickleFds[0]）设置为非阻塞模式。
-        SYLAR_ASSERT(rt);
+        SYLAR_ASSERT(!rt);
 
         rt = epoll_ctl(m_epfd, EPOLL_CTL_ADD, m_tickleFds[0], &event);
-        SYLAR_ASSERT2(rt != -1, "epoll ctl_for the IOManager(...){}");
+        SYLAR_ASSERT2(!rt, "epoll ctl_for the IOManager(...){}");
 
         // m_fdContexts.resize(64); // 初始化socket上下文句柄容器
         ContextResize(32);
@@ -123,7 +123,7 @@ namespace sylar
         {
             rdlock.unlock();
             RWMutexType::WriteLock wrlock(m_mutex);
-            ContextResize(m_fdContexts.size() * 1.5);
+            ContextResize(fd * 1.5);
         }
 
         FdContext::MutexType::Lock lock(fd_ctx->mutex);
@@ -312,7 +312,7 @@ namespace sylar
         {
             if (stopping())
             {
-                SYLAR_LOG_INFO(g_logger) << "name=" << Scheduler::getName() << " idle stopping exit.";
+                SYLAR_LOG_INFO(g_logger) << "name=" << getName() << " idle stopping exit.";
                 break;
             }
 

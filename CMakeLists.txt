@@ -25,6 +25,7 @@ set(LIB_SRC
     sylar/mutex.cc
     sylar/fiber.cc
     sylar/scheduler.cc
+    sylar/iomanager.cc
     )
 
 add_library(sylar SHARED ${LIB_SRC})
@@ -42,17 +43,17 @@ set(LIB_LIB
 
 add_executable(test tests/test.cc)
 add_dependencies(test sylar)
-force_redefine_file_macro_for_sources(test)
+force_redefine_file_macro_for_sources(test)   #__FILE__
 target_link_libraries(test ${LIB_LIB})
  
 add_executable(test_config tests/test_config.cc)
 add_dependencies(test_config sylar)
-force_redefine_file_macro_for_sources(test_config)
+force_redefine_file_macro_for_sources(test_config)  #__FILE__
 target_link_libraries(test_config sylar ${LIB_LIB})
 
 add_executable(test_thread tests/test_thread.cc)
 add_dependencies(test_thread sylar)
-force_redefine_file_macro_for_sources(test_thread)
+force_redefine_file_macro_for_sources(test_thread)  #__FILE__
 target_link_libraries(test_thread sylar ${LIB_LIB})
  
 add_executable(test_util tests/test_util.cc)
@@ -69,6 +70,11 @@ add_executable(test_scheduler tests/test_scheduler.cc)
 add_dependencies(test_scheduler sylar)
 force_redefine_file_macro_for_sources(test_scheduler)
 target_link_libraries(test_scheduler sylar ${LIB_LIB})
+
+add_executable(test_iomanager tests/test_iomanager.cc)
+add_dependencies(test_iomanager sylar)
+force_redefine_file_macro_for_sources(test_iomanager)
+target_link_libraries(test_iomanager sylar ${LIB_LIB})
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
