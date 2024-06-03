@@ -232,8 +232,8 @@ namespace sylar
             return false;
         }
 
-        fd_ctx->triggerEvent(event);
-        --m_pendingEventCount;
+        fd_ctx->triggerEvent(event); // 触发事件
+        --m_pendingEventCount;       // 事件数-1
         return true;
     }
 
@@ -268,7 +268,7 @@ namespace sylar
         if (fd_ctx->events & READ) // 读事件
         {
             fd_ctx->triggerEvent(READ);
-            --m_pendingEventCount;
+            --m_pendingEventCount; // 事件数-1
         }
         if (fd_ctx->events & WRITE) // 写事件
         {
@@ -287,13 +287,114 @@ namespace sylar
 
     void IOManager::tickle()
     {
+        // 是否有空闲线程，用空闲线程处理 : idleTheads
+        if (hasIdleThreads())
+        {
+            int ret = write(m_tickleFds[1], "T", 1);
+            SYLAR_ASSERT(ret == 1);
+        }
+        return;
     }
 
     bool IOManager::stopping()
     {
+        return Scheduler::stopping() && m_pendingEventCount == 0;
     }
 
+    // 核心点 ==> 处理epoll相关事务
     void IOManager::idle()
     {
+        epoll_event *events = new epoll_event[64]();
+        std::shared_ptr<epoll_event> shared_events(events, [](epoll_event *ptr)
+                                                   { delete[] ptr; });
+
+        while (true)
+        {
+            if (stopping())
+            {
+                SYLAR_LOG_INFO(g_logger) << "name=" << Scheduler::getName() << " idle stopping exit.";
+                break;
+            }
+
+            int ret = 0;
+            do
+            {
+                static const int MAX_TIMEOUT = 5000; // epoll定时是采用毫秒级 --> 5秒
+                ret = epoll_wait(m_epfd, events, 64, MAX_TIMEOUT);
+
+                if (ret < 0 && errno == EINTR)
+                { // 重新epoll_wait一次
+                }
+                else
+                {
+                    break;
+                }
+            } while (true);
+
+            for (int i = 0; i < ret; ++i)
+            {
+                epoll_event &event = events[i];
+                if (event.data.fd == m_tickleFds[0])
+                {
+                    uint8_t dummy;
+                    while (read(m_tickleFds[0], &dummy, 1) == 1)
+                        ;
+                    continue;
+                }
+
+                FdContext *fd_ctx = (FdContext *)event.data.ptr;
+                FdContext::MutexType::Lock lock(fd_ctx->mutex);
+                if (event.events & (EPOLLERR | EPOLLHUP))
+                {
+                    event.events |= EPOLLIN | EPOLLOUT;
+                }
+
+                int real_events = Event::NONE;
+                if (event.events & EPOLLIN)
+                {
+                    real_events |= Event::READ;
+                }
+                if (event.events & EPOLLOUT)
+                {
+                    real_events |= Event::WRITE;
+                }
+
+                if ((fd_ctx->events & real_events) == Event::NONE)
+                {
+                    continue;
+                }
+                int left_events = (fd_ctx->events & ~real_events);
+                int op = left_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
+                event.events = EPOLLET | left_events;
+
+                int ret2 = epoll_ctl(m_epfd, op, fd_ctx->fd, &event);
+                if (ret2)
+                {
+                    SYLAR_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
+                                              << op << ", " << fd_ctx->fd << ", " << (EPOLL_EVENTS)event.events << "):"
+                                              << ret2 << " (" << errno << ") (" << strerror(errno) << ")";
+                    continue;
+                }
+
+                if (real_events & Event::READ)
+                {
+                    fd_ctx->triggerEvent(Event::READ);
+                    --m_pendingEventCount; // 事件数-1
+                }
+                if (real_events & Event::WRITE)
+                {
+                    fd_ctx->triggerEvent(Event::WRITE);
+                    --m_pendingEventCount;
+                }
+            }
+
+            // 处理完一个idle, 让出控制权到外部协程框架
+            // ==> 回到主协程 MainFiber
+            Fiber::ptr cur = Fiber::GetThis();
+            auto raw_ptr = cur.get();
+            cur.reset();
+            raw_ptr->swapOut();
+        }
     }
+
 }
