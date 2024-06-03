@@ -38,8 +38,8 @@ namespace sylar
     // 触发事件
     void IOManager::FdContext::triggerEvent(Event event)
     {
-        SYLAR_ASSERT(this->events & event);
-        this->events = (Event)(events & ~event);
+        SYLAR_ASSERT(events & event);
+        events = (Event)(events & ~event);
         EventContext &ctx = getcontext(event);
         if (ctx.cb)
         {
@@ -124,6 +124,7 @@ namespace sylar
             rdlock.unlock();
             RWMutexType::WriteLock wrlock(m_mutex);
             ContextResize(fd * 1.5);
+            fd_ctx = m_fdContexts[fd]; //***
         }
 
         FdContext::MutexType::Lock lock(fd_ctx->mutex);
@@ -304,10 +305,11 @@ namespace sylar
     // 核心点 ==> 处理epoll相关事务
     void IOManager::idle()
     {
-        epoll_event *events = new epoll_event[64]();
+        SYLAR_LOG_DEBUG(g_logger) << "IOManager::idle()";
+        const uint64_t MAX_EVNETS = 256;
+        epoll_event *events = new epoll_event[MAX_EVNETS]();
         std::shared_ptr<epoll_event> shared_events(events, [](epoll_event *ptr)
                                                    { delete[] ptr; });
-
         while (true)
         {
             if (stopping())
@@ -330,7 +332,6 @@ namespace sylar
                     break;
                 }
             } while (true);
-
             for (int i = 0; i < ret; ++i)
             {
                 epoll_event &event = events[i];
@@ -346,7 +347,8 @@ namespace sylar
                 FdContext::MutexType::Lock lock(fd_ctx->mutex);
                 if (event.events & (EPOLLERR | EPOLLHUP))
                 {
-                    event.events |= EPOLLIN | EPOLLOUT;
+                    // event.events |= EPOLLIN | EPOLLOUT;
+                    event.events |= (EPOLLIN | EPOLLOUT) & fd_ctx->events;
                 }
 
                 int real_events = Event::NONE;
@@ -358,7 +360,6 @@ namespace sylar
                 {
                     real_events |= Event::WRITE;
                 }
-
                 if ((fd_ctx->events & real_events) == Event::NONE)
                 {
                     continue;
@@ -396,5 +397,4 @@ namespace sylar
             raw_ptr->swapOut();
         }
     }
-
 }

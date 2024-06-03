@@ -15,8 +15,8 @@ namespace sylar
         enum Event
         {
             NONE = 0x0, // 无事件
-            READ = 0x1, // 读事件
-            WRITE = 0x4 // 写事件
+            READ = 0x1, // 读事件   //EPOLLIN
+            WRITE = 0x4 // 写事件   //EPOLLOUT
         };
 
     private:
