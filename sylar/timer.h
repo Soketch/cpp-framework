@@ -86,6 +86,10 @@ namespace sylar
         void addTimer(Timer::ptr val, RWMutexType::WriteLock &lock);
 
     private:
+        // 检测服务器时间是否被调后了
+        bool detectClockRollover(uint64_t now_ms);
+
+    private:
         RWMutexType m_mutex;
         // 定时器集合
         std::set<Timer::ptr, Timer::Comparator> m_timers;
