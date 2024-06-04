@@ -2,11 +2,12 @@
 #define __SYLAR_IOMANAGER_H_
 
 #include "scheduler.h"
+#include "timer.h"
 
 // 基于Epoll的IO协程调度器
 namespace sylar
 {
-    class IOManager : public Scheduler
+    class IOManager : public Scheduler, public TimerManager
     {
     public:
         std::shared_ptr<IOManager> ptr;
@@ -74,8 +75,11 @@ namespace sylar
         bool stopping() override;
         void idle() override;
 
+        void onTimerInsertedtAtFront() override;
         // context容器初始化
         void ContextResize(size_t size);
+
+        bool stopping(uint64_t &timeout);
 
     private:
         int m_epfd = 0; // epoll的fd句柄

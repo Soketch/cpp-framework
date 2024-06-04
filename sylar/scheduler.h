@@ -64,7 +64,7 @@ namespace sylar
                 while (begin != end)
                 {
                     need_tickle = scheduleNoLock(&*begin, -1) || need_tickle;
-                    ++begin;
+                    ++begin; //***
                 }
             }
             if (need_tickle)

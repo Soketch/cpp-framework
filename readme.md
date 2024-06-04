@@ -328,11 +328,22 @@ epoll使用  <sys/epoll.h>
 ```
 
 #### 定时器设计（根据IO协程调度器、epoll的毫秒级响应）
-    Timer --> addTimer() --> cancel()  --> delTimer()
+    Timer --> addTimer() --> cancel()  --> refresh()  -->reset() 
      |
      |---- 获取当前的定时器触发距离到现在的时间差  ==> 返回当前需要触发的定时器
-                                              
+
+```
+ utils中设置获取当前时间毫秒数和微秒数
+ |
+ +-------------  uint64_t GetCurrentMS();  // ==> ms毫秒
+ |
+ +-------------  uint64_t GetCurrentUS();  // ==> us微秒
+```    
+```
+定时器Timer和定时器管理类TimerManager
+```                                
 ### socket函数库
+##### 1.socket IO Hook
 ### http协议开发
 ### 分布协议
 ### 推荐系统

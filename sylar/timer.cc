@@ -54,6 +54,7 @@ namespace sylar
             m_manager->m_timers.erase(it);
             return true;
         }
+        return false;
     }
     // 刷新设置定时器的执行时间
     bool Timer::refresh()
@@ -222,6 +223,11 @@ namespace sylar
         }
     }
 
+    bool TimerManager::hasTimer()
+    {
+        RWMutexType::ReadLock rdlock(m_mutex);
+        return !m_timers.empty();
+    }
     // 将定时器添加到管理器中
     void TimerManager::addTimer(Timer::ptr val, RWMutexType::WriteLock &lock)
     {
@@ -242,11 +248,12 @@ namespace sylar
     bool TimerManager::detectClockRollover(uint64_t now_ms)
     {
         bool rollover = false;
-        if (now_ms < m_previouseTime && now_ms < (m_previouseTime - 60 * 60 * 1000))
+        if (now_ms < m_previouseTime &&
+            now_ms < (m_previouseTime - 60 * 60 * 1000))
         {
             rollover = true;
-            m_previouseTime = now_ms;
-            return rollover;
         }
+        m_previouseTime = now_ms;
+        return rollover;
     }
 }

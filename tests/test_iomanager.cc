@@ -82,9 +82,25 @@ void test_iom()
     connect(sockfd, (const struct sockaddr *)&addr, sizeof(addr));
 }
 
+void test_timer()
+{
+    sylar::IOManager iom(2);
+    sylar::Timer::ptr timer = iom.addTimer(1000, [&timer]()
+                                           { 
+                SYLAR_LOG_INFO(g_logger) << "test_timer"; 
+                 static int i = 0;
+                 if(++i == 5){
+                     timer->cancel();
+                     //timer->reset(2000, true);  //重置时间
+                 } }, true);
+
+    //
+}
+
 int main(int argc, char **argv)
 {
     std::cout << "EPOLLIN = " << EPOLLIN << ",  EPOLLOUT = " << EPOLLOUT << std::endl;
-    test01();
+    // test01();
+    test_timer();
     return 0;
 }
