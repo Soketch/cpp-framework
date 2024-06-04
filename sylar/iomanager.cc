@@ -18,7 +18,6 @@ namespace sylar
         switch (event)
         {
         case Event::READ:
-
             return read;
         case Event::WRITE:
             return write;
@@ -38,6 +37,9 @@ namespace sylar
     // 触发事件
     void IOManager::FdContext::triggerEvent(Event event)
     {
+        // SYLAR_LOG_INFO(g_logger) << "fd=" << fd
+        //                          << " triggerEvent event=" << event
+        //                          << " this->events=" << this->events;
         SYLAR_ASSERT(events & event);
         events = (Event)(events & ~event);
         EventContext &ctx = getcontext(event);
@@ -60,6 +62,7 @@ namespace sylar
         SYLAR_ASSERT2(m_epfd > 0, "IOManager(...){} epoll_create");
         int rt = pipe(m_tickleFds); // pipe成功返回0，失败返回-1
         SYLAR_ASSERT(!rt);          // SYLAR_ASSERT(rt != 0);
+
         epoll_event event;
         memset(&event, 0, sizeof(epoll_event));
         event.events = EPOLLIN | EPOLLET; //  EPOLLIN可读 + EPOLLET边缘触发（高效模式）
@@ -162,7 +165,7 @@ namespace sylar
         else
         {
             event_ctx.fiber = Fiber::GetThis();
-            SYLAR_ASSERT(event_ctx.fiber->getState() == Fiber::EXEC);
+            SYLAR_ASSERT2(event_ctx.fiber->getState() == Fiber::EXEC, "state=" << event_ctx.fiber->getState());
         }
         return 0;
     }
@@ -289,12 +292,12 @@ namespace sylar
     void IOManager::tickle()
     {
         // 是否有空闲线程，用空闲线程处理 : idleTheads
-        if (hasIdleThreads())
+        if (!hasIdleThreads())
         {
-            int ret = write(m_tickleFds[1], "T", 1);
-            SYLAR_ASSERT(ret == 1);
+            return;
         }
-        return;
+        int rt = write(m_tickleFds[1], "T", 1);
+        SYLAR_ASSERT(rt == 1);
     }
 
     bool IOManager::stopping()
@@ -322,8 +325,7 @@ namespace sylar
             do
             {
                 static const int MAX_TIMEOUT = 5000; // epoll定时是采用毫秒级 --> 5秒
-                ret = epoll_wait(m_epfd, events, 64, MAX_TIMEOUT);
-
+                ret = epoll_wait(m_epfd, events, MAX_EVNETS, MAX_TIMEOUT);
                 if (ret < 0 && errno == EINTR)
                 { // 重新epoll_wait一次
                 }
@@ -332,6 +334,7 @@ namespace sylar
                     break;
                 }
             } while (true);
+
             for (int i = 0; i < ret; ++i)
             {
                 epoll_event &event = events[i];
@@ -345,6 +348,7 @@ namespace sylar
 
                 FdContext *fd_ctx = (FdContext *)event.data.ptr;
                 FdContext::MutexType::Lock lock(fd_ctx->mutex);
+
                 if (event.events & (EPOLLERR | EPOLLHUP))
                 {
                     // event.events |= EPOLLIN | EPOLLOUT;
@@ -364,7 +368,8 @@ namespace sylar
                 {
                     continue;
                 }
-                int left_events = (fd_ctx->events & ~real_events);
+                int left_events = (fd_ctx->events & ~real_events); // 剩余事件
+
                 int op = left_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
                 event.events = EPOLLET | left_events;
 
@@ -376,7 +381,6 @@ namespace sylar
                                               << ret2 << " (" << errno << ") (" << strerror(errno) << ")";
                     continue;
                 }
-
                 if (real_events & Event::READ)
                 {
                     fd_ctx->triggerEvent(Event::READ);

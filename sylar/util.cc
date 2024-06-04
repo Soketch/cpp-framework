@@ -49,5 +49,20 @@ namespace sylar
         return ss.str();
     }
 
+    uint64_t GetCurrentMS() //  ==> 毫秒
+    {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+
+        return tv.tv_sec * 1000ul + tv.tv_usec / 1000; // 注意：这里的ul 指的是无符号长整型（unsigned long）
+    }
+    uint64_t GetCurrentUS() //  ==> 微秒
+    {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+
+        return tv.tv_sec * 1000 * 1000ul + tv.tv_usec;
+    }
+
     //
 }

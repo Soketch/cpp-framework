@@ -326,6 +326,12 @@ epoll使用  <sys/epoll.h>
     |----epoll_ctl
     |----epoll_wait
 ```
+
+#### 定时器设计（根据IO协程调度器、epoll的毫秒级响应）
+    Timer --> addTimer() --> cancel()  --> delTimer()
+     |
+     |---- 获取当前的定时器触发距离到现在的时间差  ==> 返回当前需要触发的定时器
+                                              
 ### socket函数库
 ### http协议开发
 ### 分布协议

@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <sys/time.h>
 
 namespace sylar
 {
@@ -17,5 +18,9 @@ namespace sylar
     // 生成和格式化调用堆栈
     void BackTrace(std::vector<std::string> &bt, int size = 64, int skip = 1);
     std::string BackTraceToString(int size = 64, int skip = 2, const std::string &prefix = "");
+
+    // 时间ms  ==> 获取当前时间的毫秒数和微秒数
+    uint64_t GetCurrentMS(); //  ==> 毫秒
+    uint64_t GetCurrentUS(); //  ==> 微秒
 }
 #endif
