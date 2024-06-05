@@ -80,7 +80,7 @@ namespace sylar
             return nullptr;
         }
         RWMutexType::ReadLock rdlock(m_mutex);
-        if (m_datas.size() <= fd)
+        if ((int)m_datas.size() <= fd)
         {
             if (auto_create == false)
             {

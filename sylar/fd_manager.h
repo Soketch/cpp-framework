@@ -24,8 +24,19 @@ namespace sylar
         bool isSocket() const { return m_isSocket; }
         bool isClose() const { return m_isClosed; }
 
-        void setUserNonblock(bool v) { this->m_sysNonblock = v; }
-        bool getUserNonblock() const { return m_sysNonblock; }
+        void setUserNonblock(bool v) { this->m_userNonblock = v; }
+        bool getUserNonblock() const { return m_userNonblock; }
+
+        /**
+         * @brief 设置系统非阻塞
+         * @param[in] v 是否阻塞
+         */
+        void setSysNonblock(bool v) { m_sysNonblock = v; }
+
+        /**
+         * @brief 获取系统非阻塞
+         */
+        bool getSysNonblock() const { return m_sysNonblock; }
         void setTimeout(int type, uint64_t v);
         uint64_t getTimeout(int type);
 
@@ -49,7 +60,7 @@ namespace sylar
     public:
         using RWMutexType = RWMutex;
         FdManager();
-        ~FdManager();
+        ~FdManager() {}
 
         // 获取句柄，如果不存在设置参数true可以创建再获取
         FdCtx::ptr get(int fd, bool auto_create = false);
