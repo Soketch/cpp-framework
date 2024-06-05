@@ -4,7 +4,9 @@
 #include <memory>
 #include <vector>
 #include "thread.h"
+#include "log.h"
 // #include "iomanager.h"
+#include "singleton.h"
 
 // 文件句柄管理类
 namespace sylar
@@ -21,7 +23,6 @@ namespace sylar
         bool isInit() const { return m_isInit; }
         bool isSocket() const { return m_isSocket; }
         bool isClose() const { return m_isClosed; }
-        bool close();
 
         void setUserNonblock(bool v) { this->m_sysNonblock = v; }
         bool getUserNonblock() const { return m_sysNonblock; }
@@ -59,5 +60,9 @@ namespace sylar
         RWMutexType m_mutex;
         std::vector<FdCtx::ptr> m_datas;
     };
+
+    // 文件句柄 单例模式
+    using FdMgr = Singleton<FdManager>;
+    // typedef Singleton<FdManager> FdMgr;
 }
 #endif

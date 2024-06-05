@@ -9,6 +9,7 @@ namespace sylar
         init();
     }
     FdCtx::~FdCtx() {}
+
     bool FdCtx::init()
     {
         if (m_isInit)
@@ -49,20 +50,71 @@ namespace sylar
 
     void FdCtx::setTimeout(int type, uint64_t v)
     {
+        if (type == SO_RCVTIMEO)
+        {
+            m_recvTimeout = v;
+        }
+        else
+        {
+            m_sendTimeout = v;
+        }
     }
+
     uint64_t FdCtx::getTimeout(int type)
     {
-    }
-    bool FdCtx::close()
-    {
+        if (type == SO_RCVTIMEO)
+        {
+            return m_recvTimeout;
+        }
+        else
+        {
+            return m_sendTimeout;
+        }
     }
 
     FdManager::FdManager() {}
-    FdCtx::ptr FdManager::get(int fd, bool auto_create = false)
+    FdCtx::ptr FdManager::get(int fd, bool auto_create)
     {
+        if (fd == -1)
+        {
+            return nullptr;
+        }
+        RWMutexType::ReadLock rdlock(m_mutex);
+        if (m_datas.size() <= fd)
+        {
+            if (auto_create == false)
+            {
+                return nullptr;
+            }
+        }
+        else
+        {
+            if (m_datas[fd] || !auto_create)
+            {
+                return m_datas[fd];
+            }
+        }
+        rdlock.unlock();
+
+        RWMutexType::WriteLock wrlock(m_mutex);
+        FdCtx::ptr ctx(new FdCtx(fd));
+        if (fd >= (int)m_datas.size())
+        {
+            m_datas.resize(fd * 1.5);
+        }
+
+        // m_datas.push_back(ctx);
+        m_datas[fd] = ctx;
+        return ctx;
     }
 
     void FdManager::delFd(int fd)
     {
+        RWMutexType::WriteLock wrlock(m_mutex);
+        if ((int)m_datas.size() <= fd)
+        {
+            return;
+        }
+        m_datas[fd].reset();
     }
 }
