@@ -1,7 +1,7 @@
 #include "scheduler.h"
 #include "log.h"
 #include "macro.h"
-
+#include "hook.h"
 namespace sylar
 {
     static sylar::Logger::ptr g_logger = SYLAR_LOG_NAME("system");
@@ -166,7 +166,7 @@ namespace sylar
     void Scheduler::run()
     {
         SYLAR_LOG_DEBUG(g_logger) << m_name << " run";
-
+        set_hook_enable(true);
         setThis();
         if (sylar::GetTheadId() != m_rootThread) // 当前线程id != 主线程id
         {

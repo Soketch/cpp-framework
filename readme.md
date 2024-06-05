@@ -342,8 +342,44 @@ epoll使用  <sys/epoll.h>
 ```
 定时器Timer和定时器管理类TimerManager
 ```                                
+
+```
+                     [Fiber]                [Timer]
+                        ^  N                   ^
+                        |                      |
+                        |  1                   |
+                     [Thread]            [TimerManager]
+                        ^  M                   ^
+                        |                      |
+                        |  1                   |
+                   [Scheduler]  <----  [IOManager(epoll)]
+                                               |
+                                               |
+                                            主要是iomanager负责io事件和定时器
+```
 ### socket函数库
 ##### 1.socket IO Hook
+用同步IO来实现异步IO功能
+
+引入 ==> 怎么在main函数前执行一个方法？？？？
+```
+hook   +---- sleep
+       |---- usleep
+
+    // 利用静态对象的构造函数在 main 函数之前运行机制，
+    //  ====>   静态对象在程序启动时初始化，而它们的构造函数会在 main 函数之前执行
+    //  ====>   在构造函数中执行hook初始化操作
+
+    struct _HookIniter
+    {
+        _HookIniter()
+        {
+            hook_init();
+        }
+    };
+    
+    static _HookIniter s_hook_initer;
+```
 ### http协议开发
 ### 分布协议
 ### 推荐系统
