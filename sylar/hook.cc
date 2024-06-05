@@ -13,7 +13,25 @@ namespace sylar
 #define HOOK_FUN(XX) \
     XX(sleep)        \
     XX(usleep)       \
-    XX(nanosleep)
+    XX(nanosleep)    \
+    XX(socket)       \
+    XX(connect)      \
+    XX(accept)       \
+    XX(read)         \
+    XX(readv)        \
+    XX(recv)         \
+    XX(recvfrom)     \
+    XX(recvmsg)      \
+    XX(write)        \
+    XX(writev)       \
+    XX(send)         \
+    XX(sendto)       \
+    XX(sendmsg)      \
+    XX(close)        \
+    XX(fcntl)        \
+    XX(ioctl)        \
+    XX(getsockopt)   \
+    XX(setsockopt)
 
     void hook_init()
     {
@@ -58,6 +76,7 @@ extern "C"
     HOOK_FUN(XX);
 #undef XX
 
+    // sleep相关函数的hook
     unsigned int sleep(unsigned int seconds)
     {
         if (!sylar::t_hook_enable)
