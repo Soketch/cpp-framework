@@ -1,6 +1,5 @@
 #include "hook.h"
 #include <dlfcn.h>
-
 #include "config.h"
 #include "log.h"
 #include "fiber.h"
@@ -13,7 +12,8 @@ namespace sylar
 
 #define HOOK_FUN(XX) \
     XX(sleep)        \
-    XX(usleep)
+    XX(usleep)       \
+    XX(nanosleep)
 
     void hook_init()
     {
@@ -69,6 +69,9 @@ extern "C"
         sylar::IOManager *iom = sylar::IOManager::GetThis();
 
         // iom->addTimer(seconds * 1000, std::bind(&sylar::IOManager::schedule, iom, fiber, -1)); // 参数类型错误
+
+        // iom->addTimer(seconds * 1000, [iom, fiber]()
+        //               { iom->schedule(fiber); });
         iom->addTimer(seconds * 1000,
                       std::bind(
                           (void(sylar::Scheduler::*)(sylar::Fiber::ptr, int thread)) & sylar::IOManager::schedule,
@@ -87,6 +90,21 @@ extern "C"
         sylar::Fiber::ptr fiber = sylar::Fiber::GetThis();
         sylar::IOManager *iom = sylar::IOManager::GetThis();
         iom->addTimer(usec / 1000, std::bind((void(sylar::Scheduler::*)(sylar::Fiber::ptr, int thread)) & sylar::IOManager::schedule, iom, fiber, -1));
+        sylar::Fiber::YieldToHold();
+        return 0;
+    }
+
+    int nanosleep(const struct timespec *req, struct timespec *rem)
+    {
+        if (!sylar::t_hook_enable)
+        {
+            return nanosleep_f(req, rem);
+        }
+        int timeout_ms = req->tv_sec * 1000 + req->tv_nsec / 1000 / 1000;
+
+        sylar::Fiber::ptr fiber = sylar::Fiber::GetThis();
+        sylar::IOManager *iom = sylar::IOManager::GetThis();
+        iom->addTimer(timeout_ms, std::bind((void(sylar::Scheduler::*)(sylar::Fiber::ptr, int thread)) & sylar::IOManager::schedule, iom, fiber, -1));
         sylar::Fiber::YieldToHold();
         return 0;
     }

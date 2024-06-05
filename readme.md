@@ -359,7 +359,7 @@ epoll使用  <sys/epoll.h>
 ```
 ### socket函数库
 ##### 1.socket IO Hook
-用同步IO来实现异步IO功能
+用同步IO写法也能达到实现异步IO功能
 
 引入 ==> 怎么在main函数前执行一个方法？？？？
 ```

@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <iostream>
+#include <time.h>
 
 namespace sylar
 {
@@ -30,5 +31,8 @@ extern "C"
 
     typedef int (*usleep_fun)(useconds_t usec);
     extern usleep_fun usleep_f;
+
+    typedef int (*nanosleep_fun)(const struct timespec *req, struct timespec *rem);
+    extern nanosleep_fun nanosleep_f;
 }
 #endif
