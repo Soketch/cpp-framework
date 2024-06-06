@@ -4,6 +4,7 @@ namespace sylar
 {
     int Address::getFamily() const
     {
+        return getAddr()->sa_family;
     }
 
     const sockaddr *Address::getAddr() const
@@ -24,17 +25,37 @@ namespace sylar
 
     std::string Address::toString()
     {
+        std::stringstream ss;
+        insert(ss);
+        return ss.str();
     }
 
     bool Address::operator<(const Address &rhs) const
     {
+        socklen_t minlen = std::min(getAddrLen(), rhs.getAddrLen());
+        int result = memcmp(getAddr(), rhs.getAddr(), minlen);
+        if (result < 0)
+        {
+            return true;
+        }
+        else if (result > 0)
+        {
+            return false;
+        }
+        else if (getAddrLen() < rhs.getAddrLen())
+        {
+            return true;
+        }
+        return false;
     }
     bool Address::operator==(const Address &rhs) const
     {
+        return getAddrLen() == rhs.getAddrLen() && memcmp(getAddr(), rhs.getAddr(), getAddrLen()) == 0;
     }
 
     bool Address::operator!=(const Address &rhs) const
     {
+        return !(*this == rhs);
     }
 
     /// @brief IPv4
@@ -108,6 +129,24 @@ namespace sylar
     }
 
     void IPv6Address::setPort(uint16_t v)
+    {
+    }
+
+    // UnknownAddress
+
+    UnknownAddress::UnknownAddress()
+    {
+    }
+    const sockaddr *UnknownAddress::getAddr() const
+    {
+    }
+    sockaddr *UnknownAddress::getAddr()
+    {
+    }
+    socklen_t UnknownAddress::getAddrLen() const
+    {
+    }
+    std::ostream &UnknownAddress::insert(std::ostream &os) const
     {
     }
 }

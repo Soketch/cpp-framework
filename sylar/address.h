@@ -9,6 +9,8 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <sys/un.h>
+#include <sstream>
+
 /// @brief 网络地址的封装(IPv4,IPv6,Unix)
 namespace sylar
 {
@@ -170,7 +172,7 @@ namespace sylar
     {
     public:
         using ptr = std::shared_ptr<UnknownAddress>;
-
+        UnknownAddress();
         const sockaddr *getAddr() const override;
         sockaddr *getAddr() override;
         socklen_t getAddrLen() const override;
