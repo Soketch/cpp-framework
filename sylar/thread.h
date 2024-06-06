@@ -9,7 +9,7 @@
 namespace sylar
 {
 
-    class Thread
+    class Thread : public Noncopyable
     {
     public:
         typedef std::shared_ptr<Thread> ptr;
@@ -23,13 +23,6 @@ namespace sylar
         static const std::string &GetName(); // 获取当前线程名称  -- 配合日志系统
         static void setName(const std::string &name);
         ~Thread();
-
-    private:
-        // 禁止拷贝
-        Thread(const Thread &) = delete;
-        Thread(const Thread &&) = delete;
-        Thread &operator=(const Thread &) = delete;
-        Thread &operator=(Thread &&) = delete;
 
     private:
         static void *run(void *arg); // 线程执行函数

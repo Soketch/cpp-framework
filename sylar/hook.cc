@@ -60,6 +60,13 @@ namespace sylar
         _HookIniter()
         {
             hook_init();
+            s_connect_timeout = g_tcp_connect_timeout->getValue();
+
+            g_tcp_connect_timeout->addListener([](const int &old_value, const int &new_value)
+                                               {
+                SYLAR_LOG_INFO(g_logger) << "tcp connect timeout changed from "
+                                         << old_value << " to " << new_value;
+                s_connect_timeout = new_value; });
         }
     };
     // 利用静态对象的构造函数在 main 函数之前运行机制，
@@ -95,6 +102,8 @@ static ssize_t do_io(int fd, OriginFun fun, const char *hook_fun_name,
     {
         return fun(fd, std::forward<Args>(args)...);
     }
+
+    SYLAR_LOG_DEBUG(g_logger) << "do_io" << hook_fun_name;
 
     // 获取fd上下文：
     sylar::FdCtx::ptr ctx = sylar::FdMgr::GetInstance()->get(fd);
@@ -419,7 +428,7 @@ extern "C"
             {
                 iom->cancelAll(fd);
             }
-            sylar::FdMgr::GetInstance()->del(fd);
+            sylar::FdMgr::GetInstance()->delFd(fd);
         }
         return close_f(fd);
     }

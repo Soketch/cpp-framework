@@ -9,24 +9,18 @@
 #include <semaphore.h>
 #include <stdint.h>
 #include <atomic> //原子操作
+#include "noncopyable.h"
 
 namespace sylar
 {
     // 信号量
-    class Semaphore
+    class Semaphore : public Noncopyable
     {
     public:
         Semaphore(uint32_t count = 0); // count 信号量值的大小
         ~Semaphore();
         void wait();   // 获取信号量
         void notify(); // 释放信号量
-
-    private:
-        // 禁用拷贝
-        Semaphore(const Semaphore &) = delete;
-        Semaphore(const Semaphore &&) = delete;
-        Semaphore operator=(const Semaphore &) = delete;
-        Semaphore operator=(const Semaphore &&) = delete;
 
     private:
         sem_t m_semaphore;
@@ -147,7 +141,7 @@ namespace sylar
     };
 
     // 互斥量
-    class Mutex
+    class Mutex : public Noncopyable
     {
     public:
         typedef ScopedLockImpl<Mutex> Lock;
@@ -173,7 +167,7 @@ namespace sylar
     };
 
     // 空锁 -- 仅用于调试验证工程
-    class NullMutex
+    class NullMutex : public Noncopyable
     {
     public:
         typedef ScopedLockImpl<NullMutex> Lock;
@@ -186,7 +180,7 @@ namespace sylar
     };
 
     // 读写锁互斥量
-    class RWMutex
+    class RWMutex : public Noncopyable
     {
     public:
         typedef ReadScopedLockImpl<RWMutex> ReadLock;
@@ -222,7 +216,7 @@ namespace sylar
     };
 
     // 空读写锁 -- 用于调试
-    class NullRWMutex
+    class NullRWMutex : public Noncopyable
     {
     public:
         typedef ReadScopedLockImpl<NullMutex> ReadLock;
@@ -247,7 +241,7 @@ namespace sylar
 
     // 自旋锁：
     // -- 等待锁可用时不会使线程进入睡眠状态，而是不断地循环检查锁的状态。这种机制被称为“自旋”
-    class SpinLock
+    class SpinLock : public Noncopyable
     {
     public:
         typedef ScopedLockImpl<SpinLock> Lock;
@@ -273,7 +267,7 @@ namespace sylar
     };
 
     // 原子锁：  CAS 操作通常用于实现无锁数据结构
-    class CASLock
+    class CASLock : public Noncopyable
     {
     public:
         typedef ScopedLockImpl<CASLock> Lock;
