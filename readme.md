@@ -491,6 +491,7 @@ retry:
                 |
              [Socket]
 
+// 通过address网络地址的封装(IPv4,IPv6,Unix)
 // 抽象出Address 实现在到配置文件中可以配置多种"地址"
 ```
 

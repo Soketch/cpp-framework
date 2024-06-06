@@ -71,6 +71,10 @@
         "thread": "cpp",
         "variant": "cpp",
         "mutex": "cpp",
-        "condition_variable": "cpp"
+        "condition_variable": "cpp",
+        "executor": "cpp",
+        "io_context": "cpp",
+        "timer": "cpp",
+        "future": "cpp"
     }
 }
