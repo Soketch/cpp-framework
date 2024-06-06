@@ -299,7 +299,7 @@ Scheduler 1.是一个线程池，可以分配一组线程
     > 2.无任务执行idle
 ```
 
-#### IO协程调度模块
+##### IO协程调度模块
 实现方式
 ```
     IOManager(epoll)  ------------>  Scheduler
@@ -327,7 +327,7 @@ epoll使用  <sys/epoll.h>
     |----epoll_wait
 ```
 
-#### 定时器设计（根据IO协程调度器、epoll的毫秒级响应）
+##### 定时器设计（根据IO协程调度器、epoll的毫秒级响应）
     Timer --> addTimer() --> cancel()  --> refresh()  -->reset() 
      |
      |---- 获取当前的定时器触发距离到现在的时间差  ==> 返回当前需要触发的定时器
@@ -361,6 +361,10 @@ epoll使用  <sys/epoll.h>
 ##### 1.socket IO Hook
 用同步IO写法也能达到实现异步IO功能
 
+socket相关（socket, connect, accept）<br>
+io相关 （read, write, recv, send ...）<br>
+fd相关 （fcntl, ioctl ...）<br>
+
 引入 ==> 怎么在main函数前执行一个方法？？？？
 ```
 hook   +---- sleep
@@ -380,6 +384,116 @@ hook   +---- sleep
     
     static _HookIniter s_hook_initer;
 ```
+
+针对IO操作部分开发一个模板do_io，hook这个di_io模板函数,(对 I/O 操作进行 Hook，通过协程调度和超时管理实现异步 I/O 操作)
+```cpp
+template <typename OriginFun, typename... Args>
+static ssize_t do_io(int fd, OriginFun fun, const char *hook_fun_name,
+                     uint32_t event, int timeout_so, Args &&...args)
+{
+    // 是否启用HOOK
+    if (!sylar::t_hook_enable)
+    {
+        return fun(fd, std::forward<Args>(args)...);
+    }
+
+    SYLAR_LOG_DEBUG(g_logger) << "do_io" << hook_fun_name;
+
+    // 获取fd上下文：
+    sylar::FdCtx::ptr ctx = sylar::FdMgr::GetInstance()->get(fd);
+    if (!ctx)
+    {
+        return fun(fd, std::forward<Args>(args)...); // 不是fd，直接调用原io函数
+    }
+
+    if (ctx->isClose()) // 检测状态
+    {
+        errno = EBADF;
+        return -1;
+    }
+
+    if (!ctx->isSocket() || ctx->getUserNonblock()) // 是否是套接字，或者是否人为设置为非阻塞。不满足，直接调用原始的 I/O 函数。
+    {
+        return fun(fd, std::forward<Args>(args)...);
+    }
+
+    uint64_t to = ctx->getTimeout(timeout_so); // 获取超时时间，并创建一个timer_info对象 tinfo
+    std::shared_ptr<timer_info> tinfo(new timer_info);
+
+    //  ----------  进行 I/O 操作并处理重试逻辑
+retry:
+    ssize_t n = fun(fd, std::forward<Args>(args)...); // 先直接执行一遍，返回值有效 直接return n返回
+
+    while (n == -1 && errno == EINTR) // 执行一次后返回值无效，如果返回 EINTR 错误，继续重试操作。
+    {
+        n = fun(fd, std::forward<Args>(args)...);
+    }
+    if (n == -1 && errno == EAGAIN) // 如果返回 EAGAIN 错误，表示资源暂时不可用，需要等待。
+    {
+        // 设置IOManager定时器和事件处理
+        sylar::IOManager *iom = sylar::IOManager::GetThis();
+        sylar::Timer::ptr timer;
+        std::weak_ptr<timer_info> winfo(tinfo);
+
+        if (to != (uint64_t)-1) // 判断超时时间   timeout != -1
+        {
+            // 添加条件的超时的定时器
+            timer = iom->addConditionTimer(to, [winfo, fd, iom, event]()
+                                           {
+                auto t = winfo.lock();
+                if(!t || t->cancelled) {
+                    return;
+                }
+                t->cancelled = ETIMEDOUT;
+                iom->cancelEvent(fd, (sylar::IOManager::Event)(event)); }, winfo); // 取消，唤醒回来
+        }
+
+        int rt = iom->addEvent(fd, (sylar::IOManager::Event)(event)); // 这里没有传递cb参数，是以当前写出作为唤醒对象
+        // if (SYLAR_UNLIKELY(rt))
+        if (rt)
+        { // 添加失败打印日志
+            SYLAR_LOG_ERROR(g_logger) << hook_fun_name << " addEvent("
+                                      << fd << ", " << event << ")";
+            if (timer)
+            {
+                timer->cancel();
+            }
+            return -1;
+        }
+        else // 将当前协程挂起等待事件完成。定时器存在取消，cancel
+        {
+            sylar::Fiber::YieldToHold(); // 等待唤醒 --> 两种情况唤醒（1读取到事件唤醒）（2超时唤醒）
+            if (timer)                   // 检查是否有定时器，有就取消掉
+            {
+                timer->cancel();
+            }
+            if (tinfo->cancelled) // 如果定时条件状态存在，就设置errno,直接返回
+            {
+                errno = tinfo->cancelled;
+                return -1;
+            }
+            goto retry; // 有IO事件回来 --> 重新读 --> goto
+        }
+    }
+
+    return n;
+}
+// 这里后期应该考虑不使用goto,采用while可能更安全
+```
+
+##### 2.socket 网络模块开发
+```
+           [UnixAddress]
+                |
+            +--------+                            +-----[IPv4Address]
+            | Address| ------- [IPAddress] -------|
+            +--------+                            +-----[IPv6Address]
+                |
+             [Socket]
+
+// 抽象出Address 实现在到配置文件中可以配置多种"地址"
+```
+
 ### http协议开发
 ### 分布协议
 ### 推荐系统
