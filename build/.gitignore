@@ -1,0 +1,14 @@
+# Ignore build directory
+/build/
+
+# # Ignore other common files and directories
+# *.log
+# *.tmp
+# *.swp
+# .DS_Store
+
+# # Ignore CMake generated files
+# CMakeFiles/
+# CMakeCache.txt
+# cmake_install.cmake
+# Makefile
