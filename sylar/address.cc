@@ -1,4 +1,6 @@
 #include "address.h"
+#include <sstream>
+#include "endian.h"
 
 namespace sylar
 {
@@ -61,22 +63,42 @@ namespace sylar
     /// @brief IPv4
     IPv4Address::IPv4Address(uint32_t address, uint32_t port)
     {
+        memset(&m_addr, 0, sizeof(m_addr));
+        m_addr.sin_family = AF_INET;
+        m_addr.sin_port = byteswapOnLittleEndian(port);
+        m_addr.sin_addr.s_addr = byteswapOnLittleEndian(address);
     }
 
     const sockaddr *IPv4Address::getAddr() const
     {
+        return (sockaddr *)&m_addr;
     }
 
     socklen_t IPv4Address::getAddrLen() const
     {
+        return sizeof(m_addr);
     }
-
+    /// @brief 实现ipv4地址展示
     std::ostream &IPv4Address::insert(std::ostream &os) const
     {
+        uint32_t addr = byteswapOnLittleEndian(m_addr.sin_addr.s_addr);
+
+        os << ((addr >> 24) & 0xff) << "."
+           << ((addr >> 16) & 0xff) << "."
+           << ((addr >> 8) & 0xff)
+           << (addr & 0xff);
+        os << ":" << byteswapOnLittleEndian(m_addr.sin_port);
+        return os;
     }
 
     IPAddress::ptr IPv4Address::broadcastAAddress(uint32_t prefix_len)
     {
+        if (prefix_len > 32)
+        {
+            return nullptr;
+        }
+        sockaddr_in baddr(m_addr);
+        // baddr.sin_addr.s_addr |=
     }
 
     IPAddress::ptr IPv4Address::networkAddress(uint32_t prefix_len)
@@ -89,17 +111,29 @@ namespace sylar
 
     uint32_t IPv4Address::getPort() const
     {
+        return byteswapOnLittleEndian(m_addr.sin_port);
     }
 
     void IPv4Address::setPort(uint16_t v)
     {
+        this->m_addr.sin_port = byteswapOnLittleEndian(v);
     }
 
     /// @brief IPv6
-    IPv6Address::IPv6Address(uint32_t address, uint32_t port)
+    // IPv6Address::IPv6Address(const char address[16], uint32_t port)
+    // {
+    //     memset(&m_addr, 0, sizeof(m_addr));
+    //     m_addr.sin6_family = AF_INET6;
+    //     m_addr.sin6_port = byteswapOnLittleEndian(port);
+    //     memcpy(&m_addr.sin6_addr.__in6_u.__u6_addr16, address, 16);
+    // }
+    IPv6Address::IPv6Address(const uint8_t address[16], uint16_t port)
     {
+        memset(&m_addr, 0, sizeof(m_addr));
+        m_addr.sin6_family = AF_INET6;
+        m_addr.sin6_port = byteswapOnLittleEndian(port);
+        memcpy(&m_addr.sin6_addr.s6_addr, address, 16);
     }
-
     const sockaddr *IPv6Address::getAddr() const
     {
     }
@@ -132,8 +166,32 @@ namespace sylar
     {
     }
 
-    // UnknownAddress
+    /// UnixAddress
+    UnixAddress::UnixAddress(const std::string &path)
+    {
+    }
 
+    const sockaddr *UnixAddress::getAddr() const
+    {
+    }
+    sockaddr *UnixAddress::getAddr()
+    {
+    }
+    socklen_t UnixAddress::getAddrLen() const
+    {
+    }
+    std::ostream &UnixAddress::insert(std::ostream &os) const
+    {
+    }
+
+    void UnixAddress::setAddrLen(uint32_t v)
+    {
+    }
+    std::string UnixAddress::getPath() const
+    {
+    }
+
+    /// UnknownAddress未知地址
     UnknownAddress::UnknownAddress()
     {
     }

@@ -9,7 +9,6 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <sys/un.h>
-#include <sstream>
 
 /// @brief 网络地址的封装(IPv4,IPv6,Unix)
 namespace sylar
@@ -117,7 +116,7 @@ namespace sylar
     {
     public:
         using ptr = std::shared_ptr<IPv6Address>;
-        IPv6Address(uint32_t address = INADDR_ANY, uint32_t port = 0);
+        IPv6Address(const uint8_t address[16], uint16_t port = 0);
 
         /// 返回sockaddr指针,只读
         const sockaddr *getAddr() const override;
