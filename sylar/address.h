@@ -35,7 +35,7 @@ namespace sylar
         virtual socklen_t getAddrLen() const = 0;
 
         ///  可读性输出地址
-        virtual std::ostream &insert(std::ostream &os) const;
+        virtual std::ostream &insert(std::ostream &os) const = 0;
 
         /// @brief 返回可读性字符串
         std::string toString();
@@ -87,10 +87,13 @@ namespace sylar
     {
     public:
         using ptr = std::shared_ptr<IPv4Address>;
+        IPv4Address(const sockaddr_in &address);
         IPv4Address(uint32_t address = INADDR_ANY, uint32_t port = 0);
 
         /// 返回sockaddr指针,只读
         const sockaddr *getAddr() const override;
+        /// 返回sockaddr指针
+        sockaddr *getAddr() override;
         /// 返回sockaddr的长度
         socklen_t getAddrLen() const override;
         ///  可读性输出地址
@@ -116,10 +119,14 @@ namespace sylar
     {
     public:
         using ptr = std::shared_ptr<IPv6Address>;
+        IPv6Address();
+        IPv6Address(const sockaddr_in6 &address);
         IPv6Address(const uint8_t address[16], uint16_t port = 0);
 
         /// 返回sockaddr指针,只读
         const sockaddr *getAddr() const override;
+        /// 返回sockaddr指针
+        sockaddr *getAddr() override;
         /// 返回sockaddr的长度
         socklen_t getAddrLen() const override;
         ///  可读性输出地址
@@ -172,6 +179,7 @@ namespace sylar
     public:
         using ptr = std::shared_ptr<UnknownAddress>;
         UnknownAddress();
+        UnknownAddress(int family);
         const sockaddr *getAddr() const override;
         sockaddr *getAddr() override;
         socklen_t getAddrLen() const override;
