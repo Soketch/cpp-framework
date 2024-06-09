@@ -64,24 +64,91 @@ namespace sylar
         return nullptr;
     }
 
+    // bool Address::Lookup(std::vector<Address::ptr> &result, const std::string &host,
+    //                      int family, int type, int protocol)
+    // {
+    //     addrinfo hints, *results, *next;
+    //     memset(&hints, 0, sizeof(addrinfo));
+    //     hints.ai_family = family;
+    //     hints.ai_socktype = type;
+    //     hints.ai_protocol = protocol;
+    //     std::string node;
+    //     const char *service = nullptr;
+    //     // 检查 IPv6 地址和服务
+    //     if (!host.empty() && host[0] == '[')
+    //     {
+    //         const char *endipv6 = (const char *)memchr(host.c_str() + 1, ']', host.size() - 1);
+    //         if (endipv6)
+    //         { // TODO check out of range
+    //             if (*(endipv6 + 1) == ':')
+    //             {
+    //                 service = endipv6 + 2;
+    //             }
+    //             node = host.substr(1, endipv6 - host.c_str() - 1);
+    //         }
+    //     }
+    //     // 检查 node 和 service   // 解析 IPv4 地址和端口
+    //     if (node.empty())
+    //     {
+    //         service = (const char *)memchr(host.c_str(), ':', host.size());
+    //         if (service)
+    //         {
+    //             if (!memchr(service + 1, ':', host.c_str() + host.size() - service - 1))
+    //             {
+    //                 node = host.substr(0, service - host.c_str());
+    //                 ++service;
+    //             }
+    //         }
+    //     }
+    //     // 默认处理
+    //     if (node.empty())
+    //     {
+    //         node = host;
+    //     }
+    //     // 调用 getaddrinfo 进行解析
+    //     int error = getaddrinfo(node.c_str(), service, &hints, &results);
+    //     if (error)
+    //     {
+    //         SYLAR_LOG_DEBUG(g_logger) << "Address::Lookup getaddrinfo(" << host << ", "
+    //                                   << family << ", " << type << ", " << protocol << ") err=" << error << " errstr="
+    //                                   << gai_strerror(error);
+    //         return false;
+    //     }
+    //     // 处理解析结果
+    //     next = results;
+    //     while (next)
+    //     {
+    //         result.push_back(Create(next->ai_addr, (socklen_t)next->ai_addrlen));
+    //         next = next->ai_next;
+    //     }
+    //     // 释放 addrinfo 结构
+    //     freeaddrinfo(results);
+    //     return !result.empty();
+    // }
+
     bool Address::Lookup(std::vector<Address::ptr> &result, const std::string &host,
                          int family, int type, int protocol)
     {
         addrinfo hints, *results, *next;
-        memset(&hints, 0, sizeof(addrinfo));
+        hints.ai_flags = 0;
         hints.ai_family = family;
         hints.ai_socktype = type;
         hints.ai_protocol = protocol;
+        hints.ai_addrlen = 0;
+        hints.ai_canonname = NULL;
+        hints.ai_addr = NULL;
+        hints.ai_next = NULL;
 
         std::string node;
-        const char *service = nullptr;
+        const char *service = NULL;
 
-        // 检查 IPv6 地址和服务
+        // 检查 ipv6address serivce
         if (!host.empty() && host[0] == '[')
         {
             const char *endipv6 = (const char *)memchr(host.c_str() + 1, ']', host.size() - 1);
             if (endipv6)
-            { // TODO check out of range
+            {
+                // TODO check out of range
                 if (*(endipv6 + 1) == ':')
                 {
                     service = endipv6 + 2;
@@ -90,7 +157,7 @@ namespace sylar
             }
         }
 
-        // 检查 node 和 service   // 解析 IPv4 地址和端口
+        // 检查 node serivce
         if (node.empty())
         {
             service = (const char *)memchr(host.c_str(), ':', host.size());
@@ -103,28 +170,28 @@ namespace sylar
                 }
             }
         }
-        // 默认处理
+
         if (node.empty())
         {
             node = host;
         }
-        // 调用 getaddrinfo 进行解析
         int error = getaddrinfo(node.c_str(), service, &hints, &results);
         if (error)
         {
-            SYLAR_LOG_DEBUG(g_logger) << "Address::Lookup getaddrinfo(" << host << ", "
-                                      << family << ", " << type << ", " << protocol << ") err=" << error << " errstr="
+            SYLAR_LOG_DEBUG(g_logger) << "Address::Lookup getaddress(" << host << ", "
+                                      << family << ", " << type << ") err=" << error << " errstr="
                                       << gai_strerror(error);
             return false;
         }
-        // 处理解析结果
+
         next = results;
         while (next)
         {
             result.push_back(Create(next->ai_addr, (socklen_t)next->ai_addrlen));
+            // SYLAR_LOG_INFO(g_logger) << ((sockaddr_in *)next->ai_addr)->sin_addr.s_addr;
             next = next->ai_next;
         }
-        // 释放 addrinfo 结构
+
         freeaddrinfo(results);
         return !result.empty();
     }
@@ -287,35 +354,39 @@ namespace sylar
 
     /// IPAddress  IP地址基类
     // 通过域名,IP,服务器名创建IPAddress
-    IPAddress::ptr Create(const char *address, uint16_t port)
+    IPAddress::ptr IPAddress::Create(const char *address, uint16_t port)
     {
-        addrinfo hints, *result;
-        memset(&hints, 0, sizeof(hints));
+        std::cout << "test" << std::endl;
+        addrinfo hints, *results;
+        memset(&hints, 0, sizeof(addrinfo));
+
         hints.ai_flags = AI_NUMERICHOST;
+        // hints.ai_flags = AI_CANONNAME;
         hints.ai_family = AF_UNSPEC;
-        int error = getaddrinfo(address, NULL, &hints, &result);
-        if (error == EAI_NONAME)
+
+        int error = getaddrinfo(address, NULL, &hints, &results);
+        if (error)
         {
+            SYLAR_LOG_DEBUG(g_logger) << "IPAddress::Create(" << address
+                                      << ", " << port << ") error=" << error
+                                      << " errno=" << errno << " errstr=" << strerror(errno);
             return nullptr;
         }
-        else if (error)
-        {
-            SYLAR_LOG_ERROR(g_logger) << "IPAddress::create(" << address << "," << port << ") error=" << error << "  strerror:" << strerror(errno);
-            return nullptr;
-        }
+
         try
         {
-            IPAddress::ptr rt = std::dynamic_pointer_cast<IPAddress>(Address::Create(result->ai_addr, (socklen_t)result->ai_addrlen));
-            if (rt)
+            IPAddress::ptr result = std::dynamic_pointer_cast<IPAddress>(
+                Address::Create(results->ai_addr, (socklen_t)results->ai_addrlen));
+            if (result)
             {
-                rt->setPort(port);
+                result->setPort(port);
             }
-            freeaddrinfo(result);
-            return rt;
+            freeaddrinfo(results);
+            return result;
         }
         catch (...)
         {
-            freeaddrinfo(result);
+            freeaddrinfo(results);
             return nullptr;
         }
     }
@@ -367,7 +438,7 @@ namespace sylar
 
         os << ((addr >> 24) & 0xff) << "."
            << ((addr >> 16) & 0xff) << "."
-           << ((addr >> 8) & 0xff)
+           << ((addr >> 8) & 0xff) << "."
            << (addr & 0xff);
         os << ":" << byteswapOnLittleEndian(m_addr.sin_port);
         return os;
