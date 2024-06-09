@@ -145,68 +145,283 @@ namespace sylar
 
     bool Socket::bind(const Address::ptr addr)
     {
+        if (SYLAR_UNLIKELY(!isInvaild()))
+        {
+            newSock();
+            if (SYLAR_UNLIKELY(!isInvaild()))
+            {
+                return false;
+            }
+        }
+        if (SYLAR_UNLIKELY(addr->getFamily() != m_family))
+        {
+            SYLAR_LOG_ERROR(g_logger) << "bind sock.family=" << m_family << "  ,sddr.family=" << addr->getFamily() << "  ,addr=" << addr->toString();
+            return false;
+        }
+
+        if (::bind(m_sock, addr->getAddr(), addr->getAddrLen()))
+        {
+            SYLAR_LOG_ERROR(g_logger) << "bind error,  errno=" << errno << ", strerror(errno):" << strerror(errno);
+            return false;
+        }
+        getLocalAddress(); // 初始本地地址
+        return true;
     }
 
-    bool Socket::connect(const Address::ptr addr, uint64_t timeout_ms = -1)
+    bool Socket::connect(const Address::ptr addr, uint64_t timeout_ms)
     {
+        if (SYLAR_UNLIKELY(!isInvaild()))
+        {
+            newSock();
+            if (SYLAR_UNLIKELY(!isInvaild()))
+            {
+                return false;
+            }
+        }
+        if (SYLAR_UNLIKELY(addr->getFamily() != m_family))
+        {
+            SYLAR_LOG_ERROR(g_logger) << "connect sock.family=" << m_family << "  ,sddr.family=" << addr->getFamily() << "  ,addr=" << addr->toString();
+            return false;
+        }
+
+        if (timeout_ms == (uint64_t)-1)
+        {
+            if (::connect(m_sock, addr->getAddr(), addr->getAddrLen()))
+            {
+                SYLAR_LOG_ERROR(g_logger) << "connect error, m_sock=" << m_sock << ",  errno=" << errno << ",  strerror(errno):" << strerror(errno);
+                close();
+                return false;
+            }
+        }
+        else
+        {
+            if (::connect_with_timeout(m_sock, addr->getAddr(), addr->getAddrLen(), timeout_ms))
+            {
+                SYLAR_LOG_ERROR(g_logger) << "connect error, m_sock=" << m_sock
+                                          << ",  timeout=" << timeout_ms
+                                          << ",  errno=" << errno << ",  strerror(errno):" << strerror(errno);
+                close();
+                return false;
+            }
+        }
+
+        m_isConnected = true;
+        getLocalAddress();
+        getRemoteAddress();
+
+        return true;
     }
 
-    bool Socket::listen(int backlog = SOMAXCONN)
+    bool Socket::listen(int backlog)
     {
+        if (SYLAR_UNLIKELY(!isInvaild()))
+        {
+            SYLAR_LOG_ERROR(g_logger) << "listen m_sock=" << m_sock << ",  errno=" << errno << ",  strerror(errno):" << strerror(errno);
+            return false;
+        }
+        if (SYLAR_UNLIKELY(::listen(m_sock, backlog) == 0))
+        {
+            SYLAR_LOG_ERROR(g_logger) << "listen m_sock=" << m_sock << ",  errno=" << errno << ",  strerror(errno):" << strerror(errno);
+            return true;
+        }
+        return false;
     }
 
     bool Socket::close()
     {
+        if (!m_isConnected && m_sock == -1)
+        {
+            return true;
+        }
+        m_isConnected = false;
+        if (m_sock != -1)
+        {
+            ::close(m_sock);
+            m_sock = -1;
+        }
+        return false;
     }
 
-    // 发送函数   ， sendTo是针对UDP使用
-    int Socket::send(const void *buffer, size_t length, int flags = 0)
+    // send 发送函数   ， sendTo是针对UDP使用
+    int Socket::send(const void *buffer, size_t length, int flags)
     {
+        if (isConnected())
+        {
+            return ::send(m_sock, buffer, length, flags);
+        }
+    }
+    /// 一次性发送多个缓冲区的数据
+    int Socket::send(const iovec *buffers, size_t length, int flags)
+    {
+        if (isConnected())
+        {
+            msghdr msg; // 设置msghdr结构
+            memset(&msg, 0, sizeof(msg));
+            msg.msg_iovlen = length;
+            msg.msg_iov = (iovec *)buffers; // 缓冲区数组
+
+            return ::sendmsg(m_sock, &msg, flags);
+        }
+        return -1;
     }
 
-    int Socket::send(const iovec *buffers, size_t length, int flags = 0)
+    int Socket::sendTo(const void *buffer, size_t length, const Address::ptr to, int flags)
     {
+        if (isConnected())
+        {
+            return ::sendto(m_sock, buffer, length, flags, to->getAddr(), to->getAddrLen());
+        }
+        return -1;
     }
 
-    int Socket::sendTo(const void *buffer, size_t length, const Address::ptr to, int flags = 0)
+    int Socket::sendTo(const iovec *buffers, size_t length, const Address::ptr to, int flags)
     {
-    }
+        if (isConnected())
+        {
+            msghdr msg; // 设置msghdr结构
+            memset(&msg, 0, sizeof(msg));
+            msg.msg_iov = (iovec *)buffers;
+            msg.msg_iovlen = length;
+            msg.msg_name = to->getAddr();
+            msg.msg_namelen = to->getAddrLen();
 
-    int Socket::sendTo(const iovec *buffers, size_t length, const Address::ptr to, int flags = 0)
-    {
+            return ::sendmsg(m_sock, &msg, flags);
+        }
+        return -1;
     }
 
     // 接收数据buffer函数,  同样recvFrom针对UDP
-    int Socket::recv(void *buffer, size_t length, int flags = 0)
+    int Socket::recv(void *buffer, size_t length, int flags)
     {
+        if (isConnected())
+        {
+            return ::recv(m_sock, buffer, length, flags);
+        }
+        return -1;
     }
 
-    int Socket::recv(iovec *buffers, size_t length, int flags = 0)
+    int Socket::recv(iovec *buffers, size_t length, int flags)
     {
+        if (isConnected())
+        {
+            msghdr msg; // 设置msghdr结构
+            memset(&msg, 0, sizeof(msg));
+            msg.msg_iovlen = length;
+            msg.msg_iov = (iovec *)buffers; // 缓冲区数组
+
+            return ::recvmsg(m_sock, &msg, flags);
+        }
+        return -1;
     }
 
-    int Socket::recvFrom(void *buffer, size_t length, Address::ptr from, int flags = 0)
+    int Socket::recvFrom(void *buffer, size_t length, Address::ptr from, int flags)
     {
+        if (isConnected())
+        {
+            socklen_t len = from->getAddrLen();
+            return ::recvfrom(m_sock, buffer, length, flags, from->getAddr(), &len);
+        }
+        return -1;
     }
 
-    int Socket::recvFrom(iovec *buffers, size_t length, Address::ptr from, int flags = 0)
+    int Socket::recvFrom(iovec *buffers, size_t length, Address::ptr from, int flags)
     {
+        if (isConnected())
+        {
+            msghdr msg; // 设置msghdr结构
+            memset(&msg, 0, sizeof(msg));
+            msg.msg_iovlen = length;
+            msg.msg_iov = (iovec *)buffers; // 缓冲区数组
+
+            msg.msg_name = from->getAddr();
+            msg.msg_namelen = from->getAddrLen();
+            return ::recvmsg(m_sock, &msg, flags);
+        }
+        return -1;
     }
 
     Address::ptr Socket::getRemoteAddress()
     {
+        if (m_remoteAddress)
+        {
+            return m_remoteAddress;
+        }
+        Address::ptr result;
+        switch (m_family)
+        {
+        case AF_INET:
+            result.reset(new IPv4Address());
+            break;
+        case AF_INET6:
+            result.reset(new IPv6Address());
+            break;
+        case AF_UNIX:
+            result.reset(new UnixAddress());
+        default:
+            result.reset(new UnknownAddress(m_family));
+            break;
+        }
+        socklen_t addrlen = result->getAddrLen();
+        // getpeername 获取与某个套接字关联的远程端点的地址。具体来说，它可以检索到当前连接的对端（即对等方）的地址信息
+        if (getpeername(m_sock, result->getAddr(), &addrlen))
+        {
+            SYLAR_LOG_ERROR(g_logger) << "getpeername m_sock=" << m_sock << ",  error=" << errno << ", strerr:" << strerror(errno);
+            return Address::ptr(new UnknownAddress(m_family));
+        }
+        if (m_family == AF_UNIX)
+        {
+            UnixAddress::ptr addr = std::dynamic_pointer_cast<UnixAddress>(result);
+            addr->setAddrLen(addrlen);
+        }
+        m_remoteAddress = result;
+        return m_remoteAddress;
     }
+
     Address::ptr Socket::getLocalAddress()
     {
+        if (m_localAddress)
+        {
+            return m_localAddress;
+        }
+        Address::ptr result;
+        switch (m_family)
+        {
+        case AF_INET:
+            result.reset(new IPv4Address());
+            break;
+        case AF_INET6:
+            result.reset(new IPv6Address());
+            break;
+        case AF_UNIX:
+            result.reset(new UnixAddress());
+        default:
+            result.reset(new UnknownAddress(m_family));
+            break;
+        }
+        socklen_t addrlen = result->getAddrLen();
+
+        if (getsockname(m_sock, result->getAddr(), &addrlen))
+        {
+            SYLAR_LOG_ERROR(g_logger) << "getsockname m_sock=" << m_sock << ",  error=" << errno << ", strerr:" << strerror(errno);
+            return Address::ptr(new UnknownAddress(m_family));
+        }
+        if (m_family == AF_UNIX)
+        {
+            UnixAddress::ptr addr = std::dynamic_pointer_cast<UnixAddress>(result);
+            addr->setAddrLen(addrlen);
+        }
+        m_localAddress = result;
+        return m_localAddress;
     }
 
     bool Socket::isInvaild() const
     {
+        return m_sock != -1;
     }
 
     int Socket::getError()
     {
-    }
+        }
 
     std::ostream &Socket::dump(std::ostream &os) const
     {
