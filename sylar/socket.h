@@ -14,6 +14,37 @@ namespace sylar
         using ptr = std::shared_ptr<Socket>;
         using weak_ptr = std::weak_ptr<Socket>;
 
+        enum Type
+        {
+            TCP = SOCK_STREAM, // tcp type
+            UDP = SOCK_DGRAM,  // udp type
+        };
+
+        enum Family
+        {
+            IPv4 = AF_INET, /// IPv4 socket
+            /// IPv6 socket
+            IPv6 = AF_INET6,
+            /// Unix socket
+            UNIX = AF_UNIX,
+        };
+
+        // 通过Address 创建套接字
+        static Socket::ptr CreateTCP(Address::ptr address);
+        static Socket::ptr CreateUDP(Address::ptr address);
+
+        // 直接创建TCP、UDP套接字
+        static Socket::ptr CreateTCPSocket();
+        static Socket::ptr CreateUDPSocket();
+
+        // 直接创建TCP、UDP套接字  => IPv6的套接字
+        static Socket::ptr CreateTCPSocket6();
+        static Socket::ptr CreateUDPSocket6();
+
+        // 创建unix tcp、udp套接字
+        static Socket::ptr CreateUnixTCPSocket();
+        static Socket::ptr CreateUnixUDPSocket();
+
         Socket(int family, int type, int protocol);
         ~Socket();
 

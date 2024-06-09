@@ -9,7 +9,9 @@
 #include "macro.h"
 #include "fiber.h"
 #include "scheduler.h"
+#include "iomanager.h"
 #include "hook.h"
 #include "address.h"
-
+#include "endian.h"
+#include "socket.h"
 #endif

@@ -19,6 +19,54 @@ namespace sylar
         this->close();
     }
 
+    // 通过Address 创建套接字
+    Socket::ptr Socket::CreateTCP(Address::ptr address)
+    {
+        Socket::ptr sock(new Socket(address->getFamily(), Type::TCP, 0));
+        return sock;
+    }
+    Socket::ptr Socket::CreateUDP(Address::ptr address)
+    {
+        Socket::ptr sock(new Socket(address->getFamily(), Type::UDP, 0));
+        return sock;
+    }
+
+    // 直接创建TCP、UDP套接字
+    Socket::ptr Socket::CreateTCPSocket()
+    {
+        Socket::ptr sock(new Socket(Family::IPv4, Type::TCP, 0));
+        return sock;
+    }
+    Socket::ptr Socket::CreateUDPSocket()
+    {
+        Socket::ptr sock(new Socket(Family::IPv4, Type::UDP, 0));
+        return sock;
+    }
+
+    // 直接创建TCP、UDP套接字  => IPv6的套接字
+    Socket::ptr Socket::CreateTCPSocket6()
+    {
+        Socket::ptr sock(new Socket(Family::IPv6, Type::TCP, 0));
+        return sock;
+    }
+    Socket::ptr Socket::CreateUDPSocket6()
+    {
+        Socket::ptr sock(new Socket(Family::IPv6, Type::UDP, 0));
+        return sock;
+    }
+
+    // 创建unix tcp、udp套接字
+    Socket::ptr Socket::CreateUnixTCPSocket()
+    {
+        Socket::ptr sock(new Socket(Family::UNIX, Type::TCP, 0));
+        return sock;
+    }
+    Socket::ptr Socket::CreateUnixUDPSocket()
+    {
+        Socket::ptr sock(new Socket(Family::UNIX, Type::UDP, 0));
+        return sock;
+    }
+
     int Socket::getSendTimeout()
     {
         FdCtx::ptr ctx = FdMgr::GetInstance()->get(m_sock);
@@ -298,6 +346,7 @@ namespace sylar
     {
         if (isConnected())
         {
+            std::cout << &buffer << std::endl;
             return ::recv(m_sock, buffer, length, flags);
         }
         return -1;
