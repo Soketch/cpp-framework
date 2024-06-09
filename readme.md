@@ -495,6 +495,15 @@ retry:
 // 抽象出Address 实现在到配置文件中可以配置多种"地址"
 ```
 
+```
+封装Socket
+    ==> create 、socket、 bind、 listen、 accept、 connect、 send、 recv等
+```
+##### 序列化ByteArray
+```
+write(int 、float、int64_t ....)
+read(int 、float、int64_t ....)
+```
 ### http协议开发
 ### 分布协议
 ### 推荐系统
