@@ -30,6 +30,7 @@ set(LIB_SRC
     sylar/hook.cc
     sylar/fd_manager.cc
     sylar/address.cc
+    sylar/socket.cc
     )
 
 add_library(sylar SHARED ${LIB_SRC})

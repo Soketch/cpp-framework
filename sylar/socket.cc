@@ -4,6 +4,8 @@
 #include "hook.h"
 #include <limits.h>
 #include "macro.h"
+#include "iomanager.h"
+
 namespace sylar
 {
     static Logger::ptr g_logger = SYLAR_LOG_NAME("system");
@@ -70,7 +72,7 @@ namespace sylar
         return true;
     }
 
-    bool Socket::setOption(int level, int option, void *result, size_t *len)
+    bool Socket::setOption(int level, int option, const void *result, socklen_t len)
     {
         int rt = setsockopt(m_sock, level, option, result, (socklen_t)len);
 
@@ -249,6 +251,7 @@ namespace sylar
         {
             return ::send(m_sock, buffer, length, flags);
         }
+        return -1;
     }
     /// 一次性发送多个缓冲区的数据
     int Socket::send(const iovec *buffers, size_t length, int flags)
@@ -421,22 +424,50 @@ namespace sylar
 
     int Socket::getError()
     {
+        int error = 0;
+        size_t len = sizeof(error);
+        if (!getOption(SOL_SOCKET, SO_ERROR, &error, &len))
+        {
+            return -1;
         }
+        return error;
+    }
 
+    // 输出相关sock 信息
     std::ostream &Socket::dump(std::ostream &os) const
     {
+        os << "[socket sock=" << m_sock
+           << " is_connected=" << m_isConnected
+           << " family=" << m_family
+           << " type=" << m_type
+           << " protocol=" << m_protocol;
+        if (m_localAddress)
+        {
+            os << "localAddress=" << m_localAddress->toString();
+        }
+        if (m_remoteAddress)
+        {
+            os << "remoteAddress=" << m_remoteAddress->toString();
+        }
+
+        os << "]";
+        return os;
     }
 
     bool Socket::CancelRead()
     {
+        return IOManager::GetThis()->cancelEvent(m_sock, IOManager::Event::READ);
     }
     bool Socket::CancelWrite()
     {
+        return IOManager::GetThis()->cancelEvent(m_sock, IOManager::Event::WRITE);
     }
     bool Socket::CancelAccept()
     {
+        return IOManager::GetThis()->cancelEvent(m_sock, IOManager::Event::READ);
     }
     bool Socket::CancelAll()
     {
+        return IOManager::GetThis()->cancelAll(m_sock);
     }
 }

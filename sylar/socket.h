@@ -33,7 +33,7 @@ namespace sylar
             return getOption(level, option, &result, &length);
         }
 
-        bool setOption(int level, int option, void *result, size_t *len);
+        bool setOption(int level, int option, const void *result, socklen_t len);
         template <class T>
         bool setOption(int level, int option, const T &value)
         {
