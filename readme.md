@@ -504,6 +504,76 @@ retry:
 write(int 、float、int64_t ....)
 read(int 、float、int64_t ....)
 ```
+```cpp
+// 关于TLV协议压缩整型
+//  ==>  7bit压缩法
+
+// Google Protocol Buffers（protobuf）就使用了Varint编码来压缩整数值
+
+// 有符号转无符号
+    // 格式转化
+    static uint32_t EncodeZigzag32(const int32_t &v)
+    {
+        if (v < 0)
+        {
+            return ((uint32_t)(-v)) * 2 - 1;
+        }
+        else
+        {
+            return v * 2;
+        }
+    }
+
+    // 可变长度的int/uint类型的数据 ：： 压缩
+    // 压缩算法
+    void ByteArray::writeInt32(int32_t value)
+    {
+        writeUint32(EncodeZigzag32(value));
+    }
+    void ByteArray::writeUint32(uint32_t value)
+    {
+        uint8_t tmp[5];
+        uint8_t i = 0;
+        while (value >= 0x80)
+        {
+            tmp[i++] = (value & 0x7f) | 0x80;
+            value >>= 7;
+        }
+        tmp[i++] = value;
+        write(tmp, i);
+    }
+
+// 格式转化  有符号 转 无符号
+
+/*
+原始有符号整数的二进制表示：
+-5： 11111011
+10： 00001010
+-3： 11111101
+25： 00011001
+50： 00110010
+80： 01010000
+-2： 11111110
+0： 00000000
+15： 00001111
+
+经过Zigzag编码后的无符号整数的二进制表示：
+9： 00001001
+20： 00010100
+5： 00000101
+50： 00110010
+100： 01100100
+160： 10100000
+3： 00000011
+0： 00000000
+30： 00011110
+
+Zigzag编码将负数映射为大的奇数，而正数映射为大的偶数，这样可以更有效地利用比特位，减少所需的存储空间。
+
+解码中只需判断是奇数还是偶数，简单解码即可。
+Zigzag编码的解码过程相对简单，因为只需要检查无符号整数的最低位（最后一位）即可。
+*/
+```
 ### http协议开发
 ### 分布协议
 ### 推荐系统
