@@ -101,13 +101,13 @@ namespace sylar
         void clear();
 
         void write(const void *buf, size_t size);
-        void read(char *buf, size_t size);
+        void read(void *buf, size_t size);
 
         size_t getPosition() const { return m_position; }
-        void setPosition(size_t v) { m_position = v; }
+        void setPosition(size_t v);
 
         bool writeToFile(const std::string &name) const;
-        void readFromFile(const std::string &name);
+        bool readFromFile(const std::string &name);
 
         size_t getBaseSize() const { return m_baseSize; }
 
