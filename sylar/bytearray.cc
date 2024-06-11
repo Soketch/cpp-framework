@@ -577,6 +577,41 @@ namespace sylar
     /// @brief 扩容ByteArray,使其可以容纳size个数据(如果原本可以可以容纳,则不扩容)
     void ByteArray::addCapacity(size_t size)
     {
-    }
+        if (size == 0)
+        {
+            return;
+        }
 
+        int old_cap = getCapacity();
+        if (old_cap >= size)
+        {
+            return;
+        }
+
+        size -= old_cap;
+        size_t count = (size / m_baseSize) + (((size % m_baseSize) > old_cap) ? 1 : 0); // 新增的容量是节点容量的多少倍就加多少个，
+        //                                                                              整除剩余的和节点还未使用的容量（剩余的）比较，超出就再增加一个节点
+        Node *tmp = m_root;
+        while (tmp->next)
+        {
+            tmp = tmp->next; // 找到末尾节点
+        }
+
+        Node *first = nullptr;
+        for (size_t i = 0; i < count; ++i)
+        {
+            tmp->next = new Node(m_baseSize);
+            if (first == nullptr)
+            {
+                first = tmp->next;
+            }
+            tmp = tmp->next;
+            m_capacity += m_baseSize;
+        }
+
+        if (old_cap == 0)
+        {
+            m_cur = first;
+        }
+    }
 }
