@@ -574,6 +574,72 @@ Zigzag编码将负数映射为大的奇数，而正数映射为大的偶数，�
 Zigzag编码的解码过程相对简单，因为只需要检查无符号整数的最低位（最后一位）即可。
 */
 ```
+
 ### http协议开发
+```
+协议封装 -- http协议封装
+HTTP/1.1 针对API
+        |
+        +-------- 解析URL, 解析参数，结构体数据
+
+封装两个主要结构体  1：HttpRequest
+                  2: HttpResponse
+
+GET / HTTP/1.1
+Host: www.skgfweb.top
+
+HTTP/1.0 200 OK
+Pragma: no-cache
+Content-Type: text/html
+Content-Length: 14988
+Connection: close
+
+```
+
+```cpp
+解析一个url:如下
+
+url: http://www.skgfweb.top:80/page/xxx?id=10&v=20#fr
+            http  ==> scheme 协议
+ www.skgfweb.top  ==> host 主机
+              80  ==> port 端口
+       /page/xxx  ==> path 路径 
+      id=10&v=20  ==> query/param 查询参数
+              fr  ==> fragment 片段
+
+协议（scheme）: 指定使用的协议类型，如 http, https, ftp 等。
+主机（host）: 通常是域名或IP地址，表示服务器的地址。
+端口（port）: 服务器的端口号，用于指定网络端口；默认的HTTP端口是80，如果是HTTPS，则默认端口是443。
+路径（path）: 服务器上的特定资源的路径。
+查询参数（query/parameter）: 在路径后面，用 ? 开始，包含参数键值对，用 & 分隔多个参数。
+片段（fragment）: 在 # 之后的部分，用于指向资源内的某个部分，通常用于网页中的锚点。
+```
+
+<b>http协议报文格式： 
+<font color="skyBlue"><br>
+请求行 - 通用信息头 - 响应头 - 实体头 - 报文主体
+</font>
+</b>
+
+<b>
+http响应-状态消息：
+<font color="skyBlue"><br>
+1XX:信息（100 continue, 101服务器转换协议）<br>
+2XX:成功（200 ok ,  201 Created ,  202 Accepted）<br>
+3XX:重定向<br>
+4XX:客户端错误<br>
+5XX:服务器错误<br>
+</font>
+</b>
+<br>
+
+```
+封装 States codes
+封装 Methods
+
+```
+
+
+
 ### 分布协议
 ### 推荐系统
