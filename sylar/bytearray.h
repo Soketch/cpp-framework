@@ -3,6 +3,10 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+#include <stdint.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 /**
  * @brief 二进制数组,提供基础类型的序列化,反序列化功能
@@ -81,9 +85,9 @@ namespace sylar
         uint64_t readFuint64();
 
         int32_t readInt32();
-        int32_t readUint32();
+        uint32_t readUint32();
         int64_t readInt64();
-        int64_t readUint64();
+        uint64_t readUint64();
 
         float readFloat();
         double readDouble();
@@ -102,6 +106,7 @@ namespace sylar
 
         void write(const void *buf, size_t size);
         void read(void *buf, size_t size);
+        void read(void *buf, size_t size, size_t position) const;
 
         size_t getPosition() const { return m_position; }
         void setPosition(size_t v);
@@ -117,6 +122,39 @@ namespace sylar
         // 小端 - 网络字节序
         bool isLittleEndian() const;
         void setLittleEndian(bool v);
+
+        // 把当前所有内存块 转成一个string
+        std::string toString() const;
+        // 转成十六进制文本
+        std::string toHexString() const;
+
+        /**
+         * @brief 获取可读取的缓存,保存成iovec数组
+         * @param[out] buffers 保存可读取数据的iovec数组
+         * @param[in] len 读取数据的长度,如果len > getReadSize() 则 len = getReadSize()
+         * @return 返回实际数据的长度
+         */
+        uint64_t getReadBuffers(std::vector<iovec> &buffers, uint64_t len = ~0ull) const;
+
+        /**
+         * @brief 获取可读取的缓存,保存成iovec数组,从position位置开始
+         * @param[out] buffers 保存可读取数据的iovec数组
+         * @param[in] len 读取数据的长度,如果len > getReadSize() 则 len = getReadSize()
+         * @param[in] position 读取数据的位置
+         * @return 返回实际数据的长度
+         */
+        uint64_t getReadBuffers(std::vector<iovec> &buffers, uint64_t len, uint64_t position) const;
+
+        /**
+         * @brief 获取可写入的缓存,保存成iovec数组
+         * @param[out] buffers 保存可写入的内存的iovec数组
+         * @param[in] len 写入的长度
+         * @return 返回实际的长度
+         * @post 如果(m_position + len) > m_capacity 则 m_capacity扩容N个节点以容纳len长度
+         */
+        uint64_t getWriteBuffers(std::vector<iovec> &buffers, uint64_t len);
+
+        size_t getSize() const { return m_size; }
 
     private:
         /// @brief 扩容ByteArray,使其可以容纳size个数据(如果原本可以可以容纳,则不扩容)

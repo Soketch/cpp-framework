@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/bin/test",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/test_bytearray.cc",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
