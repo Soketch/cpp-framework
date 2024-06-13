@@ -1,4 +1,4 @@
-#include "http/http.h"
+#include "sylar/http/http.h"
 
 namespace sylar
 {
@@ -35,6 +35,8 @@ namespace sylar
 
         static const char *s_method_string[] = {
 #define XX(num, name, string) #string,
+            HTTP_METHOD_MAP(XX)
+#undef XX
         };
 
         /// @brief Http方法枚举参数 转 字符串指针
@@ -158,7 +160,7 @@ namespace sylar
          * @param[out] val 如果存在,val非空则赋值
          * @return 是否存在
          */
-        bool HttpRequest::hasHeader(const std::string &key, std::string *val = nullptr)
+        bool HttpRequest::hasHeader(const std::string &key, std::string *val)
         {
             auto it = m_headers.find(key);
             if (it == m_headers.end())
@@ -172,7 +174,7 @@ namespace sylar
             return true;
         }
         // 判断HTTP请求的 请求参数param是否存在
-        bool HttpRequest::hasParam(const std::string &key, std::string *val = nullptr)
+        bool HttpRequest::hasParam(const std::string &key, std::string *val)
         {
             auto it = m_params.find(key);
             if (it == m_params.end())
@@ -186,7 +188,7 @@ namespace sylar
             return true;
         }
         // 判断HTTP请求的 cookie参数是否存在
-        bool HttpRequest::hasCookie(const std::string &key, std::string *val = nullptr)
+        bool HttpRequest::hasCookie(const std::string &key, std::string *val)
         {
             auto it = m_cookies.find(key);
             if (it == m_cookies.end())
@@ -198,6 +200,47 @@ namespace sylar
                 *val = it->second;
             }
             return true;
+        }
+
+        // 输出到文本  -->数据 转成协议文本
+        std::ostream &HttpRequest::dump(std::ostream &os)
+        {
+            // GET /uri HTTP/1.1
+            // Host: www.skgfweb.top
+            //
+            //
+            os << HttpMethodToString(m_method) << " "
+               << m_path
+               << (m_query.empty() ? "" : "?")
+               << m_query
+               << (m_fragment.empty() ? "" : "#")
+               << m_fragment
+               << " HTTP/"
+               << ((uint32_t)(m_version >> 4)) // 主版本号
+               << "."
+               << ((uint32_t)(m_version & 0x0f)) // 次版本号
+               << "\r\n";
+
+            os << "connection: " << (m_close ? "close" : "keep-alive") << "\r\n";
+            // header部分
+            for (auto &i : m_headers)
+            {
+                if (strcasecmp(i.first.c_str(), "connection") == 0)
+                {
+                    continue;
+                }
+                os << i.first << ":" << i.second << "\r\n";
+            }
+            if (!m_body.empty())
+            {
+                os << "connection-length: " << m_body.size() << "\r\n\r\n"
+                   << m_body;
+            }
+            else
+            {
+                os << "\r\n";
+            }
+            return os;
         }
     }
 }

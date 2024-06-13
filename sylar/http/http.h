@@ -312,6 +312,9 @@ namespace sylar
                 return getAs(m_headers, key, def);
             }
 
+            // 输出到文本  --> 转成协议文本
+            std::ostream &dump(std::ostream &os);
+
         private:
             // 定义的通用模板方法
             template <class T>
