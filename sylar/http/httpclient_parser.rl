@@ -38,12 +38,13 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "dbg.h"
+#include <cerrno>
+// #include "dbg.h"
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
 #define PTR_TO(F) (buffer + parser->F)
-
+#define check(A, M, ...) if(!(A)) { /**log_err(M, ##__VA_ARGS__);**/ errno=0; goto error; }
 
 /** machine **/
 %%{

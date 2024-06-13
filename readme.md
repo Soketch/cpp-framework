@@ -263,7 +263,7 @@ Thread -> main_fiber <------> sub_fiber
     |        1 - N  一对多
     |
     +- Thread   -->  Fiber
-    |        1 - N  线程与协程也是一个一对多的关系
+    |        1 - M  线程与协程也是一个一对多的关系
     |
     |
     |
@@ -641,16 +641,30 @@ http响应-状态消息：
 
 ```
 
-regel  mongrel2
+
 http_parser  ==> http解析
+>>有限状态机   状态解析  http解析
+
+>> **安装 regel**  
+apt install ragel
+
+git clone mongrel2
 ```yaml
 github:  https://github.com/mongrel2/mongrel2.git
 
 /mongrel2/src/http11/http*    此目录下共7个文件
 使用三个头文件（.h）,两个ragel文件（.rl）
-在上面目录中两个c文件就是ragel生成的（不必要复制使用）  
+在上面目录中两个c文件就是ragel生成的（可以不必要复制使用）  
 ```
 
+
+**ragel生成文件执行命令**
+```cpp
+ragel -G2 -C http11_parser.rl -o http11_parser.cc
+ragel -G2 -C httpclient_parser.rl -o httpclient_parser.cc
+
+ragel帮助命令 ragel --help
+```
 
 
 ### 分布协议

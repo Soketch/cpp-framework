@@ -1,10 +1,10 @@
-
 #ifndef http11_parser_h
 #define http11_parser_h
 
-#include <http11/http11_common.h>
+#include "sylar/http/http11_common.h"
 
-typedef struct http_parser { 
+typedef struct http_parser
+{
   int cs;
   size_t body_start;
   int content_len;
@@ -27,7 +27,7 @@ typedef struct http_parser {
   element_cb query_string;
   element_cb http_version;
   element_cb header_done;
-  
+
 } http_parser;
 
 int http_parser_init(http_parser *parser);
@@ -36,6 +36,6 @@ size_t http_parser_execute(http_parser *parser, const char *data, size_t len, si
 int http_parser_has_error(http_parser *parser);
 int http_parser_is_finished(http_parser *parser);
 
-#define http_parser_nread(parser) (parser)->nread 
+#define http_parser_nread(parser) (parser)->nread
 
 #endif

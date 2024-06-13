@@ -2,23 +2,23 @@
  *
  * Copyright (c) 2010, Zed A. Shaw and Mongrel2 Project Contributors.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
- * 
+ *
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- * 
+ *
  *     * Neither the name of the Mongrel2 Project, Zed A. Shaw, nor the names
  *       of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written
  *       permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -35,9 +35,10 @@
 #ifndef httpclient_parser_h
 #define httpclient_parser_h
 
-#include <http11/http11_common.h>
+#include "sylar/http/http11_common.h"
 
-typedef struct httpclient_parser { 
+typedef struct httpclient_parser
+{
   int cs;
   size_t body_start;
   int content_len;
@@ -59,8 +60,7 @@ typedef struct httpclient_parser {
   element_cb http_version;
   element_cb header_done;
   element_cb last_chunk;
-  
-  
+
 } httpclient_parser;
 
 int httpclient_parser_init(httpclient_parser *parser);
@@ -69,6 +69,6 @@ int httpclient_parser_execute(httpclient_parser *parser, const char *data, size_
 int httpclient_parser_has_error(httpclient_parser *parser);
 int httpclient_parser_is_finished(httpclient_parser *parser);
 
-#define httpclient_parser_nread(parser) (parser)->nread 
+#define httpclient_parser_nread(parser) (parser)->nread
 
 #endif
