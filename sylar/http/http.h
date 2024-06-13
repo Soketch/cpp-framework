@@ -157,6 +157,67 @@ namespace sylar
             bool operator()(const std::string &lhs, const std::string &rhs) const;
         };
 
+        // 定义的通用模板方法
+        /**
+         * @brief 获取Map中的key值,并转成对应类型,返回是否成功
+         * @param[in] m Map数据结构
+         * @param[in] key 关键字
+         * @param[out] val 保存转换后的值
+         * @param[in] def 默认值
+         * @return
+         *      @retval true 转换成功, val 为对应的值
+         *      @retval false 不存在或者转换失败 val = def
+         */
+        template <class MapType, class T>
+        bool checkGetAs(const MapType &m, const std::string &key, T &val, const T &def = T())
+        {
+            std::string str;
+            auto it = m.find(key);
+            if (it == m.end())
+            {
+                val = def;
+                return false;
+            }
+            try
+            {
+                val = boost::lexical_cast<T>(it->second);
+                return true;
+            }
+            catch (...)
+            {
+                val = def;
+            }
+            return false;
+        }
+        /**
+         * @brief 获取Map中的key值,并转成对应类型
+         * @param[in] m Map数据结构
+         * @param[in] key 关键字
+         * @param[in] def 默认值
+         * @return 如果存在且转换成功返回对应的值,否则返回默认值
+         */
+        template <class MapType, class T>
+        T getAs(const MapType &m, const std::string &key, T &val, const T &def = T())
+        {
+            std::string str;
+            auto it = m.find(key);
+            if (it == m.end())
+            {
+                return def;
+            }
+            try
+            {
+                return boost::lexical_cast<T>(it->second);
+            }
+            catch (...)
+            {
+            }
+            return def;
+        }
+
+        // HttpResponse响应类声明
+        class HttpResponse;
+
         // Http的请求类
         class HttpRequest
         {
@@ -177,8 +238,8 @@ namespace sylar
             /// @brief 获取http协议版本
             uint8_t getVersion() const { return m_version; }
 
-            /// @brief 获取http状态
-            HttpStatus getStatus() const { return m_status; }
+            // /// @brief 获取http状态  --delete
+            // HttpStatus getStatus() const { return m_status; }  delete
 
             /// @brief 获取path,请求路径
             const std::string &getPath() const { return m_path; }
@@ -193,11 +254,14 @@ namespace sylar
             const MapType &getParams() const { return m_params; }
             const MapType &getCookies() const { return m_cookies; }
 
+            bool isClose() const { return m_close; }
+            void setClose(bool v) { m_close = v; }
+
             /// @brief 设置HTTP的方法Method
             void setMethod(HttpMethod v) { m_method = v; }
 
-            /// @brief 设置Http的状态status
-            void setStatus(HttpStatus v) { m_status = v; }
+            /// @brief 设置Http的状态status  -- delete
+            // void setStatus(HttpStatus v) { m_status = v; }  -- delete
 
             /// @brief 设置http的版本version
             void setVersion(uint8_t v) { m_version = v; }
@@ -316,57 +380,9 @@ namespace sylar
             std::ostream &dump(std::ostream &os);
 
         private:
-            // 定义的通用模板方法
-            template <class T>
-            bool checkGetAs(const MapType &m, const std::string &key, T &val, const T &def = T())
-            {
-                std::string str;
-                auto it = m.find(key);
-                if (it == m.end())
-                {
-                    val = def;
-                    return false;
-                }
-                try
-                {
-                    val = boost::lexical_cast<T>(it->second);
-                    return true;
-                }
-                catch (...)
-                {
-                    val = def;
-                }
-                return false;
-            }
-            /**
-             * @brief 获取Map中的key值,并转成对应类型
-             * @param[in] m Map数据结构
-             * @param[in] key 关键字
-             * @param[in] def 默认值
-             * @return 如果存在且转换成功返回对应的值,否则返回默认值
-             */
-            template <class T>
-            T getAs(const MapType &m, const std::string &key, T &val, const T &def = T())
-            {
-                std::string str;
-                auto it = m.find(key);
-                if (it == m.end())
-                {
-                    return def;
-                }
-                try
-                {
-                    return boost::lexical_cast<T>(it->second);
-                }
-                catch (...)
-                {
-                }
-                return def;
-            }
-
-        private:
             HttpMethod m_method;
-            HttpStatus m_status;
+            // HttpStatus m_status;  // delete
+
             //   HTTP版本
             uint8_t m_version; // ==> http1.0 (0x10)   http1.1 (0x11)
             //   是否自动关闭
@@ -386,6 +402,81 @@ namespace sylar
             MapType m_params;
             // 请求cookie的map
             MapType m_cookies;
+        };
+
+        // 封装HttpResponse响应类
+        class HttpResponse
+        {
+        public:
+            using ptr = std::shared_ptr<HttpResponse>;
+
+            /// @brief using定义 MAP结构
+            using MapType = std::map<std::string, std::string, CaseInsensitiveLess>;
+
+            HttpResponse(uint8_t version = 0x11, bool close = true);
+
+            HttpStatus getStatus() const { return m_status; }
+            void setStatus(HttpStatus v) { m_status = v; }
+
+            uint8_t getVersion() const { return m_version; }
+            void setVersion(uint8_t v) { m_version = v; }
+
+            const std::string &getReason() const { return m_reason; }
+            void setReason(const std::string v) { m_reason = v; }
+
+            const std::string &getBody() const { return m_body; }
+            void setBody(const std::string v) { m_body = v; }
+
+            const MapType &getHeaders() const { return m_headers; }
+            void setHeaders(const MapType &v) { m_headers = v; }
+
+            bool isClose() const { return m_close; }
+            void setClose(bool v) { m_close = v; }
+
+            std::string getHeader(const std::string &key, const std::string &def = "");
+            void setHeader(const std::string &key, const std::string &val);
+            void delHeader(const std::string &key);
+
+            /**
+             * @brief 检查并获取HTTP请求的头部参数
+             * @tparam T 转换类型
+             * @param[in] key 关键字
+             * @param[out] val 返回值
+             * @param[in] def 默认值
+             * @return 如果存在且转换成功返回true,否则失败val=def
+             */
+            template <class T>
+            bool checkGetHeaderAs(const std::string &key, T &val, const T &def = T())
+            {
+                return checkGetAs(m_headers, key, val, def);
+            }
+            /**
+             * @brief 获取HTTP请求的头部参数
+             * @tparam T 转换类型
+             * @param[in] key 关键字
+             * @param[in] def 默认值
+             * @return 如果存在且转换成功返回对应的值,否则返回def
+             */
+            template <class T>
+            T getHeaderAs(const std::string &key, const T &def = T())
+            {
+                return getAs(m_headers, key, def);
+            }
+
+        private:
+            /// 响应状态
+            HttpStatus m_status;
+            // 版本 http/1.1
+            uint8_t m_version;
+            // 是否自动关闭
+            bool m_close; // keep-alive
+
+            std::string m_body;   // 响应消息体
+            std::string m_reason; // 响应原因
+
+            MapType m_headers; // 响应头map
+
+            std::vector<std::string> m_cookies;
         };
     }
 }

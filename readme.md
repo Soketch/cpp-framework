@@ -584,7 +584,8 @@ HTTP/1.1 针对API
 
 封装两个主要结构体  1：HttpRequest
                   2: HttpResponse
-
+```
+```cpp
 GET / HTTP/1.1
 Host: www.skgfweb.top
 
@@ -594,9 +595,8 @@ Content-Type: text/html
 Content-Length: 14988
 Connection: close
 
-```
+<-----------------------------分割-------------------------------->
 
-```cpp
 解析一个url:如下
 
 url: http://www.skgfweb.top:80/page/xxx?id=10&v=20#fr
@@ -614,6 +614,8 @@ url: http://www.skgfweb.top:80/page/xxx?id=10&v=20#fr
 查询参数（query/parameter）: 在路径后面，用 ? 开始，包含参数键值对，用 & 分隔多个参数。
 片段（fragment）: 在 # 之后的部分，用于指向资源内的某个部分，通常用于网页中的锚点。
 ```
+
+
 
 <b>http协议报文格式： 
 <font color="skyBlue"><br>
@@ -638,6 +640,7 @@ http响应-状态消息：
 封装 Methods
 
 ```
+
 
 
 
