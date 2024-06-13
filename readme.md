@@ -642,9 +642,14 @@ http响应-状态消息：
 ```
 
 regel  mongrel2
-
 http_parser  ==> http解析
+```yaml
+github:  https://github.com/mongrel2/mongrel2.git
 
+/mongrel2/src/http11/http*    此目录下共7个文件
+使用三个头文件（.h）,两个ragel文件（.rl）
+在上面目录中两个c文件就是ragel生成的（不必要复制使用）  
+```
 
 
 
