@@ -463,6 +463,8 @@ namespace sylar
                 return getAs(m_headers, key, def);
             }
 
+            std::ostream &dump(std::ostream &os);
+
         private:
             /// 响应状态
             HttpStatus m_status;
