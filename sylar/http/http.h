@@ -125,15 +125,15 @@ namespace sylar
 
         enum class HttpMethod // http方法枚举
         {
-#define XX(num, name, string) HTTP_##name = num,
+#define XX(num, name, string) name = num,
             HTTP_METHOD_MAP(XX)
 #undef XX
-                HTTP_INVAILD_METHOD = 255 // 无效method
+                INVAILD_METHOD // 无效method
         };
 
         enum class HttpStatus // http状态枚举
         {
-#define XX(code, name, desc) HTTP_##name = code,
+#define XX(code, name, desc) name = code,
             HTTP_STATUS_MAP(XX)
 #undef XX
         };
@@ -264,17 +264,58 @@ namespace sylar
             // 判断HTTP请求的 cookie参数是否存在
             bool hasCookie(const std::string &key, std::string *val = nullptr);
 
-        private:
-            // 定义一个通用模板方法
             /**
-             * @brief 获取Map中的key值,并转成对应类型
-             * @param[in] m Map数据结构
+             * @brief 检查并获取HTTP请求的头部参数
+             * @tparam T 转换类型
              * @param[in] key 关键字
+             * @param[out] val 返回值
              * @param[in] def 默认值
-             * @return 如果存在且转换成功返回对应的值,否则返回默认值
+             * @return 如果存在且转换成功返回true,否则失败val=def
              */
             template <class T>
-            bool getAs(const MapType &m, const std::string &key, T &val, const T &def = T())
+            bool checkGetHeaderAs(const std::string &key, T &val, const T &def = T())
+            {
+                return checkGetAs(m_headers, key, val, def);
+            }
+            /**
+             * @brief 获取HTTP请求的头部参数
+             * @tparam T 转换类型
+             * @param[in] key 关键字
+             * @param[in] def 默认值
+             * @return 如果存在且转换成功返回对应的值,否则返回def
+             */
+            template <class T>
+            T getHeaderAs(const std::string &key, const T &def = T())
+            {
+                return getAs(m_headers, key, def);
+            }
+
+            template <class T>
+            bool checkGetParamAs(const std::string &key, T &val, const T &def = T())
+            {
+                return checkGetAs(m_params, key, val, def);
+            }
+            template <class T>
+            T getParamAs(const std::string &key, const T &def = T())
+            {
+                return getAs(m_headers, key, def);
+            }
+
+            template <class T>
+            bool checkGetCookieAs(const std::string &key, T &val, const T &def = T())
+            {
+                return checkGetAs(m_cookies, key, val, def);
+            }
+            template <class T>
+            T getCookieAs(const std::string &key, const T &def = T())
+            {
+                return getAs(m_headers, key, def);
+            }
+
+        private:
+            // 定义的通用模板方法
+            template <class T>
+            bool checkGetAs(const MapType &m, const std::string &key, T &val, const T &def = T())
             {
                 std::string str;
                 auto it = m.find(key);
@@ -294,23 +335,30 @@ namespace sylar
                 }
                 return false;
             }
-
+            /**
+             * @brief 获取Map中的key值,并转成对应类型
+             * @param[in] m Map数据结构
+             * @param[in] key 关键字
+             * @param[in] def 默认值
+             * @return 如果存在且转换成功返回对应的值,否则返回默认值
+             */
             template <class T>
-            bool getHeaderAs(const std::string &key, const T &def = T())
+            T getAs(const MapType &m, const std::string &key, T &val, const T &def = T())
             {
-                return getAs(m_headers, key, def);
-            }
-
-            template <class T>
-            bool getParamAs(const std::string &key, const T &def = T())
-            {
-                return getAs(m_headers, key, def);
-            }
-
-            template <class T>
-            bool getCookieAs(const std::string &key, const T &def = T())
-            {
-                return getAs(m_headers, key, def);
+                std::string str;
+                auto it = m.find(key);
+                if (it == m.end())
+                {
+                    return def;
+                }
+                try
+                {
+                    return boost::lexical_cast<T>(it->second);
+                }
+                catch (...)
+                {
+                }
+                return def;
             }
 
         private:
