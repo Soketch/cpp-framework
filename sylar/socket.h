@@ -71,33 +71,57 @@ namespace sylar
             return setOption(level, option, &value, sizeof(T));
         }
 
-        Socket::ptr accept();
+        /**
+         * @brief 接收connect链接
+         * @return 成功返回新连接的socket,失败返回nullptr
+         * @pre Socket必须 bind , listen  成功
+         */
+        virtual Socket::ptr accept();
 
-        bool bind(const Address::ptr addr);
+        /**
+         * @brief 绑定地址
+         * @param[in] addr 地址
+         * @return 是否绑定成功
+         */
+        virtual bool bind(const Address::ptr addr);
 
-        bool connect(const Address::ptr addr, uint64_t timeout_ms = -1);
+        /**
+         * @brief 连接地址
+         * @param[in] addr 目标地址
+         * @param[in] timeout_ms 超时时间(毫秒)
+         */
+        virtual bool connect(const Address::ptr addr, uint64_t timeout_ms = -1);
 
-        bool listen(int backlog = SOMAXCONN);
+        /**
+         * @brief 监听socket
+         * @param[in] backlog 未完成连接队列的最大长度
+         * @result 返回监听是否成功
+         * @pre 必须先 bind 成功
+         */
+        virtual bool listen(int backlog = SOMAXCONN);
 
-        bool close();
+        /**
+         * @brief 关闭socket
+         */
+        virtual bool close();
 
         // 发送函数   ， sendTo是针对UDP使用
-        int send(const void *buffer, size_t length, int flags = 0);
+        virtual int send(const void *buffer, size_t length, int flags = 0);
 
-        int send(const iovec *buffers, size_t length, int flags = 0);
+        virtual int send(const iovec *buffers, size_t length, int flags = 0);
 
-        int sendTo(const void *buffer, size_t length, const Address::ptr to, int flags = 0);
+        virtual int sendTo(const void *buffer, size_t length, const Address::ptr to, int flags = 0);
 
-        int sendTo(const iovec *buffers, size_t length, const Address::ptr to, int flags = 0);
+        virtual int sendTo(const iovec *buffers, size_t length, const Address::ptr to, int flags = 0);
 
         // 接收数据buffer函数,  同样recvFrom针对UDP
-        int recv(void *buffer, size_t length, int flags = 0);
+        virtual int recv(void *buffer, size_t length, int flags = 0);
 
-        int recv(iovec *buffers, size_t length, int flags = 0);
+        virtual int recv(iovec *buffers, size_t length, int flags = 0);
 
-        int recvFrom(void *buffer, size_t length, Address::ptr from, int flags = 0);
+        virtual int recvFrom(void *buffer, size_t length, Address::ptr from, int flags = 0);
 
-        int recvFrom(iovec *buffers, size_t length, Address::ptr from, int flags = 0);
+        virtual int recvFrom(iovec *buffers, size_t length, Address::ptr from, int flags = 0);
 
         Address::ptr getRemoteAddress();
         Address::ptr getLocalAddress();
@@ -113,7 +137,7 @@ namespace sylar
 
         int getError();
 
-        std::ostream &dump(std::ostream &os) const;
+        virtual std::ostream &dump(std::ostream &os) const;
 
         bool CancelRead();
         bool CancelWrite();
@@ -124,7 +148,7 @@ namespace sylar
         void initSock();
         void newSock();
 
-        bool init(int sock);
+        virtual bool init(int sock);
 
     private:
         int m_sock;
@@ -136,5 +160,11 @@ namespace sylar
         Address::ptr m_remoteAddress;
         Address::ptr m_localAddress;
     };
+    /**
+     * @brief 流式输出socket
+     * @param[in, out] os 输出流
+     * @param[in] sock Socket类
+     */
+    std::ostream &operator<<(std::ostream &os, const Socket &sock);
 }
 #endif

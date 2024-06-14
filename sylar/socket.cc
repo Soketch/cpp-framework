@@ -519,4 +519,9 @@ namespace sylar
     {
         return IOManager::GetThis()->cancelAll(m_sock);
     }
+
+    std::ostream &operator<<(std::ostream &os, const Socket &sock)
+    {
+        return sock.dump(os);
+    }
 }
