@@ -137,7 +137,7 @@ namespace sylar
         //-1: 有错误
         //>0: 已处理的字节数，且data有效数据为len - v;
 
-        size_t HttpRequestParser::execte(char *data, size_t len)
+        size_t HttpRequestParser::execute(char *data, size_t len)
         {
             size_t offset = http_parser_execute(&m_parser, data, len, 0);
             memmove(data, data + offset, (len - offset));
@@ -156,7 +156,7 @@ namespace sylar
 
         uint64_t HttpRequestParser::getContentLength()
         {
-            return 0;
+            return m_data->getHeaderAs<uint64_t>("content-length", 0);
         }
 
         uint64_t HttpRequestParser::GetHttpRequestBufferSize()
@@ -244,7 +244,7 @@ namespace sylar
             m_parser.data = this;
         }
 
-        size_t HttpResponseParser::execte(char *data, size_t len, bool chunck)
+        size_t HttpResponseParser::execute(char *data, size_t len, bool chunck)
         {
             if (chunck)
             {
@@ -268,7 +268,7 @@ namespace sylar
 
         uint64_t HttpResponseParser::getContentLength()
         {
-            return 0;
+            return m_data->getHeaderAs<uint64_t>("content-length", 0);
         }
 
         uint64_t HttpResponseParser::GetHttpResponseBufferSize()

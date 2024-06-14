@@ -23,10 +23,10 @@ namespace sylar
         ///  @brief 将字符串指针转换成HTTP方法枚举
         HttpMethod CharsToHttpMethod(const char *m)
         {
-#define XX(num, name, string)    \
-    if (strcmp(#string, m) == 0) \
-    {                            \
-        return HttpMethod::name; \
+#define XX(num, name, string)                      \
+    if (strncmp(#string, m, strlen(#string)) == 0) \
+    {                                              \
+        return HttpMethod::name;                   \
     }
             HTTP_METHOD_MAP(XX);
 #undef XX
@@ -206,7 +206,7 @@ namespace sylar
         }
 
         // 输出到文本  -->数据 转成协议文本
-        std::ostream &HttpRequest::dump(std::ostream &os)
+        std::ostream &HttpRequest::dump(std::ostream &os) const
         {
             // GET /uri HTTP/1.1
             // Host: www.skgfweb.top
@@ -246,6 +246,12 @@ namespace sylar
             return os;
         }
 
+        std::string HttpRequest::toString() const
+        {
+            std::stringstream ss;
+            dump(ss);
+            return ss.str();
+        }
         // httpResponse class generater
 
         HttpResponse::HttpResponse(uint8_t version, bool close)
@@ -267,7 +273,7 @@ namespace sylar
         {
             m_headers.erase(key);
         }
-        std::ostream &HttpResponse::dump(std::ostream &os)
+        std::ostream &HttpResponse::dump(std::ostream &os) const
         {
             os << "HTTP/"
                << ((uint32_t)m_version >> 4)
@@ -301,6 +307,13 @@ namespace sylar
             }
 
             return os;
+        }
+
+        std::string HttpResponse::toString() const
+        {
+            std::stringstream ss;
+            dump(ss);
+            return ss.str();
         }
     }
 }

@@ -197,7 +197,7 @@ namespace sylar
          * @return 如果存在且转换成功返回对应的值,否则返回默认值
          */
         template <class MapType, class T>
-        T getAs(const MapType &m, const std::string &key, T &val, const T &def = T())
+        T getAs(const MapType &m, const std::string &key, const T &def = T())
         {
             std::string str;
             auto it = m.find(key);
@@ -377,7 +377,13 @@ namespace sylar
             }
 
             // 输出到文本  --> 转成协议文本
-            std::ostream &dump(std::ostream &os);
+            std::ostream &dump(std::ostream &os) const;
+
+            /**
+             * @brief 转成字符串类型
+             * @return 字符串
+             */
+            std::string toString() const;
 
         private:
             HttpMethod m_method;
@@ -463,7 +469,13 @@ namespace sylar
                 return getAs(m_headers, key, def);
             }
 
-            std::ostream &dump(std::ostream &os);
+            std::ostream &dump(std::ostream &os) const;
+
+            /**
+             * @brief 转成字符串类型
+             * @return 字符串
+             */
+            std::string toString() const;
 
         private:
             /// 响应状态
