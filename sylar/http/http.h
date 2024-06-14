@@ -480,6 +480,7 @@ namespace sylar
 
             std::vector<std::string> m_cookies;
         };
+
     }
 }
 
