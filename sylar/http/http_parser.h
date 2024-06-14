@@ -22,7 +22,7 @@ namespace sylar
              * @param[in] len 协议文本内存长度
              * @return 返回实际解析的长度,并且将已解析的数据移除
              */
-            size_t execte(const char *data, size_t len, size_t off);
+            size_t execte(char *data, size_t len);
 
             /**
              * @brief 是否解析完成
@@ -94,7 +94,7 @@ namespace sylar
              * @param[in] chunck 是否在解析chunck
              * @return 返回实际解析的长度,并且移除已解析的数据
              */
-            size_t execte(const char *data, size_t len, size_t off);
+            size_t execte(char *data, size_t len, bool chunck);
 
             /**
              * @brief 是否解析完成
