@@ -97,7 +97,7 @@ namespace sylar
         virtual std::ostream &insert(std::ostream &os) const = 0;
 
         /// @brief 返回可读性字符串
-        std::string toString();
+        std::string toString() const;
 
         // 重载<  ，小于号比较函数
         bool operator<(const Address &rhs) const;
@@ -238,11 +238,13 @@ namespace sylar
 
         const sockaddr *getAddr() const override;
         sockaddr *getAddr() override;
-        socklen_t getAddrLen() const override;
-        std::ostream &insert(std::ostream &os) const override;
 
+        socklen_t getAddrLen() const override;
         void setAddrLen(uint32_t v);
+
         std::string getPath() const;
+
+        std::ostream &insert(std::ostream &os) const override;
 
     private:
         sockaddr_un m_addr;
@@ -264,5 +266,10 @@ namespace sylar
     private:
         sockaddr m_addr;
     };
+
+    /**
+     * @brief 流式输出Address
+     */
+    std::ostream &operator<<(std::ostream &os, const Address &addr);
 }
 #endif

@@ -122,13 +122,11 @@ namespace sylar
 
     bool Socket::setOption(int level, int option, const void *result, socklen_t len)
     {
-        int rt = setsockopt(m_sock, level, option, result, (socklen_t)len);
-
-        if (rt)
+        if (setsockopt(m_sock, level, option, result, (socklen_t)len))
         {
             SYLAR_LOG_DEBUG(g_logger) << "setOption sock=" << m_sock
                                       << "  level=" << level << "  option=" << option
-                                      << "  errno=" << errno << strerror(errno);
+                                      << "  errno=" << errno << "  str(errno):" << strerror(errno);
             return false;
         }
         return true;
@@ -205,13 +203,31 @@ namespace sylar
         }
         if (SYLAR_UNLIKELY(addr->getFamily() != m_family))
         {
-            SYLAR_LOG_ERROR(g_logger) << "bind sock.family=" << m_family << "  ,sddr.family=" << addr->getFamily() << "  ,addr=" << addr->toString();
+            SYLAR_LOG_ERROR(g_logger) << "bind sock.family=" << m_family
+                                      << "  ,sddr.family=" << addr->getFamily()
+                                      << "  ,addr=" << addr->toString();
             return false;
         }
 
+        // UnixAddress::ptr uaddr = std::dynamic_pointer_cast<UnixAddress>(addr);
+        // if (uaddr)
+        // {
+        //     Socket::ptr sock = Socket::CreateUnixTCPSocket();
+        //     if (sock->connect(uaddr))
+        //     {
+        //         return false;
+        //     }
+        //     else
+        //     {
+        //         sylar::FSUtil::Unlink(uaddr->getPath(), true);
+        //     }
+        // }
+
         if (::bind(m_sock, addr->getAddr(), addr->getAddrLen()))
         {
-            SYLAR_LOG_ERROR(g_logger) << "bind error,  errno=" << errno << ", strerror(errno):" << strerror(errno);
+            SYLAR_LOG_ERROR(g_logger) << "bind error,  errno=" << errno
+                                      << ", sock:" << addr->toString()
+                                      << ", strerror(errno):" << strerror(errno);
             return false;
         }
         getLocalAddress(); // 初始本地地址
@@ -264,17 +280,17 @@ namespace sylar
 
     bool Socket::listen(int backlog)
     {
-        if (SYLAR_UNLIKELY(!isInvaild()))
+        if (!isInvaild())
         {
             SYLAR_LOG_ERROR(g_logger) << "listen m_sock=" << m_sock << ",  errno=" << errno << ",  strerror(errno):" << strerror(errno);
             return false;
         }
-        if (SYLAR_UNLIKELY(::listen(m_sock, backlog) == 0))
+        if (::listen(m_sock, backlog))
         {
             SYLAR_LOG_ERROR(g_logger) << "listen m_sock=" << m_sock << ",  errno=" << errno << ",  strerror(errno):" << strerror(errno);
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     bool Socket::close()

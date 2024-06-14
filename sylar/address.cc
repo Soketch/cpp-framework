@@ -294,7 +294,7 @@ namespace sylar
         return getAddr()->sa_family;
     }
 
-    std::string Address::toString()
+    std::string Address::toString() const
     {
         std::stringstream ss;
         insert(ss);
@@ -699,7 +699,18 @@ namespace sylar
     }
     std::string UnixAddress::getPath() const
     {
-        return m_addr.sun_path;
+        // return m_addr.sun_path;
+
+        std::stringstream ss;
+        if (m_length > offsetof(sockaddr_un, sun_path) && m_addr.sun_path[0] == '\0')
+        {
+            ss << "\\0" << std::string(m_addr.sun_path + 1, m_length - offsetof(sockaddr_un, sun_path) - 1);
+        }
+        else
+        {
+            ss << m_addr.sun_path;
+        }
+        return ss.str();
     }
 
     /// UnknownAddress未知地址
@@ -728,5 +739,10 @@ namespace sylar
     {
         os << "[UnknownAddress family=" << m_addr.sa_family << "]";
         return os;
+    }
+
+    std::ostream &operator<<(std::ostream &os, const Address &addr)
+    {
+        return addr.insert(os);
     }
 }
