@@ -136,9 +136,11 @@ namespace sylar
     {
         Socket::ptr sock(new Socket(m_family, m_type, m_protocol));
         int newSock = ::accept(m_sock, nullptr, nullptr);
-        if (newSock)
+        if (newSock == -1)
         {
-            SYLAR_LOG_ERROR(g_logger) << "accept(" << m_sock << ") errno=" << errno << "  strerror:" << strerror(errno);
+            SYLAR_LOG_ERROR(g_logger) << "accept(" << m_sock
+                                      << ") errno=" << errno
+                                      << "  strerror:" << strerror(errno);
             return nullptr;
         }
         if (sock->init(newSock))

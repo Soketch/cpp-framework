@@ -108,7 +108,15 @@ namespace sylar
         void read(void *buf, size_t size);
         void read(void *buf, size_t size, size_t position) const;
 
+        /**
+         * @brief 返回ByteArray当前位置
+         */
         size_t getPosition() const { return m_position; }
+        /**
+         * @brief 设置ByteArray当前位置
+         * @post 如果m_position > m_size 则 m_size = m_position
+         * @exception 如果m_position > m_capacity 则抛出 std::out_of_range
+         */
         void setPosition(size_t v);
 
         bool writeToFile(const std::string &name) const;

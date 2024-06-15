@@ -555,7 +555,7 @@ namespace sylar
         {
             m_cur = m_cur->next;
         }
-    }
+        }
 
     bool ByteArray::writeToFile(const std::string &name) const
     {
