@@ -380,6 +380,16 @@ namespace sylar
             std::ostream &dump(std::ostream &os) const;
 
             /**
+             * @brief 初始化-获取是否连接=>设置close关闭
+             */
+            void init();
+
+            void initParam();
+            void initQueryParam();
+            void initBodyParam();
+            void initCookies();
+
+            /**
              * @brief 转成字符串类型
              * @return 字符串
              */
@@ -393,6 +403,9 @@ namespace sylar
             uint8_t m_version; // ==> http1.0 (0x10)   http1.1 (0x11)
             //   是否自动关闭
             bool m_close; // http1.1 支持长连接  //解状态
+
+            uint8_t m_parserParamFlag;
+
             // 请求路径
             std::string m_path;
             // 请求参数
@@ -493,6 +506,21 @@ namespace sylar
             std::vector<std::string> m_cookies;
         };
 
+        /**
+         * @brief 流式输出HttpRequest
+         * @param[in, out] os 输出流
+         * @param[in] req HTTP请求
+         * @return 输出流
+         */
+        std::ostream &operator<<(std::ostream &os, const HttpRequest &req);
+
+        /**
+         * @brief 流式输出HttpResponse
+         * @param[in, out] os 输出流
+         * @param[in] rsp HTTP响应
+         * @return 输出流
+         */
+        std::ostream &operator<<(std::ostream &os, const HttpResponse &rsp);
     }
 }
 

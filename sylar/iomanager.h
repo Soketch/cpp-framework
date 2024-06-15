@@ -10,7 +10,7 @@ namespace sylar
     class IOManager : public Scheduler, public TimerManager
     {
     public:
-        std::shared_ptr<IOManager> ptr;
+        using ptr = std::shared_ptr<IOManager>;
         typedef RWMutex RWMutexType;
 
         enum Event

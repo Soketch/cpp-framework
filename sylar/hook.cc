@@ -103,7 +103,7 @@ static ssize_t do_io(int fd, OriginFun fun, const char *hook_fun_name,
         return fun(fd, std::forward<Args>(args)...);
     }
 
-    SYLAR_LOG_DEBUG(g_logger) << "do_io" << hook_fun_name;
+    // SYLAR_LOG_DEBUG(g_logger) << "do_io" << hook_fun_name;
 
     // 获取fd上下文：
     sylar::FdCtx::ptr ctx = sylar::FdMgr::GetInstance()->get(fd);

@@ -671,8 +671,8 @@ github:  https://github.com/mongrel2/mongrel2.git
 
 **ragel生成文件执行命令**
 ```cpp
-ragel -G2 -C http11_parser.rl -o http11_parser.cc
-ragel -G2 -C httpclient_parser.rl -o httpclient_parser.cc
+ragel -G2 -C http11_parser.rl -o http11_parser.rl.cc
+ragel -G2 -C httpclient_parser.rl -o httpclient_parser.rl.cc
 
 ragel帮助命令 ragel --help
 ```
@@ -690,11 +690,81 @@ http没有规定每个字段有多长，为了规避恶意发包行为（不属�
 #### <font color="#18C29E" size="3px">
 封装TCPServer
 </font>
+```cpp
+echo_server测试
+···
+```
 
 
 #### Stream 针对文件/socket封装
-read/write/readFixSize/readFixSize<br>
+read/write/readFixSize/writeFixSize<br>
 相当于**粘包处理**
+```cpp
+实现 stream抽象类 - 流接口
+实现固定buffer的读写操作
+readFixSize(void* buffer)/writeFixSize(void* buffer)
+readFixSize(ByteArray::ptr ba)/writeFixSize(ByteArray::ptr ba)
+```
+```cpp
+通过stream 实现 socket_stream封装
+重写实现 read/write/close
+```
+
+#### HttpSession封装
+**<font color="#97829E">HttpSession和HttpConnection区别</font>**：
+Server端accept操作产出的socket   ===>(命名) Session
+Client端connect操作产生的socket  ===>(命名) Connetion
+
+#### HttpServer封装
+HttpServer : TcpServer  (继承与TcpServer)
+
+
+## 实现Servlet接口
+Servlet 的主要功能是接收 HTTP 请求、处理请求并生成 HTTP 响应。<br>
+设置适当的缓冲区大小<br>
+检测和限制<br>
+流式处理<br>
+异常处理<br>
+```js
+Servlet 的工作原理
+客户端请求:   
+     客户端（通常是 Web 浏览器）向 Web 服务器发送 HTTP 请求。
+Web 服务器接收请求:   
+     Web 服务器接收客户端的请求，并将其转发给 Servlet 容器。
+Servlet 容器处理请求: 
+     Servlet 容器负责查找并调用适当的 Servlet 来处理请求。Servlet 容器会根据请求的 URL 映射找到相应的 Servlet 类。
+Servlet 生成响应: 
+     Servlet 处理请求，通常会访问数据库、调用其他服务或执行业务逻辑，然后生成响应内容。
+发送响应: 
+     Servlet 将生成的响应内容返回给 Web 服务器，再由 Web 服务器发送回客户端。
+Servlet 的生命周期
+Servlet 的生命周期由 Servlet 容器管理，主要包括以下几个阶段：
+
+加载和实例化: 
+     当 Servlet 容器启动或收到对某个 Servlet 的第一次请求时，它会加载并实例化该 Servlet。
+初始化: 
+     Servlet 容器调用 Servlet 的 init 方法进行初始化。这通常用于初始化资源，如数据库连接等。
+处理请求: 
+     每次请求到达时，Servlet 容器调用 Servlet 的 service 方法，service 方法会根据请求类型（GET、POST 等）调用相应的 doGet、doPost 等方法来处理请求。
+销毁: 
+    当 Servlet 容器决定销毁一个 Servlet 实例时，会调用 Servlet 的 destroy 方法进行清理工作。这通常用于释放资源，如关闭数据库连接等。
+```
+
+        (控制器)            （方法控制器）
+        Servlet  <-------- FunctionServlet
+           |        继承
+           |
+           | 管理
+           |
+           V
+        ServletDispatch
+        (前端控制器)   它负责将传入的请求分派（dispatch）到不同的 Servlet 或处理器（handler）。
+
+Servlet启动，会同时存在多个Servlet或者handle
+FunctionServlet继承与Servlet, 可以专门用于处理某种类型的请求。
+ServletDispatch会统一管理Servlet,  当用户传递一个uri, 管理对象会通知 现在应该命中的那个Servlet去处理。
+
+
 
 ## 分布协议
 ## 推荐系统

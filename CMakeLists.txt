@@ -32,13 +32,15 @@ set(LIB_SRC
     sylar/address.cc
     sylar/socket.cc
     sylar/bytearray.cc
-    sylar/http/http.cc
+    sylar/stream.cc
+    sylar/tcp_server.cc
+    sylar/http/http.cc #http
     sylar/http/http11_parser.rl.cc
     sylar/http/httpclient_parser.rl.cc
     sylar/http/http_parser.cc
-    sylar/tcp_server.cc
-    sylar/stream.cc
-    sylar/socket_stream.cc
+    sylar/http/http_session.cc
+    sylar/http/http_server.cc
+    sylar/streams/socket_stream.cc #streams
     )
 
 add_library(sylar SHARED ${LIB_SRC})
@@ -133,6 +135,10 @@ add_dependencies(echo_server sylar)
 force_redefine_file_macro_for_sources(echo_server)
 target_link_libraries(echo_server sylar ${LIB_LIB})
 
+add_executable(test_httpserver tests/test_httpserver.cc)
+add_dependencies(test_httpserver sylar)
+force_redefine_file_macro_for_sources(test_httpserver)
+target_link_libraries(test_httpserver sylar ${LIB_LIB})
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

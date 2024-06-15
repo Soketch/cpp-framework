@@ -23,25 +23,75 @@ namespace sylar
         static sylar::ConfigVar<uint64_t>::ptr g_http_request_max_body_size =
             sylar::Config::Lookup("http.request.max_body_size", (uint64_t)64 * 1024 * 1024, "http request max body size");
 
+        // 4K
+        static sylar::ConfigVar<uint64_t>::ptr g_http_response_buffer_size =
+            sylar::Config::Lookup("http.response.buffer_size", (uint64_t)(4 * 1024), "http response buffer size");
+        // 64M
+        static sylar::ConfigVar<uint64_t>::ptr g_http_response_max_body_size =
+            sylar::Config::Lookup("http.response.max_body_size", (uint64_t)(64 * 1024 * 1024), "http response max body size");
+
         static uint64_t s_http_request_buffer_size = 0;
         static uint64_t s_http_request_max_body_size = 0;
 
-        // 初始化 请求大小 结构体
-        struct _RequestSizeIniter
-        {
-            _RequestSizeIniter()
-            {
-                s_http_request_buffer_size = g_http_request_buffer_size->getValue();
-                s_http_request_max_body_size = g_http_request_max_body_size->getValue();
+        static uint64_t s_http_response_buffer_size = 0;
+        static uint64_t s_http_response_max_body_size = 0;
 
-                g_http_request_buffer_size->addListener([](const uint64_t &old_val, const uint64_t &new_val)
-                                                        { s_http_request_buffer_size = new_val; });
-                g_http_request_max_body_size->addListener([](const uint64_t &ov, const uint64_t &nv)
-                                                          { s_http_request_max_body_size = nv; });
-            }
-        };
-        // 通过静态全局对象的方式，实现在main函数前执行，初始化操作
-        static _RequestSizeIniter _init;
+        uint64_t HttpRequestParser::GetHttpRequestBufferSize()
+        {
+            return s_http_request_buffer_size;
+        }
+
+        uint64_t HttpRequestParser::GetHttpRequestMaxBodySize()
+        {
+            return s_http_request_max_body_size;
+        }
+        uint64_t HttpResponseParser::GetHttpResponseBufferSize()
+        {
+            return s_http_response_buffer_size;
+        }
+
+        uint64_t HttpResponseParser::GetHttpResponseMaxBodySize()
+        {
+            return s_http_response_max_body_size;
+        }
+
+        // 防止污染全局命名空间
+        namespace
+        {
+            // 初始化 请求大小 结构体
+            struct _RequestSizeIniter
+            {
+                _RequestSizeIniter()
+                {
+                    s_http_request_buffer_size = g_http_request_buffer_size->getValue();
+                    s_http_request_max_body_size = g_http_request_max_body_size->getValue();
+
+                    g_http_request_buffer_size->addListener(
+                        [](const uint64_t &old_val, const uint64_t &new_val)
+                        { s_http_request_buffer_size = new_val; });
+                    g_http_request_max_body_size->addListener(
+                        [](const uint64_t &ov, const uint64_t &nv)
+                        { s_http_request_max_body_size = nv; });
+                    //
+                    s_http_response_buffer_size = g_http_response_buffer_size->getValue();
+                    s_http_response_max_body_size = g_http_response_max_body_size->getValue();
+
+                    g_http_response_buffer_size->addListener(
+                        [](const uint64_t &ov, const uint64_t &nv)
+                        {
+                            s_http_response_buffer_size = nv;
+                        });
+
+                    g_http_response_max_body_size->addListener(
+                        [](const uint64_t &ov, const uint64_t &nv)
+                        {
+                            s_http_response_max_body_size = nv;
+                        });
+                }
+            };
+            // 通过静态全局对象的方式，实现在main函数前执行，初始化操作
+            static _RequestSizeIniter _init;
+        }
 
         // element_cb 回调函数
         void on_request_method(void *data, const char *at, size_t length)
@@ -106,7 +156,7 @@ namespace sylar
             if (flen == 0)
             {
                 SYLAR_LOG_WARN(g_logger) << "invaild http request field length = 0 ";
-                parser->setError(1002); // invaild field
+                // parser->setError(1002); // invaild field
                 return;
             }
             // 设置请求头
@@ -159,16 +209,6 @@ namespace sylar
             return m_data->getHeaderAs<uint64_t>("content-length", 0);
         }
 
-        uint64_t HttpRequestParser::GetHttpRequestBufferSize()
-        {
-            return 0;
-        }
-
-        uint64_t HttpRequestParser::GetHttpRequestMaxBodySize()
-        {
-            return 0;
-        }
-
         //
 
         // element_cb 回调函数 response
@@ -218,7 +258,7 @@ namespace sylar
             if (flen == 0)
             {
                 SYLAR_LOG_WARN(g_logger) << "invaild http response field length = 0 ";
-                parser->setError(1002); // invaild field
+                // parser->setError(1002); // invaild field  字段
                 return;
             }
             // 设置请求头
@@ -271,14 +311,5 @@ namespace sylar
             return m_data->getHeaderAs<uint64_t>("content-length", 0);
         }
 
-        uint64_t HttpResponseParser::GetHttpResponseBufferSize()
-        {
-            return 0;
-        }
-
-        uint64_t HttpResponseParser::GetHttpResponseMaxBodySize()
-        {
-            return 0;
-        }
     }
 }
