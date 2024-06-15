@@ -692,5 +692,9 @@ http没有规定每个字段有多长，为了规避恶意发包行为（不属�
 </font>
 
 
+#### Stream 针对文件/socket封装
+read/write/readFixSize/readFixSize<br>
+相当于**粘包处理**
+
 ## 分布协议
 ## 推荐系统
