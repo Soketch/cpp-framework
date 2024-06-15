@@ -129,7 +129,9 @@ namespace sylar
         int getFamily() const { return m_family; }
         int getType() const { return m_type; }
         int getProtocol() const { return m_protocol; }
-
+        /**
+         * @brief 返回socket是否连接
+         */
         bool isConnected() const { return m_isConnected; }
         int getSocket() const { return m_sock; }
 

@@ -19,7 +19,7 @@ namespace sylar
         using ptr = std::shared_ptr<Stream>;
 
         // 需要屏蔽文件与socket差异，必须设置虚析构，抽象
-        virtual ~Stream();
+        virtual ~Stream() {}
 
         /**
          * @brief 读数据
