@@ -101,7 +101,7 @@ namespace sylar
          */
         virtual void startAccept(Socket::ptr sock);
 
-    private:
+    protected:
         /// 监听Socket数组, 存储listen socket,存放监听套接字
         std::vector<Socket::ptr> m_socks;
 

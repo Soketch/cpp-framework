@@ -29,7 +29,7 @@ namespace sylar
              * @brief 构造函数
              * @param[in] name 名称
              */
-            Servlet(std::string &name) : m_name(name) {}
+            Servlet(const std::string &name) : m_name(name) {}
 
             ~Servlet() {}
 
@@ -65,7 +65,7 @@ namespace sylar
             /// 函数回调类型定义
             using callback = std::function<int32_t(HttpRequest::ptr request,
                                                    HttpResponse::ptr response,
-                                                   HttpSession session)>;
+                                                   HttpSession::ptr session)>;
 
             /**
              * @brief 构造函数

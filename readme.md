@@ -760,9 +760,9 @@ Servlet 的生命周期由 Servlet 容器管理，主要包括以下几个阶段
         ServletDispatch
         (前端控制器)   它负责将传入的请求分派（dispatch）到不同的 Servlet 或处理器（handler）。
 
-Servlet启动，会同时存在多个Servlet或者handle
-FunctionServlet继承与Servlet, 可以专门用于处理某种类型的请求。
-ServletDispatch会统一管理Servlet,  当用户传递一个uri, 管理对象会通知 现在应该命中的那个Servlet去处理。
+Servlet 是一个抽象基类，定义了处理 HTTP 请求的接口。所有具体的 Servlet 类都必须继承自 Servlet 并实现 handle 方法,Servlet启动，会同时存在多个Servlet<br>
+FunctionServlet继承与Servlet, 可以专门用于处理某种类型的请求。通过回调函数实现具体的请求处理逻辑。这使得可以很方便地使用 Lambda 表达式或函数指针来定义处理逻辑。<br>
+ServletDispatch会统一管理Servlet,  当用户传递一个uri, 管理对象会通知 现在应该命中的那个Servlet去处理。<br>
 
 
 

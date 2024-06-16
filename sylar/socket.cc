@@ -510,11 +510,11 @@ namespace sylar
            << " protocol=" << m_protocol;
         if (m_localAddress)
         {
-            os << "localAddress=" << m_localAddress->toString();
+            os << " localAddress=" << m_localAddress->toString();
         }
         if (m_remoteAddress)
         {
-            os << "remoteAddress=" << m_remoteAddress->toString();
+            os << " remoteAddress=" << m_remoteAddress->toString();
         }
 
         os << "]";

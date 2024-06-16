@@ -5,6 +5,7 @@
 
 #include "http_session.h"
 #include "sylar/tcp_server.h"
+#include "servlet.h"
 
 namespace sylar
 {
@@ -30,12 +31,30 @@ namespace sylar
                        sylar::IOManager *accept_worker = sylar::IOManager::GetThis());
             ~HttpServer() {}
 
+            /**
+             * @brief 获取ServletDispatch
+             */
+            ServletDispatch::ptr getServletDispatch() const { return m_dispatch; }
+
+            /**
+             * @brief 设置ServletDispatch
+             */
+            void setServletDispatch(ServletDispatch::ptr v) { m_dispatch = v; }
+
+            /**
+             * @brief 设置HTTP服务器名称
+             */
+            virtual void setName(const std::string &v) override;
+
         protected:
             virtual void handleClient(Socket::ptr client) override;
 
         private:
             /// 是否支持长连接
             bool m_isKeepalive;
+
+            // servlet分发器
+            ServletDispatch::ptr m_dispatch;
         };
     }
 }
