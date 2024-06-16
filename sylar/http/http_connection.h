@@ -65,7 +65,7 @@ namespace sylar
             std::string toString() const;
         };
 
-        //
+        // http-connection连接池
         class HttpConnectionPool;
 
         /**

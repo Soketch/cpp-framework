@@ -765,7 +765,15 @@ FunctionServlet继承与Servlet, 可以专门用于处理某种类型的请求�
 ServletDispatch会统一管理Servlet,  当用户传递一个uri, 管理对象会通知 现在应该命中的那个Servlet去处理。<br>
 
 #### HttpConnection封装
-1.使用Postman模式调试
+
+1.使用Postman模式调试<br>
+2.实现httpConnection封装<br>
+
+>  ==> ----- HttpResults封装<br>
+
+3.实现URI,使用uri解析<br>
+4.实现一个Http连接池 || 实现keep-alive 长连接的方式<br>
+    HttpConnectionPool<br>
 
 ## 分布协议
 ## 推荐系统
