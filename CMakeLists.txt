@@ -24,7 +24,7 @@ if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-find_library(YAMLCPP yaml-cpp)
+# find_library(YAMLCPP yaml-cpp)
 message("***", ${YAMLCPP})
 
 
@@ -69,46 +69,52 @@ force_redefine_file_macro_for_sources(sylar)
 #add_library(sylar_static STATIC ${LIB_SRC})
 #set_target_properties(sylar_static PROPERTIES OUTPUT_NAME "sylar")
 
+find_library(PTHREAD pthread)
 
-set(LIB_LIB
+set(LIBS
     sylar
     dl
     pthread
-    ${YAMLCPP}
-    )
-message("***", ${LIB_LIB})
+    yaml-cpp
+)
+message("***", ${LIBS})
 
-# sylar_add_executable(my_http_server "samples/my_http_server.cc" sylar "${LIBS}")
 
-add_executable(my_http_server samples/my_http_server.cc)
-add_dependencies(my_http_server sylar)
-force_redefine_file_macro_for_sources(my_http_server)   #__FILE__
-target_link_libraries(my_http_server ${LIB_LIB})
 
+# add_executable(my_http_server samples/my_http_server.cc)
+# add_dependencies(my_http_server sylar)
+# force_redefine_file_macro_for_sources(my_http_server)   #__FILE__
+# target_link_libraries(my_http_server ${LIBS})
+sylar_add_executable(my_http_server "samples/my_http_server.cc" sylar "${LIBS}")
+
+
+message("build begin")
 if(BUILD_TEST)
 # add_executable(test tests/test.cc)
 # add_dependencies(test sylar)
 # force_redefine_file_macro_for_sources(test)   #__FILE__
-# target_link_libraries(test ${LIB_LIB})
-sylar_add_executable(test "tests/test.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_config "tests/test_config.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_thread "tests/test_thread.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_util "tests/test_util.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_fiber "tests/test_fiber.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_scheduler "tests/test_scheduler.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_iomanager "tests/test_iomanager.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_hook "tests/test_hook.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_address "tests/test_address.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_socket "tests/test_socket.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_bytearray "tests/test_bytearray.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_http "tests/test_http.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_httpparser "tests/test_httpparser.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_tcpserver "tests/test_tcpserver.cc" sylar "${LIB_LIB}")
-sylar_add_executable(echo_server "examples/echo_server.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_httpserver "tests/test_httpserver.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_httpconnection "tests/test_httpconnection.cc" sylar "${LIB_LIB}")
-sylar_add_executable(test_uri "tests/test_uri.cc" sylar "${LIB_LIB}")
+# target_link_libraries(test ${LIBS})
+message("### build test ###")
+sylar_add_executable(test "tests/test.cc" sylar "${LIBS}")
+sylar_add_executable(test_config "tests/test_config.cc" sylar "${LIBS}")
+sylar_add_executable(test_thread "tests/test_thread.cc" sylar "${LIBS}")
+sylar_add_executable(test_util "tests/test_util.cc" sylar "${LIBS}")
+sylar_add_executable(test_fiber "tests/test_fiber.cc" sylar "${LIBS}")
+sylar_add_executable(test_scheduler "tests/test_scheduler.cc" sylar "${LIBS}")
+sylar_add_executable(test_iomanager "tests/test_iomanager.cc" sylar "${LIBS}")
+sylar_add_executable(test_hook "tests/test_hook.cc" sylar "${LIBS}")
+sylar_add_executable(test_address "tests/test_address.cc" sylar "${LIBS}")
+sylar_add_executable(test_socket "tests/test_socket.cc" sylar "${LIBS}")
+sylar_add_executable(test_bytearray "tests/test_bytearray.cc" sylar "${LIBS}")
+sylar_add_executable(test_http "tests/test_http.cc" sylar "${LIBS}")
+sylar_add_executable(test_httpparser "tests/test_httpparser.cc" sylar "${LIBS}")
+sylar_add_executable(test_tcpserver "tests/test_tcpserver.cc" sylar "${LIBS}")
+sylar_add_executable(echo_server "examples/echo_server.cc" sylar "${LIBS}")
+sylar_add_executable(test_httpserver "tests/test_httpserver.cc" sylar "${LIBS}")
+sylar_add_executable(test_httpconnection "tests/test_httpconnection.cc" sylar "${LIBS}")
+sylar_add_executable(test_uri "tests/test_uri.cc" sylar "${LIBS}")
 endif()
+message("build test end")
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

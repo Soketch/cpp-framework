@@ -67,3 +67,9 @@ function(sylar_add_executable targetname srcs depends libs)
     force_redefine_file_macro_for_sources(${targetname})
     target_link_libraries(${targetname} ${libs})
 endfunction()
+# sylar_add_executable(my_http_server "samples/my_http_server.cc" sylar "${LIBS}")
+
+# add_executable(test tests/test.cc)
+# add_dependencies(test sylar)
+# force_redefine_file_macro_for_sources(test)   #__FILE__
+# target_link_libraries(test ${LIB_LIB})
