@@ -778,8 +778,11 @@ ServletDispatch会统一管理Servlet,  当用户传递一个uri, 管理对象�
 ## 分布协议
 ## 推荐系统
 
+### 性能测试详见
+see [performance test](/doc/performancetest.md)
+
 ### 最后| 一些不确信的问题，应该改进处
- see [doubt](./doubt.md).
+ see [doubt](/doc/doubt.md).
 
 
 
