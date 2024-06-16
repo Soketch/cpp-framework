@@ -7,6 +7,17 @@
 
 static sylar::Logger::ptr g_logger = SYLAR_LOG_ROOT();
 
+void test_pool()
+{
+    sylar::http::HttpConnectionPool::ptr pool(new sylar::http::HttpConnectionPool(
+        "www.sylar.top", "", 80, false, 10, 1000 * 30, 5));
+
+    sylar::IOManager::GetThis()->addTimer(1000, [pool]()
+                                          {
+            auto r = pool->doGet("/", 300);
+            SYLAR_LOG_INFO(g_logger) << r->toString(); }, true);
+}
+
 void run()
 {
     sylar::Address::ptr addr = sylar::Address::LookupAnyIPAddress("www.sylar.top:80");
@@ -53,7 +64,7 @@ void run()
                              << " rsp=" << (r->response ? r->response->toString() : "");
 
     SYLAR_LOG_INFO(g_logger) << "=========================";
-    // test_pool();
+    test_pool();
 }
 
 // void test_https()

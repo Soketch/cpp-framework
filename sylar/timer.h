@@ -68,6 +68,9 @@ namespace sylar
         TimerManager();
         virtual ~TimerManager();
 
+        /**
+         * @brief  添加一个定时器
+         */
         Timer::ptr addTimer(uint64_t ms, std::function<void()>, bool recurring = false);
 
         // 条件定时器  ==> 用智能指针weak_ptr做条件,利用引用计数机制

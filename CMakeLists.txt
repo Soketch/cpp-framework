@@ -5,13 +5,19 @@ include(cmake/utils.cmake)
 
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -rdynamic -O0 -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -Wno-builtin-macro-redefined")
+set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -rdynamic -O3 -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -Wno-builtin-macro-redefined")
 
 # include_directories(/apps/sylar/include)
 #include_directories(/usr/include)
 include_directories(.)
 include_directories(/home/coding/tools)
 link_directories(/usr/local/lib)
+
+#Boost
+find_package(Boost REQUIRED)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+endif()
 
 find_library(YAMLCPP yaml-cpp)
 message("***", ${YAMLCPP})

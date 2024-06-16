@@ -81,6 +81,11 @@ namespace sylar
          */
         bool isConnected() const;
 
+        /**
+         * @brief 返回Socket类
+         */
+        Socket::ptr getSocket() const { return m_sock; }
+
     private:
         Socket::ptr m_sock;
         /// 是否主控

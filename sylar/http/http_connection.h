@@ -73,6 +73,8 @@ namespace sylar
          */
         class HttpConnection : public SocketStream
         {
+            friend class HttpConnectionPool;
+
         public:
             using ptr = std::shared_ptr<HttpConnection>;
 
@@ -193,9 +195,11 @@ namespace sylar
             int sendRequest(HttpRequest::ptr rsp);
 
         private:
+            uint64_t m_createTime = 0;
+            uint64_t m_request = 0;
         };
 
-        /// @brief
+        /// @brief HttpConnection连接池
         class HttpConnectionPool
         {
         public:
@@ -206,6 +210,7 @@ namespace sylar
 
             HttpConnectionPool(const std::string &host, const std::string &vhost, uint32_t port, bool is_https, uint32_t max_size, uint32_t max_alive_time, uint32_t max_request);
 
+            /// @brief 获取连接
             HttpConnection::ptr getConnection();
 
             /**
@@ -279,19 +284,33 @@ namespace sylar
             HttpResult::ptr doRequest(HttpRequest::ptr req, uint64_t timeout_ms);
 
         private:
+            /// @brief 释放连接
+            //  用于在连接不再使用时，将其返回到连接池中，
+            //  以便后续请求可以重用该连接，从而减少创建和销毁连接的开销。
+            //  先判断是否可以放回连接池，不能就析构掉
+            //  连接池 已经满了 直接销毁这个连接。
             static void ReleasePtr(HttpConnection *ptr, HttpConnectionPool *pool);
 
         private:
+            /// @brief 目标服务器的主机名或IP地址
             std::string m_host;
+            /// @brief 虚拟主机，允许通过相同的IP地址和端口号访问多个不同的域名，从而实现多站点托管
             std::string m_vhost;
+            /// @brief 端口
             uint32_t m_port;
+            /// @brief 最大连接数
             uint32_t m_maxSize;
+            /// @brief 最大连接时间
             uint32_t m_maxAliveTime;
+            /// @brief 请求上限
             uint32_t m_maxRequest;
+            /// @brief 是否支持https
             bool m_isHttps;
 
             MutexType m_mutex;
+            /// @brief 连接池
             std::list<HttpConnection *> m_conns;
+            /// @brief 当前连接数
             std::atomic<int32_t> m_total = {0};
         };
     }
