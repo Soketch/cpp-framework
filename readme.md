@@ -719,7 +719,7 @@ Client端connect操作产生的socket  ===>(命名) Connetion
 HttpServer : TcpServer  (继承与TcpServer)
 
 
-## 实现Servlet接口
+#### 实现Servlet接口
 Servlet 的主要功能是接收 HTTP 请求、处理请求并生成 HTTP 响应。<br>
 设置适当的缓冲区大小<br>
 检测和限制<br>
@@ -764,7 +764,8 @@ Servlet 是一个抽象基类，定义了处理 HTTP 请求的接口。所有具
 FunctionServlet继承与Servlet, 可以专门用于处理某种类型的请求。通过回调函数实现具体的请求处理逻辑。这使得可以很方便地使用 Lambda 表达式或函数指针来定义处理逻辑。<br>
 ServletDispatch会统一管理Servlet,  当用户传递一个uri, 管理对象会通知 现在应该命中的那个Servlet去处理。<br>
 
-
+#### HttpConnection封装
+1.使用Postman模式调试
 
 ## 分布协议
 ## 推荐系统

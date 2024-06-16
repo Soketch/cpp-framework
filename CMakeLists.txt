@@ -39,11 +39,20 @@ set(LIB_SRC
     sylar/http/httpclient_parser.rl.cc
     sylar/http/http_parser.cc
     sylar/http/http_session.cc
+    sylar/http/http_connection.cc
     sylar/http/http_server.cc
     sylar/http/servlet.cc
     sylar/streams/socket_stream.cc #streams
     )
 
+## ragel编译处理rl文件
+ragelmaker(sylar/http/http11_parser.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/sylar/http)
+ragelmaker(sylar/http/httpclient_parser.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/sylar/http)
+
+ragelmaker(sylar/uri.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/sylar)
+
+
+# 生成共享库
 add_library(sylar SHARED ${LIB_SRC})
 force_redefine_file_macro_for_sources(sylar) 
 #add_library(sylar_static STATIC ${LIB_SRC})
@@ -140,6 +149,18 @@ add_executable(test_httpserver tests/test_httpserver.cc)
 add_dependencies(test_httpserver sylar)
 force_redefine_file_macro_for_sources(test_httpserver)
 target_link_libraries(test_httpserver sylar ${LIB_LIB})
+
+add_executable(test_httpconnection tests/test_httpconnection.cc)
+add_dependencies(test_httpconnection sylar)
+force_redefine_file_macro_for_sources(test_httpconnection)
+target_link_libraries(test_httpconnection sylar ${LIB_LIB})
+
+
+add_executable(test_uri tests/test_uri.cc)
+add_dependencies(test_uri sylar)
+force_redefine_file_macro_for_sources(test_uri)
+target_link_libraries(test_uri sylar ${LIB_LIB})
+
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

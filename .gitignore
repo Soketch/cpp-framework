@@ -1,6 +1,7 @@
 # Ignore build directory
 /build/
 
+/txtlog/rsp.dat
 # # Ignore other common files and directories
 # *.log
 # *.tmp
