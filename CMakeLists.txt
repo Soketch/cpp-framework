@@ -5,9 +5,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(cmake/utils.cmake)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -rdynamic -O3 -fPIC -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -Wno-builtin-macro-redefined -Wno-deprecated-declarations")
-set(CMAKE_C_FLAGS "$ENV{CXXFLAGS} -rdynamic -O3 -fPIC -ggdb -std=c11 -Wall -Wno-deprecated -Werror -Wno-unused-function -Wno-builtin-macro-redefined -Wno-deprecated-declarations")
+# set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -rdynamic -O3 -fPIC -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -Wno-builtin-macro-redefined -Wno-deprecated-declarations")
+# set(CMAKE_C_FLAGS "$ENV{CXXFLAGS} -rdynamic -O3 -fPIC -ggdb -std=c11 -Wall -Wno-deprecated -Werror -Wno-unused-function -Wno-builtin-macro-redefined -Wno-deprecated-declarations")
 
+set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -rdynamic -O3 -fPIC -ggdb -std=c++11 -Wall -Wno-deprecated -Wno-unused-function -Wno-builtin-macro-redefined -Wno-deprecated-declarations")
+set(CMAKE_C_FLAGS "$ENV{CXXFLAGS} -rdynamic -O3 -fPIC -ggdb -std=c11 -Wall -Wno-deprecated -Wno-unused-function -Wno-builtin-macro-redefined -Wno-deprecated-declarations")
 
 # include_directories(/apps/sylar/include)
 #include_directories(/usr/include)
@@ -45,6 +47,8 @@ set(LIB_SRC
     sylar/bytearray.cc
     sylar/stream.cc
     sylar/tcp_server.cc
+    sylar/daemon.cc
+    sylar/env.cc
     sylar/http/http.cc #http
     sylar/http/http11_parser.rl.cc
     sylar/http/httpclient_parser.rl.cc
@@ -87,35 +91,35 @@ sylar_add_executable(my_http_server "samples/my_http_server.cc" sylar "${LIBS}")
 
 message("build begin")
 if(BUILD_TEST)
-# add_executable(test tests/test.cc)
-# add_dependencies(test sylar)
-# force_redefine_file_macro_for_sources(test)   #__FILE__
-# target_link_libraries(test ${LIBS})
-message("### build test ###")
-sylar_add_executable(test "tests/test.cc" sylar "${LIBS}")
-sylar_add_executable(test_config "tests/test_config.cc" sylar "${LIBS}")
-sylar_add_executable(test_thread "tests/test_thread.cc" sylar "${LIBS}")
-sylar_add_executable(test_util "tests/test_util.cc" sylar "${LIBS}")
-sylar_add_executable(test_fiber "tests/test_fiber.cc" sylar "${LIBS}")
-sylar_add_executable(test_scheduler "tests/test_scheduler.cc" sylar "${LIBS}")
-sylar_add_executable(test_iomanager "tests/test_iomanager.cc" sylar "${LIBS}")
-sylar_add_executable(test_hook "tests/test_hook.cc" sylar "${LIBS}")
-sylar_add_executable(test_address "tests/test_address.cc" sylar "${LIBS}")
-sylar_add_executable(test_socket "tests/test_socket.cc" sylar "${LIBS}")
-sylar_add_executable(test_bytearray "tests/test_bytearray.cc" sylar "${LIBS}")
-sylar_add_executable(test_http "tests/test_http.cc" sylar "${LIBS}")
-sylar_add_executable(test_httpparser "tests/test_httpparser.cc" sylar "${LIBS}")
-sylar_add_executable(test_tcpserver "tests/test_tcpserver.cc" sylar "${LIBS}")
-sylar_add_executable(echo_server "examples/echo_server.cc" sylar "${LIBS}")
-sylar_add_executable(test_httpserver "tests/test_httpserver.cc" sylar "${LIBS}")
-sylar_add_executable(test_httpconnection "tests/test_httpconnection.cc" sylar "${LIBS}")
-sylar_add_executable(test_uri "tests/test_uri.cc" sylar "${LIBS}")
+    # add_executable(test tests/test.cc)
+    # add_dependencies(test sylar)
+    # force_redefine_file_macro_for_sources(test)   #__FILE__
+    # target_link_libraries(test ${LIBS})
+    message("### build test ###")
+    sylar_add_executable(test "tests/test.cc" sylar "${LIBS}")
+    sylar_add_executable(test_config "tests/test_config.cc" sylar "${LIBS}")
+    sylar_add_executable(test_thread "tests/test_thread.cc" sylar "${LIBS}")
+    sylar_add_executable(test_util "tests/test_util.cc" sylar "${LIBS}")
+    sylar_add_executable(test_fiber "tests/test_fiber.cc" sylar "${LIBS}")
+    sylar_add_executable(test_scheduler "tests/test_scheduler.cc" sylar "${LIBS}")
+    sylar_add_executable(test_iomanager "tests/test_iomanager.cc" sylar "${LIBS}")
+    sylar_add_executable(test_hook "tests/test_hook.cc" sylar "${LIBS}")
+    sylar_add_executable(test_address "tests/test_address.cc" sylar "${LIBS}")
+    sylar_add_executable(test_socket "tests/test_socket.cc" sylar "${LIBS}")
+    sylar_add_executable(test_bytearray "tests/test_bytearray.cc" sylar "${LIBS}")
+    sylar_add_executable(test_http "tests/test_http.cc" sylar "${LIBS}")
+    sylar_add_executable(test_httpparser "tests/test_httpparser.cc" sylar "${LIBS}")
+    sylar_add_executable(test_tcpserver "tests/test_tcpserver.cc" sylar "${LIBS}")
+    sylar_add_executable(echo_server "examples/echo_server.cc" sylar "${LIBS}")
+    sylar_add_executable(test_httpserver "tests/test_httpserver.cc" sylar "${LIBS}")
+    sylar_add_executable(test_httpconnection "tests/test_httpconnection.cc" sylar "${LIBS}")
+    sylar_add_executable(test_uri "tests/test_uri.cc" sylar "${LIBS}")
 endif()
 message("build test end")
 
 
-
-
+sylar_add_executable(test_daemon "tests/test_daemon.cc" sylar "${LIBS}")
+sylar_add_executable(test_env "tests/test_env.cc" sylar "${LIBS}")
 
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)

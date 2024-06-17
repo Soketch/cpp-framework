@@ -32,6 +32,7 @@ namespace sylar
     static int real_daemon(int argc, char **argv,
                            std::function<int(int argc, char **argv)> main_cb)
     {
+        daemon(1, 0);
         // 父进程id
         ProcessInfoMgr::GetInstance()->parent_id = getpid();
         // 父进程启动时间
@@ -47,7 +48,7 @@ namespace sylar
                 ProcessInfoMgr::GetInstance()->main_id = getpid();
                 ProcessInfoMgr::GetInstance()->main_start_time = time(0);
                 // 打印日志
-                SYLAR_LOG_INFO(g_logger) << "process start pid=" << getpid();
+                SYLAR_LOG_INFO(g_logger) << "daemon process start pid=" << getpid();
                 return real_start(argc, argv, main_cb);
             }
             else if (pid < 0)
