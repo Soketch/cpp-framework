@@ -5,6 +5,8 @@ static sylar::Logger::ptr g_logger = SYLAR_LOG_ROOT();
 
 void run()
 {
+    g_logger->setLevel(sylar::LogLevel::INFO);
+
     sylar::Address::ptr addr = sylar::Address::LookupAnyIPAddress("0.0.0.0:8020");
 
     if (!addr)
@@ -27,7 +29,7 @@ void run()
 int main(int argc, char **argv)
 {
 
-    sylar::IOManager iom(1);
+    sylar::IOManager iom(4);
     iom.schedule(run);
 
     return 0;
