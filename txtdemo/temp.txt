@@ -1,0 +1,2 @@
+2024-06-18 00:05:27	88428	UNKNOWN	0	[INFO]	[system]	sylar/config.cc:101	LoadConfFile file=/home/coding/cpp/sylar/bin/conf/temp.yml ok
+2024-06-18 00:05:27	88428	UNKNOWN	0	[INFO]	[root]	sylar/log.cc:881	on_logger_conf_changed

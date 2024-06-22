@@ -1,4 +1,1 @@
-2024-05-27 14:59:41	hello, system
-
-2024-05-27 14:59:41 - hello, system
-
+2024-06-18 00:05:27	LoadConfFile file=/home/coding/cpp/sylar/bin/conf/test.yml ok
